@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — Krieshan AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:         #07080f;
+      --surface:    #0d0f1e;
+      --card:       rgba(255,255,255,0.04);
+      --border:     rgba(255,255,255,0.08);
+      --gold:       #c9a84c;
+      --gold-light: #e8c96a;
+      --violet:     #7c5cbf;
+      --violet-light:#a884e8;
+      --text:       #e2dff5;
+      --muted:      #7a789a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Raleway', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Starfield */
+    #stars {
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse at 20% 30%, rgba(124,92,191,.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 70%, rgba(201,168,76,.06) 0%, transparent 50%),
+        var(--bg);
+      pointer-events: none;
+    }
+    #stars::before, #stars::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 10%  15%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30%  40%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50%   8%, rgba(255,255,255,.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70%  55%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90%  20%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 15%  75%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 45%  88%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 60% 30%, rgba(255,255,255,.8) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 25% 50%, rgba(200,180,255,.6) 0%, transparent 100%);
+      background-size: 400px 300px;
+      animation: twinkle 8s ease-in-out infinite alternate;
+    }
+    #stars::after {
+      background-size: 600px 500px;
+      animation-duration: 12s;
+      animation-direction: alternate-reverse;
+      opacity: .6;
+    }
+    @keyframes twinkle { 0% { opacity: .5; } 100% { opacity: 1; } }
+
+    /* Content */
+    .login-wrap {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column;
+      align-items: center;
+      padding: 2rem 1.5rem;
+      width: 100%;
+    }
+
+    .header-symbol {
+      font-size: 2.8rem; line-height: 1; margin-bottom: .6rem;
+      filter: drop-shadow(0 0 12px var(--gold));
+    }
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 700; letter-spacing: .1em;
+      background: linear-gradient(135deg, var(--gold-light), var(--violet-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; margin-bottom: .4rem;
+    }
+    .subtitle {
+      font-size: .9rem; color: var(--muted); letter-spacing: .05em;
+      margin-bottom: 2.5rem;
+    }
+
+    .login-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      backdrop-filter: blur(16px);
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-card-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem; font-weight: 600;
+      color: var(--gold); letter-spacing: .12em;
+      text-transform: uppercase; margin-bottom: .6rem;
+    }
+    .login-card-sub {
+      font-size: .85rem; color: var(--muted);
+      line-height: 1.7; margin-bottom: 2rem;
+    }
+
+    .features-list {
+      list-style: none;
+      text-align: left;
+      margin-bottom: 2rem;
+      display: flex; flex-direction: column; gap: .55rem;
+    }
+    .features-list li {
+      font-size: .82rem; color: rgba(226,223,245,.75);
+      display: flex; align-items: center; gap: .6rem;
+    }
+    .features-list li::before {
+      content: '✦'; font-size: .5rem; color: var(--gold); flex-shrink: 0;
+    }
+
+    .btn-google {
+      display: flex; align-items: center; justify-content: center; gap: .75rem;
+      width: 100%;
+      background: #fff;
+      border: none; border-radius: 10px;
+      color: #333;
+      font-family: 'Raleway', sans-serif; font-size: .95rem; font-weight: 600;
+      padding: .85rem 1.5rem;
+      text-decoration: none;
+      transition: transform .15s, box-shadow .15s;
+      cursor: pointer;
+    }
+    .btn-google:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255,255,255,.15);
+    }
+    .btn-google img { width: 20px; height: 20px; flex-shrink: 0; }
+
+    .login-fine {
+      font-size: .72rem; color: var(--muted);
+      margin-top: 1.2rem; line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div id="stars"></div>
+
+  <div class="login-wrap">
+    <img src="/static/lion.svg?v=2" alt="Krieshan AI" style="width:72px;height:72px;margin-bottom:.6rem;filter:drop-shadow(0 0 14px rgba(201,168,76,.5))" />
+    <h1 style="font-family:'Cinzel',serif;font-size:2rem;background:linear-gradient(135deg,#e8c96a,#a884e8);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Krieshan AI</h1>
+    <p class="subtitle">Sidereal astrology · Vedic depth · AI-powered readings</p>
+
+    <div class="login-card">
+      <div class="login-card-title">Welcome Back</div>
+      <p class="login-card-sub">Sign in to unlock your birth chart, cosmic transits, and daily guidance powered by sidereal astrology.</p>
+
+      <ul class="features-list">
+        <li>✦ Sidereal birth chart with nakshatras &amp; fixed stars</li>
+        <li>✦ Career, romance &amp; Vimshottari Dasha readings</li>
+        <li>✦ Daily, monthly &amp; yearly transit forecasts</li>
+        <li>✦ Synastry compatibility · Astro Journal</li>
+        <li>✦ Learning library &amp; downloadable PDF</li>
+      </ul>
+
+      <a href="/auth/google" class="btn-google">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
+        Continue with Google
+      </a>
+
+      <p class="login-fine">By signing in you agree to store your birth details securely in our database. We never share your data.</p>
+    </div>
+  </div>
+</body>
+</html>

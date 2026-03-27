@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile — Krieshan AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:         #07080f;
+      --surface:    #0d0f1e;
+      --card:       rgba(255,255,255,0.04);
+      --border:     rgba(255,255,255,0.08);
+      --gold:       #c9a84c;
+      --gold-light: #e8c96a;
+      --violet:     #7c5cbf;
+      --violet-light:#a884e8;
+      --text:       #e2dff5;
+      --muted:      #7a789a;
+      --green:      #6de8a8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Raleway', sans-serif;
+      min-height: 100vh;
+    }
+
+    #stars {
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse at 20% 30%, rgba(124,92,191,.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 70%, rgba(201,168,76,.06) 0%, transparent 50%),
+        var(--bg);
+      pointer-events: none;
+    }
+    #stars::before, #stars::after {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 40%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 55%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 60% 30%, rgba(255,255,255,.8) 0%, transparent 100%);
+      background-size: 400px 300px;
+      animation: twinkle 8s ease-in-out infinite alternate;
+    }
+    #stars::after { background-size: 600px 500px; animation-duration: 12s; animation-direction: alternate-reverse; opacity: .6; }
+    @keyframes twinkle { 0% { opacity: .5; } 100% { opacity: 1; } }
+
+    .container {
+      position: relative; z-index: 1;
+      max-width: 860px; margin: 0 auto;
+      padding: 2rem 1.5rem 5rem;
+    }
+
+    /* ── Top nav ── */
+    .topnav {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1rem;
+    }
+    .back-link {
+      display: flex; align-items: center; gap: .5rem;
+      color: var(--muted); text-decoration: none;
+      font-size: .85rem; transition: color .2s;
+    }
+    .back-link:hover { color: var(--gold); }
+    .logout-link {
+      color: var(--muted); text-decoration: none;
+      font-size: .82rem; transition: color .2s;
+    }
+    .logout-link:hover { color: var(--violet-light); }
+
+    /* ── Profile header ── */
+    .profile-header {
+      display: flex; align-items: center; gap: 1.5rem;
+      margin-bottom: 2.5rem; flex-wrap: wrap;
+    }
+    .profile-avatar {
+      width: 72px; height: 72px; border-radius: 50%;
+      border: 2px solid rgba(201,168,76,.3);
+      object-fit: cover; flex-shrink: 0;
+      background: var(--surface);
+    }
+    .profile-avatar-placeholder {
+      width: 72px; height: 72px; border-radius: 50%;
+      border: 2px solid rgba(201,168,76,.3);
+      background: linear-gradient(135deg, var(--violet), #5a3fa0);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cinzel', serif; font-size: 1.6rem; font-weight: 700;
+      color: #fff; flex-shrink: 0;
+    }
+    .profile-info {}
+    .profile-name {
+      font-family: 'Cinzel', serif; font-size: 1.5rem; font-weight: 700;
+      color: var(--gold-light); margin-bottom: .2rem;
+    }
+    .profile-email { font-size: .85rem; color: var(--muted); }
+    .profile-since { font-size: .78rem; color: var(--muted); margin-top: .2rem; }
+
+    /* ── Section title ── */
+    .section-title {
+      font-family: 'Cinzel', serif; font-size: .85rem; font-weight: 600;
+      letter-spacing: .14em; text-transform: uppercase; color: var(--gold);
+      margin: 2.5rem 0 1.2rem;
+      display: flex; align-items: center; gap: .7rem;
+    }
+    .section-title::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(to right, rgba(201,168,76,.3), transparent);
+    }
+
+    /* ── Subscription card ── */
+    .sub-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 1.5rem 1.8rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .sub-card.active { border-color: rgba(109,232,168,.25); background: linear-gradient(135deg, rgba(109,232,168,.06), rgba(124,92,191,.06)); }
+    .sub-card.inactive { border-color: rgba(201,168,76,.15); }
+    .sub-left {}
+    .sub-status {
+      font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600;
+      margin-bottom: .25rem;
+    }
+    .sub-card.active .sub-status { color: var(--green); }
+    .sub-card.inactive .sub-status { color: var(--muted); }
+    .sub-detail { font-size: .82rem; color: var(--muted); }
+    .btn-subscribe {
+      background: linear-gradient(135deg, var(--gold), #a07828);
+      border: none; border-radius: 8px;
+      color: #07080f; cursor: pointer;
+      font-family: 'Cinzel', serif; font-size: .82rem; font-weight: 700;
+      letter-spacing: .06em; padding: .6rem 1.4rem;
+      transition: transform .15s, box-shadow .15s;
+      text-decoration: none; display: inline-block;
+    }
+    .btn-subscribe:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(201,168,76,.3); }
+
+    /* ── Charts list ── */
+    .charts-empty {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 2.5rem;
+      text-align: center; color: var(--muted); font-size: .88rem;
+    }
+    .chart-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.2rem 1.5rem;
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: .75rem; transition: border-color .2s;
+    }
+    .chart-card:hover { border-color: rgba(124,92,191,.3); }
+    .chart-icon {
+      width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+      background: linear-gradient(135deg, rgba(124,92,191,.25), rgba(201,168,76,.1));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .chart-info { flex: 1; min-width: 0; }
+    .chart-label {
+      font-family: 'Cinzel', serif; font-size: .9rem; font-weight: 600;
+      color: var(--text); margin-bottom: .2rem;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .chart-meta { font-size: .75rem; color: var(--muted); }
+    .chart-actions { display: flex; gap: .5rem; flex-shrink: 0; }
+    .btn-view {
+      background: rgba(124,92,191,.2); border: 1px solid rgba(124,92,191,.3);
+      border-radius: 7px; color: var(--violet-light); cursor: pointer;
+      font-family: 'Raleway', sans-serif; font-size: .75rem; font-weight: 600;
+      padding: .35rem .85rem; text-decoration: none;
+      transition: background .2s;
+    }
+    .btn-view:hover { background: rgba(124,92,191,.35); }
+    .btn-delete {
+      background: rgba(220,50,80,.1); border: 1px solid rgba(220,50,80,.2);
+      border-radius: 7px; color: #f88; cursor: pointer;
+      font-family: 'Raleway', sans-serif; font-size: .75rem; font-weight: 600;
+      padding: .35rem .85rem;
+      transition: background .2s;
+    }
+    .btn-delete:hover { background: rgba(220,50,80,.2); }
+
+    /* ── Danger zone ── */
+    .danger-zone {
+      background: rgba(220,50,80,.05); border: 1px solid rgba(220,50,80,.15);
+      border-radius: 16px; padding: 1.5rem 1.8rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .danger-title {
+      font-family: 'Cinzel', serif; font-size: .9rem; font-weight: 600;
+      color: #f88; margin-bottom: .25rem;
+    }
+    .danger-sub { font-size: .8rem; color: var(--muted); }
+    .btn-danger {
+      background: rgba(220,50,80,.15); border: 1px solid rgba(220,50,80,.3);
+      border-radius: 8px; color: #f88; cursor: pointer;
+      font-family: 'Raleway', sans-serif; font-size: .82rem; font-weight: 600;
+      padding: .6rem 1.3rem; transition: background .2s;
+    }
+    .btn-danger:hover { background: rgba(220,50,80,.25); }
+
+    @media (max-width: 600px) {
+      .profile-header { flex-direction: column; text-align: center; }
+      .sub-card, .danger-zone { flex-direction: column; }
+      .chart-actions { width: 100%; justify-content: flex-end; }
+    }
+  </style>
+</head>
+<body>
+  <div id="stars"></div>
+
+  <div class="container">
+
+    <!-- Top nav -->
+    <div class="topnav">
+      <a href="/" class="back-link">← Back to Chart Calculator</a>
+      <a href="/auth/logout" class="logout-link">Sign out</a>
+    </div>
+
+    <!-- Profile header -->
+    <div class="profile-header">
+      {% if user.picture_url %}
+        <img src="{{ user.picture_url }}" class="profile-avatar" alt="{{ user.name }}" />
+      {% else %}
+        <div class="profile-avatar-placeholder">{{ user.name[0] | upper }}</div>
+      {% endif %}
+      <div class="profile-info">
+        <div class="profile-name">{{ user.name }}</div>
+        <div class="profile-email">{{ user.email }}</div>
+        <div class="profile-since">Member since {{ user.created_at.strftime('%B %Y') }}</div>
+      </div>
+    </div>
+
+    <!-- Subscription -->
+    <div class="section-title">Subscription</div>
+    {% if user.is_paid %}
+      <div class="sub-card active">
+        <div class="sub-left">
+          <div class="sub-status">✦ Full Access — Active</div>
+          <div class="sub-detail">
+            {% if user.subscription and user.subscription.current_period_end %}
+              Renews {{ user.subscription.current_period_end.strftime('%B %d, %Y') }}
+            {% else %}
+              All transit readings and features unlocked
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="sub-card inactive">
+        <div class="sub-left">
+          <div class="sub-status">No Active Subscription</div>
+          <div class="sub-detail">Subscribe to unlock daily, monthly &amp; yearly transit readings — $8/month</div>
+        </div>
+        <a href="/" class="btn-subscribe">Subscribe — $8/mo</a>
+      </div>
+    {% endif %}
+
+    <!-- Saved Charts -->
+    <div class="section-title">Saved Charts ({{ charts | length }})</div>
+
+    {% if charts %}
+      {% for chart in charts %}
+        <div class="chart-card" id="chart-{{ chart.id }}">
+          <div class="chart-icon">✦</div>
+          <div class="chart-info">
+            <div class="chart-label">{{ chart.label or 'Birth Chart' }}</div>
+            <div class="chart-meta">
+              {{ chart.date }}{% if chart.time %} · {{ chart.time }}{% endif %}
+              {% if chart.city %} · {{ chart.city }}{% endif %}
+              · Saved {{ chart.created_at.strftime('%b %d, %Y') }}
+            </div>
+          </div>
+          <div class="chart-actions">
+            <button class="btn-delete" onclick="deleteChart({{ chart.id }})">Delete</button>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="charts-empty">
+        No saved charts yet. <a href="/" style="color:var(--gold-light)">Generate your first chart →</a>
+      </div>
+    {% endif %}
+
+    <!-- Danger Zone -->
+    <div class="section-title">Account</div>
+    <div class="danger-zone">
+      <div>
+        <div class="danger-title">Delete Account</div>
+        <div class="danger-sub">Permanently removes your account, all saved charts, and subscription data. This cannot be undone.</div>
+      </div>
+      <button class="btn-danger" onclick="deleteAccount()">Delete My Account</button>
+    </div>
+
+  </div>
+
+  <script>
+    async function deleteChart(chartId) {
+      if (!confirm('Delete this chart? This cannot be undone.')) return;
+      const r = await fetch(`/api/charts/${chartId}`, { method: 'DELETE' });
+      if (r.ok) {
+        const el = document.getElementById(`chart-${chartId}`);
+        if (el) el.remove();
+      } else {
+        alert('Could not delete chart. Please try again.');
+      }
+    }
+
+    async function deleteAccount() {
+      const confirmed = prompt('Type DELETE to permanently remove your account and all data:');
+      if (confirmed !== 'DELETE') return;
+      const r = await fetch('/api/account', { method: 'DELETE' });
+      if (r.ok) {
+        window.location.href = '/login';
+      } else {
+        alert('Could not delete account. Please try again.');
+      }
+    }
+  </script>
+</body>
+</html>

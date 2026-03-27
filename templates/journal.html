@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Astro Journal — Krieshan AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #07080f; --surface: #0d0f1e; --card: rgba(255,255,255,.04);
+      --border: rgba(255,255,255,.08); --gold: #c9a84c; --gold-light: #e8c96a;
+      --violet: #7c5cbf; --violet-light: #a884e8; --text: #e2dff5;
+      --muted: #7a789a; --green: #6de8a8;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Raleway', sans-serif; min-height: 100vh; }
+
+    #stars { position: fixed; inset: 0; z-index: 0;
+      background: radial-gradient(ellipse at 30% 20%, rgba(124,92,191,.1) 0%, transparent 60%),
+                  radial-gradient(ellipse at 70% 80%, rgba(201,168,76,.06) 0%, transparent 50%), var(--bg); pointer-events: none; }
+    #stars::before { content: ''; position: absolute; inset: 0;
+      background-image: radial-gradient(1px 1px at 20% 35%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 55% 70%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 80% 25%, rgba(255,255,255,.8) 0%, transparent 100%);
+      background-size: 450px 350px; animation: twinkle 10s ease-in-out infinite alternate; }
+    @keyframes twinkle { 0% { opacity: .5; } 100% { opacity: 1; } }
+
+    .container { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+
+    .topnav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+    .back-link { color: var(--muted); text-decoration: none; font-size: .85rem; transition: color .2s; }
+    .back-link:hover { color: var(--gold); }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-link { color: var(--muted); text-decoration: none; font-size: .82rem; transition: color .2s; }
+    .nav-link:hover, .nav-link.active { color: var(--gold-light); }
+
+    header { text-align: center; margin-bottom: 2rem; }
+    .header-symbol { font-size: 2rem; color: var(--gold); filter: drop-shadow(0 0 10px rgba(201,168,76,.6)); margin-bottom: .5rem; }
+    h1 { font-family: 'Cinzel', serif; font-size: 1.9rem; font-weight: 700; color: var(--gold-light); letter-spacing: .04em; }
+    .subtitle { font-size: .88rem; color: var(--muted); margin-top: .4rem; }
+
+    /* Moon stamp */
+    .moon-stamp { background: linear-gradient(135deg, rgba(124,92,191,.12), rgba(201,168,76,.06));
+      border: 1px solid rgba(124,92,191,.25); border-radius: 12px; padding: 1rem 1.4rem;
+      display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .moon-stamp-icon { font-size: 1.6rem; }
+    .moon-stamp-text { flex: 1; }
+    .moon-stamp-label { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+    .moon-stamp-value { font-family: 'Cinzel', serif; font-size: .95rem; color: var(--violet-light); }
+    .moon-affirmation { font-size: .78rem; color: var(--muted); margin-top: .25rem; font-style: italic; }
+
+    /* Write entry */
+    .write-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; margin-bottom: 2rem; }
+    .write-title { font-family: 'Cinzel', serif; font-size: .82rem; font-weight: 600;
+      letter-spacing: .14em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+    textarea { width: 100%; background: rgba(255,255,255,.04); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text); font-family: 'Raleway', sans-serif;
+      font-size: .9rem; line-height: 1.7; padding: 1rem 1.1rem;
+      resize: vertical; min-height: 120px; transition: border-color .2s; }
+    textarea:focus { outline: none; border-color: rgba(124,92,191,.5); }
+    textarea::placeholder { color: var(--muted); }
+    .write-footer { display: flex; align-items: center; justify-content: space-between; margin-top: .75rem; flex-wrap: wrap; gap: .75rem; }
+    .write-hint { font-size: .74rem; color: var(--muted); }
+    .btn-save { background: linear-gradient(135deg, var(--violet), #5a3fa0);
+      border: none; border-radius: 8px; color: #fff; cursor: pointer;
+      font-family: 'Cinzel', serif; font-size: .82rem; font-weight: 700; letter-spacing: .06em;
+      padding: .55rem 1.4rem; transition: transform .15s, box-shadow .15s; }
+    .btn-save:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(124,92,191,.3); }
+    .btn-save:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    .error-msg { background: rgba(220,50,80,.1); border: 1px solid rgba(220,50,80,.25);
+      border-radius: 8px; padding: .65rem .9rem; font-size: .8rem; color: #f87171; display: none; margin-bottom: 1rem; }
+
+    /* Entries */
+    .section-title { font-family: 'Cinzel', serif; font-size: .82rem; font-weight: 600;
+      letter-spacing: .14em; text-transform: uppercase; color: var(--gold);
+      margin-bottom: 1.2rem; display: flex; align-items: center; gap: .7rem; }
+    .section-title::after { content: ''; flex: 1; height: 1px;
+      background: linear-gradient(to right, rgba(201,168,76,.3), transparent); }
+
+    .entry-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 1.3rem 1.5rem; margin-bottom: .9rem; transition: border-color .2s; }
+    .entry-card:hover { border-color: rgba(124,92,191,.25); }
+    .entry-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: .75rem; gap: 1rem; }
+    .entry-stamps { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .stamp { display: inline-flex; align-items: center; gap: .3rem; font-size: .68rem;
+      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+      border-radius: 5px; padding: 2px 7px; color: var(--muted); }
+    .stamp.moon { color: var(--violet-light); border-color: rgba(124,92,191,.2); background: rgba(124,92,191,.08); }
+    .stamp.nak  { color: var(--gold-light);   border-color: rgba(201,168,76,.2);  background: rgba(201,168,76,.05); }
+    .entry-date { font-size: .72rem; color: var(--muted); white-space: nowrap; }
+    .entry-content { font-size: .9rem; line-height: 1.75; color: var(--text); white-space: pre-wrap; }
+    .btn-delete-entry { background: none; border: none; color: var(--muted); cursor: pointer;
+      font-size: .75rem; padding: .2rem .4rem; border-radius: 4px; transition: color .2s; flex-shrink: 0; }
+    .btn-delete-entry:hover { color: #f87171; }
+
+    .empty-state { text-align: center; padding: 3rem; color: var(--muted); font-size: .88rem; }
+    .empty-icon { font-size: 2.5rem; margin-bottom: .75rem; }
+
+    .load-more { display: block; width: 100%; background: var(--card);
+      border: 1px solid var(--border); border-radius: 10px; color: var(--muted); cursor: pointer;
+      font-family: 'Raleway', sans-serif; font-size: .82rem; padding: .75rem;
+      text-align: center; margin-top: 1rem; transition: border-color .2s; }
+    .load-more:hover { border-color: rgba(124,92,191,.3); color: var(--violet-light); }
+
+    .premium-lock { background: rgba(201,168,76,.05); border: 1px solid rgba(201,168,76,.2);
+      border-radius: 12px; padding: 1.2rem 1.5rem; text-align: center; font-size: .85rem;
+      color: var(--muted); display: none; }
+    .premium-lock a { color: var(--gold-light); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div id="stars"></div>
+  <div class="container">
+
+    <div class="topnav">
+      <a href="/" class="back-link">← Chart Calculator</a>
+      <div class="nav-links">
+        <a href="/synastry" class="nav-link">Synastry</a>
+        <a href="/journal" class="nav-link active">Journal</a>
+        <a href="/learn" class="nav-link">Learn</a>
+        <a href="/dashboard" class="nav-link">Profile</a>
+      </div>
+    </div>
+
+    <header>
+      <div class="header-symbol">☽</div>
+      <h1>Astro Journal</h1>
+      <p class="subtitle">Your personal log — every entry timestamped with the cosmic weather</p>
+    </header>
+
+    <div id="moonStamp" class="moon-stamp" style="display:none">
+      <div class="moon-stamp-icon">☽</div>
+      <div class="moon-stamp-text">
+        <div class="moon-stamp-label">Moon Today</div>
+        <div class="moon-stamp-value" id="moonStampValue">Loading…</div>
+        <div class="moon-affirmation" id="moonAffirmation"></div>
+      </div>
+    </div>
+
+    <div id="premiumLock" class="premium-lock">
+      ✦ The Astro Journal is a premium feature. <a href="/">Subscribe for $8/month</a> to start writing.
+    </div>
+
+    <div id="writeSection">
+      <div class="write-card">
+        <div class="write-title">New Entry</div>
+        <textarea id="entryText" placeholder="What's alive in you today? The stars are listening…" rows="5"></textarea>
+        <div class="error-msg" id="errorMsg"></div>
+        <div class="write-footer">
+          <span class="write-hint" id="stampHint">This entry will be stamped with today's Moon sign &amp; nakshatra.</span>
+          <button class="btn-save" id="btnSave" onclick="saveEntry()">✦ Save Entry</button>
+        </div>
+      </div>
+
+      <div class="section-title">Past Entries</div>
+      <div id="entriesList"></div>
+      <button class="load-more" id="loadMoreBtn" style="display:none" onclick="loadEntries(true)">Load more entries</button>
+    </div>
+
+  </div>
+
+  <script>
+    let currentPage = 1;
+    let hasNext = false;
+    let isPaid = false;
+
+    async function init() {
+      // Check payment
+      try {
+        const r = await fetch('/api/check-paid');
+        const d = await r.json();
+        isPaid = d.paid;
+      } catch(e) {}
+
+      if (!isPaid) {
+        document.getElementById('premiumLock').style.display = 'block';
+        document.getElementById('writeSection').style.display = 'none';
+      } else {
+        await loadMoonStamp();
+        await loadEntries(false);
+      }
+    }
+
+    async function loadMoonStamp() {
+      try {
+        const r = await fetch('/api/daily-horoscope');
+        const d = await r.json();
+        if (d.moon_nakshatra) {
+          const nak = d.moon_nakshatra;
+          document.getElementById('moonStampValue').textContent = `${nak.name} Nakshatra in ${d.moon_nakshatra.sign || ''}`;
+          document.getElementById('moonAffirmation').textContent = nak.affirmation || '';
+          document.getElementById('stampHint').textContent = `This entry will be stamped: Moon in ${nak.name}`;
+          document.getElementById('moonStamp').style.display = 'flex';
+        }
+      } catch(e) {}
+    }
+
+    async function loadEntries(append) {
+      if (!append) currentPage = 1;
+      try {
+        const r = await fetch(`/api/journal?page=${currentPage}`);
+        const d = await r.json();
+        hasNext = d.has_next;
+        renderEntries(d.entries, append);
+        if (d.has_next) {
+          currentPage++;
+          document.getElementById('loadMoreBtn').style.display = 'block';
+        } else {
+          document.getElementById('loadMoreBtn').style.display = 'none';
+        }
+      } catch(e) {}
+    }
+
+    function renderEntries(entries, append) {
+      const list = document.getElementById('entriesList');
+      if (!append) list.innerHTML = '';
+      if (!entries.length && !append) {
+        list.innerHTML = `<div class="empty-state"><div class="empty-icon">✦</div>No entries yet. Write your first cosmic note above.</div>`;
+        return;
+      }
+      entries.forEach(e => {
+        const div = document.createElement('div');
+        div.className = 'entry-card';
+        div.id = `entry-${e.id}`;
+        div.innerHTML = `
+          <div class="entry-header">
+            <div class="entry-stamps">
+              ${e.moon_sign    ? `<span class="stamp moon">☽ ${e.moon_sign}</span>` : ''}
+              ${e.moon_nakshatra ? `<span class="stamp nak">✦ ${e.moon_nakshatra}</span>` : ''}
+            </div>
+            <div style="display:flex;align-items:center;gap:.5rem">
+              <span class="entry-date">${e.created_at}</span>
+              <button class="btn-delete-entry" onclick="deleteEntry(${e.id})">✕</button>
+            </div>
+          </div>
+          <div class="entry-content">${escHtml(e.content)}</div>`;
+        list.appendChild(div);
+      });
+    }
+
+    async function saveEntry() {
+      const content = document.getElementById('entryText').value.trim();
+      if (!content) { showError('Write something first.'); return; }
+      hideError();
+      document.getElementById('btnSave').disabled = true;
+      try {
+        const r = await fetch('/api/journal', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content })
+        });
+        const d = await r.json();
+        if (!r.ok) {
+          if (d.paid_required) { document.getElementById('premiumLock').style.display = 'block'; return; }
+          showError(d.error || 'Could not save entry.'); return;
+        }
+        document.getElementById('entryText').value = '';
+        const list = document.getElementById('entriesList');
+        const emptyState = list.querySelector('.empty-state');
+        if (emptyState) emptyState.remove();
+        const div = document.createElement('div');
+        div.className = 'entry-card';
+        div.id = `entry-${d.id}`;
+        div.innerHTML = `
+          <div class="entry-header">
+            <div class="entry-stamps">
+              ${d.moon_sign       ? `<span class="stamp moon">☽ ${d.moon_sign}</span>` : ''}
+              ${d.moon_nakshatra  ? `<span class="stamp nak">✦ ${d.moon_nakshatra}</span>` : ''}
+            </div>
+            <div style="display:flex;align-items:center;gap:.5rem">
+              <span class="entry-date">${d.created_at}</span>
+              <button class="btn-delete-entry" onclick="deleteEntry(${d.id})">✕</button>
+            </div>
+          </div>
+          <div class="entry-content">${escHtml(d.content)}</div>`;
+        list.insertBefore(div, list.firstChild);
+      } catch(e) { showError('Could not connect to the server.'); }
+      finally { document.getElementById('btnSave').disabled = false; }
+    }
+
+    async function deleteEntry(id) {
+      if (!confirm('Delete this entry?')) return;
+      const r = await fetch(`/api/journal/${id}`, { method: 'DELETE' });
+      if (r.ok) {
+        const el = document.getElementById(`entry-${id}`);
+        if (el) el.remove();
+      }
+    }
+
+    function showError(msg) { const el = document.getElementById('errorMsg'); el.textContent = msg; el.style.display = 'block'; }
+    function hideError()    { document.getElementById('errorMsg').style.display = 'none'; }
+    function escHtml(s)     { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    init();
+  </script>
+</body>
+</html>

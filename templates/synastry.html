@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Synastry — Krieshan AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #07080f; --surface: #0d0f1e; --card: rgba(255,255,255,.04);
+      --border: rgba(255,255,255,.08); --gold: #c9a84c; --gold-light: #e8c96a;
+      --violet: #7c5cbf; --violet-light: #a884e8; --text: #e2dff5;
+      --muted: #7a789a; --green: #6de8a8; --red: #f87171;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Raleway', sans-serif; min-height: 100vh; }
+
+    #stars { position: fixed; inset: 0; z-index: 0;
+      background: radial-gradient(ellipse at 20% 30%, rgba(124,92,191,.12) 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 70%, rgba(201,168,76,.06) 0%, transparent 50%), var(--bg); pointer-events: none; }
+    #stars::before { content: ''; position: absolute; inset: 0;
+      background-image: radial-gradient(1px 1px at 15% 25%, rgba(255,255,255,.8) 0%, transparent 100%),
+        radial-gradient(1px 1px at 45% 65%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 75% 35%, rgba(255,255,255,.7) 0%, transparent 100%);
+      background-size: 500px 400px; animation: twinkle 9s ease-in-out infinite alternate; }
+    @keyframes twinkle { 0% { opacity: .5; } 100% { opacity: 1; } }
+
+    .container { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+
+    .topnav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+    .back-link { color: var(--muted); text-decoration: none; font-size: .85rem; transition: color .2s; }
+    .back-link:hover { color: var(--gold); }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-link { color: var(--muted); text-decoration: none; font-size: .82rem; transition: color .2s; }
+    .nav-link:hover, .nav-link.active { color: var(--gold-light); }
+
+    header { text-align: center; margin-bottom: 2.5rem; }
+    .header-symbol { font-size: 2rem; color: var(--gold); filter: drop-shadow(0 0 10px rgba(201,168,76,.6)); margin-bottom: .5rem; }
+    h1 { font-family: 'Cinzel', serif; font-size: 2rem; font-weight: 700; color: var(--gold-light); letter-spacing: .04em; }
+    .subtitle { font-size: .9rem; color: var(--muted); margin-top: .4rem; }
+
+    .premium-notice { background: linear-gradient(135deg, rgba(124,92,191,.12), rgba(201,168,76,.06));
+      border: 1px solid rgba(124,92,191,.25); border-radius: 12px; padding: 1rem 1.4rem;
+      display: flex; align-items: center; gap: .75rem; margin-bottom: 2rem; font-size: .85rem; color: var(--violet-light); }
+
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+    @media (max-width: 640px) { .charts-grid { grid-template-columns: 1fr; } }
+
+    .chart-form-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.6rem; }
+    .form-card-title { font-family: 'Cinzel', serif; font-size: .85rem; font-weight: 600;
+      letter-spacing: .14em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.2rem;
+      display: flex; align-items: center; gap: .5rem; }
+    .person-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-a { background: #a884e8; }
+    .dot-b { background: #6de8a8; }
+
+    .form-group { margin-bottom: 1rem; }
+    label { display: block; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: .4rem; }
+    input { width: 100%; background: rgba(255,255,255,.05); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); font-family: 'Raleway', sans-serif;
+      font-size: .88rem; padding: .65rem .9rem; transition: border-color .2s; }
+    input:focus { outline: none; border-color: rgba(124,92,191,.5); }
+    input::placeholder { color: var(--muted); }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+
+    .btn-calculate { width: 100%; background: linear-gradient(135deg, var(--violet), #5a3fa0);
+      border: none; border-radius: 10px; color: #fff; cursor: pointer;
+      font-family: 'Cinzel', serif; font-size: .9rem; font-weight: 700; letter-spacing: .06em;
+      padding: .85rem; margin-top: .5rem; transition: transform .15s, box-shadow .15s; }
+    .btn-calculate:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(124,92,191,.35); }
+    .btn-calculate:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    .error-msg { background: rgba(220,50,80,.1); border: 1px solid rgba(220,50,80,.25);
+      border-radius: 8px; padding: .7rem 1rem; font-size: .82rem; color: #f87171; display: none; margin-bottom: 1rem; }
+
+    /* ── Results ── */
+    #results { display: none; }
+
+    .score-section { background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 2rem; margin-bottom: 2rem; text-align: center; }
+    .score-headline { font-family: 'Cinzel', serif; font-size: .82rem; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+    .score-number { font-family: 'Cinzel', serif; font-size: 3.5rem; font-weight: 700;
+      line-height: 1; margin-bottom: .3rem; }
+    .score-max { font-size: .85rem; color: var(--muted); margin-bottom: 1rem; }
+    .score-verdict { font-size: 1rem; color: var(--text); margin-bottom: 1.5rem; font-style: italic; }
+
+    .score-bar-wrap { height: 10px; background: rgba(255,255,255,.08); border-radius: 999px; overflow: hidden; max-width: 400px; margin: 0 auto 1.5rem; }
+    .score-bar-fill { height: 100%; border-radius: 999px;
+      background: linear-gradient(90deg, var(--violet), var(--gold)); transition: width 1s ease; }
+
+    .kuta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .75rem; text-align: left; }
+    @media (max-width: 640px) { .kuta-grid { grid-template-columns: repeat(2, 1fr); } }
+    .kuta-card { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+      border-radius: 10px; padding: .9rem; }
+    .kuta-name { font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: .3rem; }
+    .kuta-score { font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 700; color: var(--gold-light); }
+    .kuta-max { font-size: .7rem; color: var(--muted); }
+
+    .section-title { font-family: 'Cinzel', serif; font-size: .85rem; font-weight: 600;
+      letter-spacing: .14em; text-transform: uppercase; color: var(--gold);
+      margin: 2.5rem 0 1.2rem; display: flex; align-items: center; gap: .7rem; }
+    .section-title::after { content: ''; flex: 1; height: 1px;
+      background: linear-gradient(to right, rgba(201,168,76,.3), transparent); }
+
+    .charts-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 640px) { .charts-compare { grid-template-columns: 1fr; } }
+
+    .mini-chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.4rem; }
+    .mini-chart-name { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700;
+      margin-bottom: 1rem; display: flex; align-items: center; gap: .6rem; }
+    .big-four { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin-bottom: 1rem; }
+    .big-four-item { background: rgba(255,255,255,.04); border-radius: 8px; padding: .6rem .8rem; }
+    .bf-label { font-size: .64rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+    .bf-value { font-family: 'Cinzel', serif; font-size: .88rem; color: var(--gold-light); margin-top: .15rem; }
+    .dasha-mini { font-size: .78rem; color: var(--muted); background: rgba(255,255,255,.03);
+      border-radius: 8px; padding: .6rem .8rem; }
+    .dasha-mini span { color: var(--violet-light); font-weight: 600; }
+
+    .loader { text-align: center; padding: 3rem; color: var(--muted); font-size: .9rem; display: none; }
+    .loader-ring { width: 40px; height: 40px; border: 3px solid rgba(124,92,191,.2);
+      border-top-color: var(--violet); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div id="stars"></div>
+  <div class="container">
+
+    <div class="topnav">
+      <a href="/" class="back-link">← Chart Calculator</a>
+      <div class="nav-links">
+        <a href="/synastry" class="nav-link active">Synastry</a>
+        <a href="/journal" class="nav-link">Journal</a>
+        <a href="/learn" class="nav-link">Learn</a>
+        <a href="/dashboard" class="nav-link">Profile</a>
+      </div>
+    </div>
+
+    <header>
+      <div class="header-symbol">♡</div>
+      <h1>Sidereal Synastry</h1>
+      <p class="subtitle">Vedic compatibility — Kuta scoring based on sidereal Moon nakshatras</p>
+    </header>
+
+    <div class="premium-notice">
+      ✦ Premium feature — requires an active subscription to calculate compatibility reports
+    </div>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <div class="charts-grid">
+      <div class="chart-form-card">
+        <div class="form-card-title"><span class="person-dot dot-a"></span> Person A</div>
+        <div class="form-group"><label>Full Name (optional)</label>
+          <input type="text" id="nameA" placeholder="e.g. Aria" /></div>
+        <div class="form-row">
+          <div class="form-group"><label>Date of Birth *</label>
+            <input type="date" id="dateA" /></div>
+          <div class="form-group"><label>Time of Birth *</label>
+            <input type="time" id="timeA" /></div>
+        </div>
+        <div class="form-group"><label>City of Birth *</label>
+          <input type="text" id="cityA" placeholder="e.g. Mumbai" /></div>
+      </div>
+
+      <div class="chart-form-card">
+        <div class="form-card-title"><span class="person-dot dot-b"></span> Person B</div>
+        <div class="form-group"><label>Full Name (optional)</label>
+          <input type="text" id="nameB" placeholder="e.g. Rohan" /></div>
+        <div class="form-row">
+          <div class="form-group"><label>Date of Birth *</label>
+            <input type="date" id="dateB" /></div>
+          <div class="form-group"><label>Time of Birth *</label>
+            <input type="time" id="timeB" /></div>
+        </div>
+        <div class="form-group"><label>City of Birth *</label>
+          <input type="text" id="cityB" placeholder="e.g. London" /></div>
+      </div>
+    </div>
+
+    <button class="btn-calculate" id="btnCalc" onclick="calculate()">✦ Calculate Compatibility</button>
+
+    <div class="loader" id="loader">
+      <div class="loader-ring"></div>
+      Calculating both charts &amp; Kuta scores…
+    </div>
+
+    <div id="results">
+      <!-- Score -->
+      <div class="score-section">
+        <div class="score-headline">Kuta Compatibility Score</div>
+        <div class="score-number" id="scoreNum">—</div>
+        <div class="score-max">out of 36 points</div>
+        <div class="score-verdict" id="scoreVerdict"></div>
+        <div class="score-bar-wrap"><div class="score-bar-fill" id="scoreBar" style="width:0%"></div></div>
+        <div class="kuta-grid" id="kutaGrid"></div>
+      </div>
+
+      <!-- Charts side by side -->
+      <div class="section-title">Individual Charts</div>
+      <div class="charts-compare">
+        <div class="mini-chart-card" id="miniA"></div>
+        <div class="mini-chart-card" id="miniB"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const KUTA_NAMES = {
+      varna: "Varna", vashya: "Vashya", tara: "Tara", yoni: "Yoni",
+      graha_maitri: "Graha Maitri", gana: "Gana", bhakoot: "Bhakoot", nadi: "Nadi"
+    };
+    const KUTA_MAX = { varna: 1, vashya: 2, tara: 3, yoni: 4, graha_maitri: 5, gana: 6, bhakoot: 7, nadi: 8 };
+
+    async function calculate() {
+      const fields = { dateA: 'Date A', timeA: 'Time A', cityA: 'City A', dateB: 'Date B', timeB: 'Time B', cityB: 'City B' };
+      for (const [id, label] of Object.entries(fields)) {
+        if (!document.getElementById(id).value) {
+          showError(`Please fill in ${label}.`); return;
+        }
+      }
+      hideError();
+      document.getElementById('loader').style.display = 'block';
+      document.getElementById('results').style.display = 'none';
+      document.getElementById('btnCalc').disabled = true;
+
+      try {
+        const r = await fetch('/api/synastry', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name_a: document.getElementById('nameA').value,
+            date_a: document.getElementById('dateA').value,
+            time_a: document.getElementById('timeA').value,
+            city_a: document.getElementById('cityA').value,
+            name_b: document.getElementById('nameB').value,
+            date_b: document.getElementById('dateB').value,
+            time_b: document.getElementById('timeB').value,
+            city_b: document.getElementById('cityB').value,
+          })
+        });
+        const data = await r.json();
+        if (!r.ok) { showError(data.error || 'Calculation failed.'); return; }
+        renderResults(data);
+      } catch(e) {
+        showError('Could not connect to the server.');
+      } finally {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('btnCalc').disabled = false;
+      }
+    }
+
+    function renderResults(data) {
+      const { chart_a, chart_b, kuta } = data;
+      // Score
+      document.getElementById('scoreNum').textContent = kuta.total;
+      document.getElementById('scoreNum').style.color = kuta.percent >= 70 ? '#6de8a8' : kuta.percent >= 50 ? '#e8c96a' : '#f87171';
+      document.getElementById('scoreVerdict').textContent = kuta.verdict;
+      setTimeout(() => { document.getElementById('scoreBar').style.width = kuta.percent + '%'; }, 100);
+
+      // Kuta breakdown
+      const grid = document.getElementById('kutaGrid');
+      grid.innerHTML = Object.entries(kuta.scores).map(([k, v]) => `
+        <div class="kuta-card">
+          <div class="kuta-name">${KUTA_NAMES[k] || k}</div>
+          <div class="kuta-score">${v}<span class="kuta-max">/${KUTA_MAX[k]}</span></div>
+        </div>`).join('');
+
+      // Mini charts
+      renderMiniChart('miniA', chart_a, 'dot-a');
+      renderMiniChart('miniB', chart_b, 'dot-b');
+
+      document.getElementById('results').style.display = 'block';
+      document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function renderMiniChart(elId, chart, dotClass) {
+      const pl = chart.placements;
+      const dasha = chart.dasha;
+      const el = document.getElementById(elId);
+      el.innerHTML = `
+        <div class="mini-chart-name">
+          <span class="person-dot ${dotClass}"></span>
+          ${chart.name}
+        </div>
+        <div class="big-four">
+          ${['Sun','Moon','Ascendant','Midheaven'].map(p => `
+            <div class="big-four-item">
+              <div class="bf-label">${p === 'Ascendant' ? 'Rising' : p === 'Midheaven' ? 'MC' : p}</div>
+              <div class="bf-value">${pl[p]?.sign || '—'}</div>
+            </div>`).join('')}
+        </div>
+        ${dasha?.current_maha ? `
+        <div class="dasha-mini">
+          Maha Dasha: <span>${dasha.current_maha.lord}</span>
+          ${dasha.current_antar ? `· Antar: <span>${dasha.current_antar.lord}</span> until ${dasha.current_antar.end_date}` : ''}
+        </div>` : ''}`;
+    }
+
+    function showError(msg) { const el = document.getElementById('errorMsg'); el.textContent = msg; el.style.display = 'block'; }
+    function hideError() { document.getElementById('errorMsg').style.display = 'none'; }
+  </script>
+</body>
+</html>

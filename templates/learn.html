@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learning Library — Krieshan AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #07080f; --surface: #0d0f1e; --card: rgba(255,255,255,.04);
+      --border: rgba(255,255,255,.08); --gold: #c9a84c; --gold-light: #e8c96a;
+      --violet: #7c5cbf; --violet-light: #a884e8; --text: #e2dff5; --muted: #7a789a;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'Raleway', sans-serif; }
+
+    #stars { position: fixed; inset: 0; z-index: 0;
+      background: radial-gradient(ellipse at 25% 40%, rgba(124,92,191,.1) 0%, transparent 55%),
+                  radial-gradient(ellipse at 75% 60%, rgba(201,168,76,.06) 0%, transparent 50%), var(--bg); pointer-events: none; }
+
+    /* Full-height flex layout — only .main-content scrolls */
+    .layout { display: flex; height: 100vh; overflow: hidden; position: relative; z-index: 1; }
+
+    .sidebar {
+      width: 220px; min-width: 220px; height: 100vh;
+      flex-shrink: 0; z-index: 10;
+      background: rgba(7,8,15,.98); border-right: 1px solid var(--border);
+      padding: 1.5rem 1.2rem; overflow-y: auto;
+    }
+    .sidebar-logo { font-family: 'Cinzel', serif; font-size: .8rem; font-weight: 700; color: var(--gold);
+      letter-spacing: .1em; margin-bottom: 2rem; display: flex; align-items: center; gap: .5rem; }
+    .sidebar-section { font-size: .65rem; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--muted); margin: 1.5rem 0 .6rem; }
+    .sidebar-link { display: block; color: var(--muted); text-decoration: none; font-size: .8rem;
+      padding: .35rem .5rem; border-radius: 6px; margin-bottom: .15rem; transition: all .2s; }
+    .sidebar-link:hover { color: var(--gold-light); background: rgba(201,168,76,.06); }
+    .sidebar-link.active { color: var(--gold-light); background: rgba(201,168,76,.1); border-left: 2px solid var(--gold); padding-left: .65rem; }
+    .back-to-app { color: var(--muted); text-decoration: none; font-size: .75rem; display: flex;
+      align-items: center; gap: .3rem; margin-top: 2rem; transition: color .2s; }
+    .back-to-app:hover { color: var(--gold); }
+
+    /* Main content is the sole scrolling region */
+    .main-content { flex: 1; height: 100vh; overflow-y: auto; padding: 2.5rem 2.5rem 5rem; position: relative; z-index: 1; }
+    @media (max-width: 768px) { .sidebar { display: none; } .main-content { padding: 1.5rem 1.2rem 4rem; } }
+
+    .page-header { margin-bottom: 3rem; }
+    h1 { font-family: 'Cinzel', serif; font-size: 2rem; font-weight: 700; color: var(--gold-light); margin-bottom: .4rem; }
+    .page-subtitle { color: var(--muted); font-size: .9rem; }
+
+    .chapter { margin-bottom: 3.5rem; scroll-margin-top: 2rem; }
+    .chapter-title { font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 700;
+      color: var(--gold); margin-bottom: 1.2rem; padding-bottom: .6rem;
+      border-bottom: 1px solid rgba(201,168,76,.2); display: flex; align-items: center; gap: .7rem; }
+    .chapter-icon { font-size: 1.3rem; }
+    p { font-size: .9rem; line-height: 1.8; color: rgba(226,223,245,.85); margin-bottom: 1rem; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.5rem; }
+    @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+    .info-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.2rem 1.4rem; }
+    .info-card-title { font-family: 'Cinzel', serif; font-size: .88rem; font-weight: 600;
+      color: var(--gold-light); margin-bottom: .5rem; display: flex; align-items: center; gap: .5rem; }
+    .info-card p { font-size: .83rem; line-height: 1.7; margin: 0; }
+
+    .planet-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin-bottom: 1rem; }
+    @media (max-width: 640px) { .planet-grid { grid-template-columns: repeat(2, 1fr); } }
+    .planet-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; }
+    .planet-symbol { font-size: 1.4rem; margin-bottom: .3rem; }
+    .planet-name { font-family: 'Cinzel', serif; font-size: .82rem; font-weight: 600; color: var(--gold-light); margin-bottom: .25rem; }
+    .planet-desc { font-size: .75rem; color: var(--muted); line-height: 1.5; }
+
+    .nak-table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; font-size: .8rem; }
+    .nak-table th { text-align: left; padding: .5rem .75rem; font-size: .65rem; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); }
+    .nak-table td { padding: .5rem .75rem; border-bottom: 1px solid rgba(255,255,255,.04); color: rgba(226,223,245,.8); }
+    .nak-table tr:hover td { background: rgba(255,255,255,.02); }
+    .nak-name { color: var(--gold-light); font-weight: 600; }
+
+    .glossary-item { margin-bottom: 1.2rem; }
+    .glossary-term { font-family: 'Cinzel', serif; font-size: .88rem; font-weight: 700;
+      color: var(--violet-light); margin-bottom: .3rem; }
+    .glossary-def { font-size: .85rem; line-height: 1.7; color: rgba(226,223,245,.8); }
+
+    .highlight-box { background: linear-gradient(135deg, rgba(124,92,191,.1), rgba(201,168,76,.05));
+      border: 1px solid rgba(124,92,191,.2); border-radius: 12px; padding: 1.2rem 1.5rem; margin: 1.5rem 0; }
+    .highlight-box p { margin: 0; font-size: .88rem; color: var(--violet-light); font-style: italic; }
+  </style>
+</head>
+<body>
+  <div id="stars"></div>
+  <div class="layout">
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-logo">✦ Learning Library</div>
+      <div class="sidebar-section">Getting Started</div>
+      <a href="#what-is-sidereal" class="sidebar-link">What is Sidereal?</a>
+      <a href="#tropical-vs-sidereal" class="sidebar-link">Tropical vs Sidereal</a>
+      <div class="sidebar-section">Systems</div>
+      <a href="#ayanamsa" class="sidebar-link">Ayanamsa Systems</a>
+      <a href="#planets" class="sidebar-link">The 9 Planets</a>
+      <a href="#signs" class="sidebar-link">12 Signs (Sidereal)</a>
+      <div class="sidebar-section">Vedic Depth</div>
+      <a href="#nakshatras" class="sidebar-link">27 Nakshatras</a>
+      <a href="#dasha" class="sidebar-link">Dasha System</a>
+      <a href="#glossary" class="sidebar-link">Glossary</a>
+      <a href="/" class="back-to-app">← Back to App</a>
+    </nav>
+
+    <!-- Main -->
+    <main class="main-content">
+      <div class="page-header">
+        <h1>Learning Library</h1>
+        <p class="page-subtitle">Everything you need to understand sidereal astrology from the ground up.</p>
+      </div>
+
+      <!-- What is Sidereal -->
+      <div class="chapter" id="what-is-sidereal">
+        <div class="chapter-title"><span class="chapter-icon">✦</span> What is Sidereal Astrology?</div>
+        <p>Sidereal astrology is the original star-based system — it tracks planetary positions against the actual backdrop of the fixed stars. The word <em>sidereal</em> comes from the Latin <em>sidus</em>, meaning star. This is the system used by ancient Babylonian, Egyptian, and Vedic (Indian) astrologers for thousands of years.</p>
+        <p>The key idea is straightforward: when sidereal astrology says "the Sun is in Aries," it means the Sun is actually in the region of sky occupied by the constellation Aries. The planets are measured against real star positions, not an abstract mathematical point.</p>
+        <div class="highlight-box"><p>"The sidereal zodiac is a star map. The tropical zodiac is a season map. Both are meaningful — they measure different things."</p></div>
+        <p>Today, Vedic (Jyotish) astrology is the primary living tradition that uses the sidereal zodiac. It also forms the basis of Western sidereal astrology, pioneered in the 20th century by Cyril Fagan and Donald Bradley.</p>
+      </div>
+
+      <!-- Tropical vs Sidereal -->
+      <div class="chapter" id="tropical-vs-sidereal">
+        <div class="chapter-title"><span class="chapter-icon">↔</span> Tropical vs Sidereal</div>
+        <p>Western astrology (the kind in newspaper horoscopes) uses the <strong>tropical zodiac</strong>. This system anchors 0° Aries to the Spring Equinox — the moment when day and night are equal in the Northern Hemisphere. The tropical zodiac is a calendar — it reflects seasons, not star positions.</p>
+        <p>Sidereal astrology anchors 0° Aries to the actual Aries constellation. Because the Earth wobbles on its axis (a phenomenon called <strong>precession of the equinoxes</strong>), the Spring Equinox drifts backward through the constellations at about 50 arc-seconds per year — roughly 1° every 72 years.</p>
+        <div class="two-col">
+          <div class="info-card">
+            <div class="info-card-title">🌱 Tropical Zodiac</div>
+            <p>Anchored to the Spring Equinox. Measures the annual solar cycle and seasons. The most widely known system in Western cultures. 0° Aries = March 20–21 each year, regardless of where the stars are.</p>
+          </div>
+          <div class="info-card">
+            <div class="info-card-title">⭐ Sidereal Zodiac</div>
+            <p>Anchored to actual star positions. Currently about 23–24° behind the tropical zodiac. Most people find their sidereal Sun sign is one sign earlier than their tropical Sun sign.</p>
+          </div>
+        </div>
+        <p>The gap between the two systems is currently about <strong>23–24 degrees</strong> (depending on the ayanamsa used). This means if your tropical chart says "Sun in Aries," your sidereal chart likely shows "Sun in Pisces." Neither is wrong — they measure different things.</p>
+      </div>
+
+      <!-- Ayanamsa -->
+      <div class="chapter" id="ayanamsa">
+        <div class="chapter-title"><span class="chapter-icon">∿</span> Ayanamsa Systems</div>
+        <p>The <strong>ayanamsa</strong> (from Sanskrit: <em>ayana</em> = movement, <em>amsa</em> = portion) is the correction value subtracted from tropical longitudes to get sidereal positions. It represents the accumulated precession since the two zodiacs were last aligned.</p>
+        <div class="two-col">
+          <div class="info-card">
+            <div class="info-card-title">Lahiri (IAU Official)</div>
+            <p>The Indian government standard, adopted in 1955. Most widely used by Vedic and Western sidereal astrologers. Currently ~23.85°. <strong>Best starting point for most people.</strong></p>
+          </div>
+          <div class="info-card">
+            <div class="info-card-title">Fagan-Bradley</div>
+            <p>Developed by Cyril Fagan and Donald Bradley. About 0.9° larger than Lahiri. Popular among Western sidereal astrologers following the Babylonian tradition. Currently ~24.72°.</p>
+          </div>
+          <div class="info-card">
+            <div class="info-card-title">Krishnamurti (KP)</div>
+            <p>Refined by K.S. Krishnamurti for his KP system of event prediction. Nearly identical to Lahiri but uses a slightly different reference epoch. Favored for precise timing.</p>
+          </div>
+          <div class="info-card">
+            <div class="info-card-title">True Chitrapaksha</div>
+            <p>Dynamically keeps the star Spica (Chitra) at exactly 180° sidereal. Because Spica moves slightly, this ayanamsa changes more than a fixed formula. Used by astronomically precise practitioners.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Planets -->
+      <div class="chapter" id="planets">
+        <div class="chapter-title"><span class="chapter-icon">☿</span> The 9 Planets (Navagrahas)</div>
+        <p>Vedic astrology works primarily with the <strong>nine grahas</strong> (planets/luminaries) — the two luminaries, five classical planets, and the two lunar nodes. In sidereal framing, each planet represents a cosmic principle active in your life.</p>
+        <div class="planet-grid">
+          <div class="planet-card"><div class="planet-symbol">☉</div><div class="planet-name">Sun (Surya)</div><div class="planet-desc">Core identity, soul purpose, father, authority, vitality. The king of the chart.</div></div>
+          <div class="planet-card"><div class="planet-symbol">☽</div><div class="planet-name">Moon (Chandra)</div><div class="planet-desc">Mind, emotions, mother, home, habits, intuition. The most personal planet in Vedic astrology.</div></div>
+          <div class="planet-card"><div class="planet-symbol">☿</div><div class="planet-name">Mercury (Budha)</div><div class="planet-desc">Intelligence, communication, commerce, siblings, learning. Prince of the intellect.</div></div>
+          <div class="planet-card"><div class="planet-symbol">♀</div><div class="planet-name">Venus (Shukra)</div><div class="planet-desc">Love, beauty, creativity, luxury, relationships, desire. The great benefic of earthly pleasure.</div></div>
+          <div class="planet-card"><div class="planet-symbol">♂</div><div class="planet-name">Mars (Mangala)</div><div class="planet-desc">Drive, courage, conflict, energy, passion, protection. The warrior planet.</div></div>
+          <div class="planet-card"><div class="planet-symbol">♃</div><div class="planet-name">Jupiter (Guru)</div><div class="planet-desc">Wisdom, expansion, dharma, teachers, abundance, grace. The great benefic of higher life.</div></div>
+          <div class="planet-card"><div class="planet-symbol">♄</div><div class="planet-name">Saturn (Shani)</div><div class="planet-desc">Karma, discipline, time, limitations, service, mastery. The great teacher through restriction.</div></div>
+          <div class="planet-card"><div class="planet-symbol">☊</div><div class="planet-name">Rahu (N. Node)</div><div class="planet-desc">Desire, ambition, obsession, foreign influence, present-life dharma. The shadowy amplifier.</div></div>
+          <div class="planet-card"><div class="planet-symbol">☋</div><div class="planet-name">Ketu (S. Node)</div><div class="planet-desc">Past-life karma, liberation, detachment, spirituality, sudden insight. The moksha indicator.</div></div>
+        </div>
+      </div>
+
+      <!-- Signs -->
+      <div class="chapter" id="signs">
+        <div class="chapter-title"><span class="chapter-icon">♈</span> The 12 Signs in Sidereal Framing</div>
+        <p>In sidereal astrology, the 12 signs carry the same archetypal meanings as in Western astrology — but their timing shifts back ~23 days. The sign energies are tied to stellar positions, not seasons.</p>
+        <div class="two-col">
+          <div class="info-card"><div class="info-card-title">♈ Aries — The Pioneer</div><p>Courage, initiative, raw energy. The cosmic first breath. Ruled by Mars.</p></div>
+          <div class="info-card"><div class="info-card-title">♉ Taurus — The Builder</div><p>Embodiment, beauty, resource, patience. The cosmic cultivator. Ruled by Venus.</p></div>
+          <div class="info-card"><div class="info-card-title">♊ Gemini — The Connector</div><p>Intelligence, curiosity, duality, communication. The cosmic weaver. Ruled by Mercury.</p></div>
+          <div class="info-card"><div class="info-card-title">♋ Cancer — The Nurturer</div><p>Emotion, home, intuition, memory, protection. The cosmic mother. Ruled by Moon.</p></div>
+          <div class="info-card"><div class="info-card-title">♌ Leo — The Sovereign</div><p>Radiance, creativity, self-expression, authority. The cosmic king. Ruled by Sun.</p></div>
+          <div class="info-card"><div class="info-card-title">♍ Virgo — The Refiner</div><p>Discernment, service, craft, healing, analysis. The cosmic healer. Ruled by Mercury.</p></div>
+          <div class="info-card"><div class="info-card-title">♎ Libra — The Balancer</div><p>Harmony, justice, partnership, beauty, diplomacy. The cosmic mediator. Ruled by Venus.</p></div>
+          <div class="info-card"><div class="info-card-title">♏ Scorpio — The Transformer</div><p>Depth, power, death/rebirth, intensity, occult. The cosmic alchemist. Ruled by Mars/Ketu.</p></div>
+          <div class="info-card"><div class="info-card-title">♐ Sagittarius — The Seeker</div><p>Wisdom, truth, philosophy, travel, expansion. The cosmic teacher. Ruled by Jupiter.</p></div>
+          <div class="info-card"><div class="info-card-title">♑ Capricorn — The Achiever</div><p>Ambition, discipline, structure, time, legacy. The cosmic elder. Ruled by Saturn.</p></div>
+          <div class="info-card"><div class="info-card-title">♒ Aquarius — The Visionary</div><p>Innovation, community, originality, detachment. The cosmic revolutionary. Ruled by Saturn/Rahu.</p></div>
+          <div class="info-card"><div class="info-card-title">♓ Pisces — The Mystic</div><p>Transcendence, imagination, compassion, dissolution. The cosmic dreamer. Ruled by Jupiter/Ketu.</p></div>
+        </div>
+      </div>
+
+      <!-- Nakshatras -->
+      <div class="chapter" id="nakshatras">
+        <div class="chapter-title"><span class="chapter-icon">☽</span> The 27 Nakshatras</div>
+        <p>The <strong>nakshatras</strong> (lunar mansions) divide the zodiac into 27 equal segments of 13°20' each. The Moon transits one nakshatra roughly every day. In Vedic astrology, your natal Moon's nakshatra is considered more revealing than your Moon sign — it provides finer psychological and karmic detail.</p>
+        <p>Each nakshatra has a ruling planet (lord), a deity, an animal symbol, and a characteristic energy. The four <em>padas</em> (quarters) of each nakshatra correspond to the four aims of life: Dharma, Artha, Kama, Moksha.</p>
+        <table class="nak-table">
+          <thead><tr><th>#</th><th>Nakshatra</th><th>Lord</th><th>Deity</th><th>Symbol</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td class="nak-name">Ashwini</td><td>Ketu</td><td>Ashwins</td><td>Horse's head</td></tr>
+            <tr><td>2</td><td class="nak-name">Bharani</td><td>Venus</td><td>Yama</td><td>Yoni</td></tr>
+            <tr><td>3</td><td class="nak-name">Krittika</td><td>Sun</td><td>Agni</td><td>Flame / razor</td></tr>
+            <tr><td>4</td><td class="nak-name">Rohini</td><td>Moon</td><td>Brahma</td><td>Cart / chariot</td></tr>
+            <tr><td>5</td><td class="nak-name">Mrigashira</td><td>Mars</td><td>Soma</td><td>Deer's head</td></tr>
+            <tr><td>6</td><td class="nak-name">Ardra</td><td>Rahu</td><td>Rudra</td><td>Teardrop / diamond</td></tr>
+            <tr><td>7</td><td class="nak-name">Punarvasu</td><td>Jupiter</td><td>Aditi</td><td>Quiver of arrows</td></tr>
+            <tr><td>8</td><td class="nak-name">Pushya</td><td>Saturn</td><td>Brihaspati</td><td>Udder / lotus</td></tr>
+            <tr><td>9</td><td class="nak-name">Ashlesha</td><td>Mercury</td><td>Nagas</td><td>Coiled serpent</td></tr>
+            <tr><td>10</td><td class="nak-name">Magha</td><td>Ketu</td><td>Pitrs</td><td>Throne room</td></tr>
+            <tr><td>11</td><td class="nak-name">Purva Phalguni</td><td>Venus</td><td>Bhaga</td><td>Hammock</td></tr>
+            <tr><td>12</td><td class="nak-name">Uttara Phalguni</td><td>Sun</td><td>Aryaman</td><td>Bed / fig tree</td></tr>
+            <tr><td>13</td><td class="nak-name">Hasta</td><td>Moon</td><td>Savitar</td><td>Hand</td></tr>
+            <tr><td>14</td><td class="nak-name">Chitra</td><td>Mars</td><td>Vishvakarman</td><td>Bright jewel / pearl</td></tr>
+            <tr><td>15</td><td class="nak-name">Swati</td><td>Rahu</td><td>Vayu</td><td>Coral / sword</td></tr>
+            <tr><td>16</td><td class="nak-name">Vishakha</td><td>Jupiter</td><td>Indra-Agni</td><td>Triumphal arch</td></tr>
+            <tr><td>17</td><td class="nak-name">Anuradha</td><td>Saturn</td><td>Mitra</td><td>Lotus / staff</td></tr>
+            <tr><td>18</td><td class="nak-name">Jyeshtha</td><td>Mercury</td><td>Indra</td><td>Circular amulet</td></tr>
+            <tr><td>19</td><td class="nak-name">Mula</td><td>Ketu</td><td>Nirrti</td><td>Root / bunch of roots</td></tr>
+            <tr><td>20</td><td class="nak-name">Purva Ashadha</td><td>Venus</td><td>Apas</td><td>Fan / tusk of elephant</td></tr>
+            <tr><td>21</td><td class="nak-name">Uttara Ashadha</td><td>Sun</td><td>Vishvedevas</td><td>Elephant tusk</td></tr>
+            <tr><td>22</td><td class="nak-name">Shravana</td><td>Moon</td><td>Vishnu</td><td>Three footprints / ear</td></tr>
+            <tr><td>23</td><td class="nak-name">Dhanishtha</td><td>Mars</td><td>Eight Vasus</td><td>Drum / flute</td></tr>
+            <tr><td>24</td><td class="nak-name">Shatabhisha</td><td>Rahu</td><td>Varuna</td><td>Empty circle / 100 stars</td></tr>
+            <tr><td>25</td><td class="nak-name">Purva Bhadrapada</td><td>Jupiter</td><td>Aja Ekapad</td><td>Sword / front of funeral cot</td></tr>
+            <tr><td>26</td><td class="nak-name">Uttara Bhadrapada</td><td>Saturn</td><td>Ahir Budhanya</td><td>Twins / back of funeral cot</td></tr>
+            <tr><td>27</td><td class="nak-name">Revati</td><td>Mercury</td><td>Pushan</td><td>Fish / pair of fish</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Dasha -->
+      <div class="chapter" id="dasha">
+        <div class="chapter-title"><span class="chapter-icon">⏳</span> Vimshottari Dasha System</div>
+        <p>The <strong>Vimshottari Dasha</strong> is Vedic astrology's primary timing system. It divides life into planetary periods (Maha Dashas) totaling 120 years, determined by your natal Moon's nakshatra position.</p>
+        <p>The system works like this: each nakshatra has a ruling planet (lord). The planet ruling your Moon's nakshatra at birth governs your first Maha Dasha. The balance of that dasha is calculated based on how far the Moon has traveled through the nakshatra.</p>
+        <div class="two-col">
+          <div class="info-card"><div class="info-card-title">Dasha Sequence & Duration</div>
+            <p style="font-size:.8rem;line-height:2">
+              Ketu — 7 years<br>Venus — 20 years<br>Sun — 6 years<br>Moon — 10 years<br>
+              Mars — 7 years<br>Rahu — 18 years<br>Jupiter — 16 years<br>Saturn — 19 years<br>Mercury — 17 years
+            </p>
+          </div>
+          <div class="info-card"><div class="info-card-title">Antar Dasha (Sub-Periods)</div>
+            <p>Each Maha Dasha is divided into 9 sub-periods (Antar Dashas), proportional to each planet's dasha length within the total 120-year cycle. So a Jupiter Maha Dasha (16 years) begins with a Jupiter-Ketu sub-period, then Jupiter-Venus, and so on.</p>
+          </div>
+        </div>
+        <p>The Dasha system is considered one of Vedic astrology's most powerful tools for understanding <em>when</em> life events unfold. Each planet's dasha activates its natal house, sign, and aspects — bringing the themes of that planet to the foreground of lived experience.</p>
+      </div>
+
+      <!-- Glossary -->
+      <div class="chapter" id="glossary">
+        <div class="chapter-title"><span class="chapter-icon">📖</span> Glossary</div>
+        <div class="glossary-item"><div class="glossary-term">Ayanamsa</div><div class="glossary-def">The angular difference between the tropical and sidereal zodiacs at any given moment. Calculated by measuring the accumulated precession of the equinoxes since a chosen reference date. Different ayanamsa systems use different reference epochs.</div></div>
+        <div class="glossary-item"><div class="glossary-term">Graha</div><div class="glossary-def">Sanskrit for "planet" or "seizer." In Vedic astrology, refers to the nine planetary bodies: Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Rahu, and Ketu. Each graha "seizes" aspects of life under its domain.</div></div>
+        <div class="glossary-item"><div class="glossary-term">Nakshatra</div><div class="glossary-def">One of 27 lunar mansions that divide the 360° zodiac into equal 13°20' segments. The Moon transits one nakshatra approximately every day. Your natal Moon's nakshatra is considered one of the most personally significant placements in Vedic astrology.</div></div>
+        <div class="glossary-item"><div class="glossary-term">Dasha</div><div class="glossary-def">A planetary period in the Vimshottari timing system. The Maha Dasha is the major period (6–20 years) and the Antar Dasha is the sub-period within it. Your natal Moon's nakshatra lord determines which dasha you are born into.</div></div>
+        <div class="glossary-item"><div class="glossary-term">Rahu & Ketu</div><div class="glossary-def">The North and South lunar nodes — the points where the Moon's orbit crosses the ecliptic. Not physical planets, but shadow points of immense karmic significance. Rahu governs present-life desire and dharma; Ketu governs past-life karma and liberation. They always sit exactly opposite each other.</div></div>
+        <div class="glossary-item"><div class="glossary-term">Kuta</div><div class="glossary-def">In Vedic synastry, Kuta refers to the eight compatibility factors assessed when comparing two charts. The maximum total score is 36 points. A score of 18+ is generally considered acceptable for partnership; 28+ is considered excellent.</div></div>
+        <div class="glossary-item"><div class="glossary-term">Fixed Star</div><div class="glossary-def">A star outside our solar system that appears stationary relative to other stars over human timescales (in contrast to planets, which "wander"). When a natal planet is conjunct a major fixed star within ~1°, the star's qualities intensify and modify that planet's expression.</div></div>
+        <div class="glossary-item"><div class="glossary-term">Whole Sign Houses</div><div class="glossary-def">The oldest house system in astrology. The rising sign's full 30° extent becomes the entire 1st house; the next sign becomes the entire 2nd house; and so on. Favored in Vedic astrology for its elegance and clarity.</div></div>
+        <div class="glossary-item"><div class="glossary-term">Pada</div><div class="glossary-def">Each of the four equal quarters of a nakshatra (3°20' each). The four padas correspond to the four aims of life: Dharma (1st), Artha (2nd), Kama (3rd), Moksha (4th).</div></div>
+        <div class="glossary-item"><div class="glossary-term">Jyotish</div><div class="glossary-def">The traditional Sanskrit name for Vedic astrology, meaning "science of light" or "the eye of the Vedas." One of the six Vedangas (limbs of Vedic knowledge), used traditionally for both natal interpretation and election of auspicious times for action.</div></div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    const sections = document.querySelectorAll('.chapter[id]');
+    const navLinks = document.querySelectorAll('.sidebar-link[href^="#"]');
+    const scroller = document.querySelector('.main-content');
+
+    // Smooth-scroll anchor clicks inside the scrollable container
+    navLinks.forEach(link => {
+      link.addEventListener('click', e => {
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target && scroller) {
+          e.preventDefault();
+          scroller.scrollTo({ top: target.offsetTop - 32, behavior: 'smooth' });
+        }
+      });
+    });
+
+    function updateActiveLink() {
+      let current = '';
+      sections.forEach(section => {
+        if (section.offsetTop - scroller.scrollTop <= 140) {
+          current = section.getAttribute('id');
+        }
+      });
+      navLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+      });
+    }
+
+    scroller.addEventListener('scroll', updateActiveLink, { passive: true });
+    updateActiveLink();
+  </script>
+</body>
+</html>
