@@ -1147,6 +1147,55 @@
       .career-section, .romance-section, .transit-section { padding: 1.4rem; }
       .transit-grid { grid-template-columns: 1fr; }
     }
+
+    /* ── Gender toggle ─────────────────────────────────────────── */
+    .gender-toggle { display: flex; gap: .6rem; }
+    .gender-toggle input[type="radio"] { display: none; }
+    .gender-toggle label {
+      flex: 1; text-align: center; padding: .55rem .5rem;
+      border: 1px solid var(--border); border-radius: 8px;
+      font-size: .82rem; color: var(--muted); cursor: pointer;
+      transition: all .2s;
+    }
+    .gender-toggle input[type="radio"]:checked + label {
+      border-color: var(--gold); color: var(--gold-light);
+      background: rgba(201,168,76,.1);
+    }
+
+    /* ── Character Archetypes section ──────────────────────────── */
+    .characters-section { margin-top: 2rem; }
+    .char-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem; margin-top: 1rem;
+    }
+    .char-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.1rem; text-align: center;
+      transition: border-color .2s;
+    }
+    .char-card:hover { border-color: rgba(201,168,76,.35); }
+    .char-universe {
+      font-size: .58rem; letter-spacing: .13em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: .5rem;
+    }
+    .char-emoji { font-size: 1.5rem; line-height: 1; margin-bottom: .45rem; }
+    .char-name {
+      font-family: 'Cinzel', serif; font-size: .82rem;
+      color: var(--gold-light); line-height: 1.35;
+    }
+    .char-card.mbti-card {
+      border-color: rgba(124,92,191,.3); background: rgba(124,92,191,.06);
+    }
+    .char-mbti-type {
+      font-family: 'Cinzel', serif; font-size: 1.5rem;
+      color: var(--gold-light); font-weight: 700; line-height: 1;
+      margin-bottom: .4rem;
+    }
+    .char-mbti-desc {
+      font-size: .72rem; color: rgba(226,223,245,.7); line-height: 1.5;
+    }
+    @media (max-width: 600px) { .char-grid { grid-template-columns: 1fr 1fr; } }
   </style>
 </head>
 <body>
@@ -1273,9 +1322,18 @@
       <h2>Enter Birth Details</h2>
       <form id="chart-form" autocomplete="off">
         <div class="form-grid">
-          <div class="form-group full">
+          <div class="form-group">
             <label for="name">Name (optional)</label>
             <input type="text" id="name" placeholder="e.g. Alex" />
+          </div>
+          <div class="form-group">
+            <label>Gender</label>
+            <div class="gender-toggle">
+              <input type="radio" name="gender" id="gender-m" value="M" checked>
+              <label for="gender-m">♂ Male</label>
+              <input type="radio" name="gender" id="gender-f" value="F">
+              <label for="gender-f">♀ Female</label>
+            </div>
           </div>
           <div class="form-group">
             <label for="date">Date of Birth *</label>
@@ -1660,6 +1718,12 @@
           <div class="tomorrow-label">Tomorrow's Moon</div>
           <div class="tomorrow-text" id="tomorrow-text">Loading…</div>
         </div>
+      </div>
+
+      <!-- Character Archetypes -->
+      <div class="section-title" id="characters-section-title" style="display:none">🎭 Your Character Archetypes</div>
+      <div class="characters-section" id="characters-section" style="display:none">
+        <div class="char-grid" id="char-grid"></div>
       </div>
 
       <!-- Actions -->
@@ -2106,6 +2170,9 @@
     // Special Lagnas
     renderArudhaLagna(data.arudha_lagna || {});
     renderInduLagna(data.indu_lagna || {});
+
+    // Character Archetypes
+    renderCharacters(data.characters || {});
 
     // Daily Horoscope
     loadDailyHoroscope(data.sun_sign, data.moon_sign, data.rising_sign);
@@ -2634,11 +2701,13 @@
     const errBox = $('error-box');
     errBox.style.display = 'none';
 
+    const genderEl = document.querySelector('input[name="gender"]:checked');
     const payload = {
       name:     $('name').value,
       date:     $('date').value,
       time:     $('time').value,
       city:     $('city').value,
+      gender:   genderEl ? genderEl.value : 'M',
       ayanamsa: $('ayanamsa-select').value,
     };
 
@@ -2713,6 +2782,27 @@
   }
 
   // ── Arudha Lagna Renderer ────────────────────────────────────────
+  function renderCharacters(c) {
+    if (!c || !c.mbti) return;
+    const grid = $('char-grid');
+    const cards = [
+      { universe: 'MBTI',        emoji: '🧠', name: c.mbti,        extra: `<div class="char-mbti-type">${c.mbti}</div><div class="char-mbti-desc">${c.mbti_desc}</div>`, isMbti: true },
+      { universe: 'Naruto',      emoji: '🍥', name: c.naruto },
+      { universe: 'One Piece',   emoji: '🏴‍☠️', name: c.one_piece },
+      { universe: 'Mahabharata', emoji: '⚔️',  name: c.mahabharata },
+      { universe: 'Ramayana',    emoji: '🏹', name: c.ramayana },
+    ];
+    grid.innerHTML = cards.map(card => `
+      <div class="char-card${card.isMbti ? ' mbti-card' : ''}">
+        <div class="char-universe">${card.universe}</div>
+        ${card.isMbti
+          ? `<div class="char-mbti-type">${c.mbti}</div><div class="char-mbti-desc">${c.mbti_desc}</div>`
+          : `<div class="char-emoji">${card.emoji}</div><div class="char-name">${card.name}</div>`}
+      </div>`).join('');
+    $('characters-section-title').style.display = '';
+    $('characters-section').style.display = '';
+  }
+
   function renderArudhaLagna(al) {
     if (!al || !al.sign) return;
     $('arudha-section-title').style.display = '';

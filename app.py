@@ -12,6 +12,7 @@ from authlib.integrations.flask_client import OAuth
 from models import db, User, BirthChart, Subscription, JournalEntry
 from auth import auth_bp, init_oauth
 from astrology import get_chart, get_transits, get_today_moon_nakshatra, AYANAMSA_EXPLAINERS
+from characters import get_characters
 from interpretations import (
     get_daily_horoscope, get_nakshatra_ritual, get_dasha_interpretation,
     ANTAR_DASHA_NOTES, calculate_kuta_score, get_fixed_star_interpretation,
@@ -119,6 +120,7 @@ def chart():
         date           = (data.get("date") or "").strip()
         time           = (data.get("time") or "").strip()
         city           = (data.get("city") or "").strip()
+        gender         = (data.get("gender") or "M").strip().upper()[:1]
         ayanamsa_system = (data.get("ayanamsa") or "lahiri").strip()
 
         if not date:
@@ -152,6 +154,11 @@ def chart():
         for fs in result.get("fixed_stars", []):
             fs["planet_meaning"] = get_fixed_star_interpretation(fs["star"], fs["planet"])
 
+        # Character archetypes
+        characters = get_characters(
+            result["sun_sign"], result["moon_sign"], result["rising_sign"], gender
+        )
+
         # Persist to database
         birth_chart = BirthChart(
             user_id=current_user.id,
@@ -159,6 +166,7 @@ def chart():
             date=date,
             time=time,
             city=city,
+            gender=gender,
             full_address=result.get("full_address", ""),
             placements_json=json.dumps(result.get("placements", {})),
             career_json=json.dumps(result.get("career", {})),
@@ -167,7 +175,7 @@ def chart():
         db.session.add(birth_chart)
         db.session.commit()
 
-        return jsonify({**result, "chart_id": birth_chart.id})
+        return jsonify({**result, "chart_id": birth_chart.id, "characters": characters})
 
     except ValueError as e:
         return jsonify({"error": str(e)}), 400

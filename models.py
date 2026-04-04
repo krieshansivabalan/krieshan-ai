@@ -45,6 +45,7 @@ class BirthChart(db.Model):
     time = db.Column(db.String(8))
     city = db.Column(db.String(256))
     full_address = db.Column(db.String(512))
+    gender = db.Column(db.String(1))           # "M" or "F"
     placements_json = db.Column(db.Text)
     career_json = db.Column(db.Text)
     romance_json = db.Column(db.Text)
