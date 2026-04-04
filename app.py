@@ -269,8 +269,6 @@ def tomorrow_moon():
 @app.route("/api/transits", methods=["GET"])
 @login_required
 def transits():
-    if not current_user.is_paid:
-        return jsonify({"error": "Payment required.", "paid_required": True}), 402
 
     natal_placements = session.get("natal_placements")
     if not natal_placements:
@@ -297,8 +295,6 @@ def transits():
 @app.route("/api/synastry", methods=["POST"])
 @login_required
 def synastry_api():
-    if not current_user.is_paid:
-        return jsonify({"error": "Payment required.", "paid_required": True}), 402
 
     try:
         data = request.get_json()
@@ -366,8 +362,6 @@ def get_journal():
 @app.route("/api/journal", methods=["POST"])
 @login_required
 def create_journal():
-    if not current_user.is_paid:
-        return jsonify({"error": "Payment required.", "paid_required": True}), 402
 
     data = request.get_json()
     content = (data.get("content") or "").strip()
@@ -419,9 +413,8 @@ def delete_journal(entry_id):
 @app.route("/api/check-paid")
 @login_required
 def check_paid():
-    paid = current_user.is_paid
-    session["paid"] = paid
-    return jsonify({"paid": paid})
+    session["paid"] = True
+    return jsonify({"paid": True})
 
 
 @app.route("/create-checkout-session", methods=["POST"])
