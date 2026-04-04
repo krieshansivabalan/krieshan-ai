@@ -1824,7 +1824,7 @@
   function openModal() { $('payment-modal').classList.add('open'); }
   function closeModal() { $('payment-modal').classList.remove('open'); }
 
-  $('open-modal-btn').addEventListener('click', openModal);
+  $('open-modal-btn') && $('open-modal-btn').addEventListener('click', openModal);
   $('modal-close').addEventListener('click', closeModal);
   $('transit-unlock-btn').addEventListener('click', openModal);
   $('payment-modal').addEventListener('click', e => { if (e.target === $('payment-modal')) closeModal(); });
