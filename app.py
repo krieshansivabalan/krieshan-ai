@@ -87,6 +87,11 @@ def index():
 @app.route("/dashboard")
 @login_required
 def dashboard():
+    # Dashboard is admin-only — redirect to admin login if not authenticated
+    if not _admin_session_valid():
+        session.pop("admin_auth", None)
+        session.pop("admin_auth_ts", None)
+        return redirect(url_for("admin_login"))
     charts = current_user.charts.order_by(BirthChart.created_at.desc()).all()
     return render_template("dashboard.html", user=current_user, charts=charts)
 
