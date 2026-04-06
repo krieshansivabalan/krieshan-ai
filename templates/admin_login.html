@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Login</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #07080f; color: #e2dff5; font-family: system-ui, sans-serif;
+      display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .card { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px; padding: 2.5rem 2rem; width: 100%; max-width: 360px; }
+    h1 { font-size: 1.1rem; color: #c9a84c; margin-bottom: 1.5rem; letter-spacing: .05em; }
+    label { font-size: .8rem; color: #7a789a; display: block; margin-bottom: .4rem; }
+    input[type="password"] {
+      width: 100%; padding: .65rem .9rem; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.05);
+      color: #e2dff5; font-size: .9rem; outline: none; margin-bottom: 1rem;
+    }
+    input[type="password"]:focus { border-color: #c9a84c; }
+    button { width: 100%; padding: .7rem; border: none; border-radius: 8px;
+      background: linear-gradient(135deg, #c9a84c, #e8c96a);
+      color: #07080f; font-weight: 700; font-size: .9rem; cursor: pointer; }
+    .error { color: #f87171; font-size: .82rem; margin-bottom: .8rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>✦ Admin Access</h1>
+    {% if error %}<div class="error">{{ error }}</div>{% endif %}
+    <form method="POST">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Enter admin password" autofocus/>
+      <button type="submit">Enter</button>
+    </form>
+  </div>
+</body>
+</html>

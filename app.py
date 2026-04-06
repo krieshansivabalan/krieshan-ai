@@ -11,7 +11,7 @@ from authlib.integrations.flask_client import OAuth
 
 from models import db, User, BirthChart, Subscription, JournalEntry
 from auth import auth_bp, init_oauth
-from astrology import get_chart, get_transits, get_today_moon_nakshatra, AYANAMSA_EXPLAINERS
+from astrology import get_chart, get_transits, get_today_moon_nakshatra, AYANAMSA_EXPLAINERS, get_navamsa_chart
 from characters import get_characters
 from interpretations import (
     get_daily_horoscope, get_nakshatra_ritual, get_dasha_interpretation,
@@ -107,6 +107,12 @@ def learn():
     return render_template("learn.html", user=current_user if current_user.is_authenticated else None)
 
 
+@app.route("/navamsa")
+@login_required
+def navamsa():
+    return render_template("navamsa.html", user=current_user, ayanamsa_explainers=AYANAMSA_EXPLAINERS)
+
+
 # ── Chart calculation ─────────────────────────────────────────────
 @app.route("/chart", methods=["POST"])
 @login_required
@@ -159,6 +165,9 @@ def chart():
             result["sun_sign"], result["moon_sign"], result["rising_sign"], gender
         )
 
+        # D9 Navamsa chart
+        navamsa = get_navamsa_chart(result["placements"])
+
         # Persist to database
         birth_chart = BirthChart(
             user_id=current_user.id,
@@ -175,7 +184,51 @@ def chart():
         db.session.add(birth_chart)
         db.session.commit()
 
-        return jsonify({**result, "chart_id": birth_chart.id, "characters": characters})
+        return jsonify({**result, "chart_id": birth_chart.id, "characters": characters, "navamsa": navamsa})
+
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": f"Calculation error: {str(e)}"}), 500
+
+
+@app.route("/api/navamsa", methods=["POST"])
+@login_required
+def api_navamsa():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No data received."}), 400
+
+        name            = (data.get("name") or "").strip()
+        date            = (data.get("date") or "").strip()
+        time_val        = (data.get("time") or "").strip()
+        city            = (data.get("city") or "").strip()
+        ayanamsa_system = (data.get("ayanamsa") or "lahiri").strip()
+
+        if not date:
+            return jsonify({"error": "Please enter a birth date."}), 400
+        if not time_val:
+            return jsonify({"error": "Please enter a birth time."}), 400
+        if not city:
+            return jsonify({"error": "Please enter a birth city."}), 400
+
+        result = get_chart(name, date, time_val, city, ayanamsa_system=ayanamsa_system)
+        navamsa = get_navamsa_chart(result["placements"])
+
+        return jsonify({
+            "name":            result["name"],
+            "date":            result["date"],
+            "time":            result["time"],
+            "city":            result["city"],
+            "full_address":    result["full_address"],
+            "ayanamsa_label":  result["ayanamsa_label"],
+            "sun_sign":        result["sun_sign"],
+            "moon_sign":       result["moon_sign"],
+            "rising_sign":     result["rising_sign"],
+            "navamsa":         navamsa,
+        })
 
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
@@ -578,6 +631,44 @@ def delete_account():
     db.session.delete(user)
     db.session.commit()
     return jsonify({"ok": True})
+
+
+# ── Admin Panel ───────────────────────────────────────────────────
+_ADMIN_PASSWORD = "Witstypeai2026!"
+
+def admin_required(f):
+    from functools import wraps
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not session.get("admin_auth"):
+            return redirect(url_for("admin_login"))
+        return f(*args, **kwargs)
+    return decorated
+
+@app.route("/admin/login", methods=["GET", "POST"])
+def admin_login():
+    error = None
+    if request.method == "POST":
+        if request.form.get("password") == _ADMIN_PASSWORD:
+            session["admin_auth"] = True
+            return redirect(url_for("admin_dashboard"))
+        error = "Incorrect password."
+    return render_template("admin_login.html", error=error)
+
+@app.route("/admin/logout")
+def admin_logout():
+    session.pop("admin_auth", None)
+    return redirect(url_for("admin_login"))
+
+@app.route("/admin")
+@admin_required
+def admin_dashboard():
+    users = User.query.order_by(User.created_at.desc()).all()
+    user_data = []
+    for u in users:
+        charts = u.charts.order_by(BirthChart.created_at.desc()).all()
+        user_data.append({"user": u, "charts": charts})
+    return render_template("admin_dashboard.html", user_data=user_data, total=len(users))
 
 
 if __name__ == "__main__":

@@ -1206,3 +1206,132 @@ def calculate_indu_lagna(placements):
         "total":           total,
         "remainder":       remainder,
     }
+
+
+# ─── D9 Navamsa Chart ──────────────────────────────────────────────────────────
+
+# Navamsa starting sign by D1 sign index (0=Aries … 11=Pisces)
+_NAV_START = {
+    0: 0,   # Aries      → Aries
+    1: 9,   # Taurus     → Capricorn
+    2: 6,   # Gemini     → Libra
+    3: 3,   # Cancer     → Cancer
+    4: 0,   # Leo        → Aries
+    5: 9,   # Virgo      → Capricorn
+    6: 6,   # Libra      → Libra
+    7: 3,   # Scorpio    → Cancer
+    8: 0,   # Sagittarius→ Aries
+    9: 9,   # Capricorn  → Capricorn
+    10: 6,  # Aquarius   → Libra
+    11: 3,  # Pisces     → Cancer
+}
+
+_NAV_SPAN = 30.0 / 9.0   # 3°20' per navamsa
+
+
+def longitude_to_navamsa(longitude):
+    """Return (d9_sign, d9_degree, d9_sign_index) for a sidereal longitude."""
+    sign_idx    = int(longitude / 30) % 12
+    pos_in_sign = longitude % 30
+    nav_num     = int(pos_in_sign / _NAV_SPAN)       # 0–8
+    nav_start   = _NAV_START[sign_idx]
+    d9_idx      = (nav_start + nav_num) % 12
+    d9_sign     = SIGNS[d9_idx]
+    # Project position within this navamsa to a 0–30° scale
+    pos_in_nav  = pos_in_sign % _NAV_SPAN
+    d9_degree   = round((pos_in_nav / _NAV_SPAN) * 30, 2)
+    return d9_sign, d9_degree, d9_idx
+
+
+def get_chara_karakas(placements):
+    """
+    Jaimini Chara Karakas ranked by descending degree within sign.
+    Returns dict: AK→planet, AmK→planet … DK→planet (7 karakas).
+    """
+    seven = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"]
+    ranked = sorted(
+        [(p, placements[p].get("degree", 0)) for p in seven if p in placements],
+        key=lambda x: x[1],
+        reverse=True,
+    )
+    labels = ["AK", "AmK", "BK", "MK", "PiK", "PuK", "DK"]
+    return {labels[i]: planet for i, (planet, _) in enumerate(ranked) if i < len(labels)}
+
+
+def get_navamsa_chart(placements):
+    """
+    Calculate the D9 Navamsa chart from a set of sidereal D1 placements.
+    Returns a dict of navamsa placements keyed by planet name.
+    """
+    from interpretations import NAVAMSA_LAGNA_INTERP, NAVAMSA_VENUS_INTERP, NAVAMSA_7TH_SIGN_INTERP, DARAKARAKA_INTERP
+
+    navamsa = {}
+    for planet_name, pl in placements.items():
+        lon         = pl["longitude"]
+        d9_sign, d9_degree, d9_idx = longitude_to_navamsa(lon)
+        # Use pseudo-longitude for nakshatra within D9
+        d9_pseudo_lon = d9_idx * 30 + d9_degree
+        nak = get_nakshatra(d9_pseudo_lon)
+        navamsa[planet_name] = {
+            "planet":         planet_name,
+            "symbol":         pl.get("symbol", PLANET_SYMBOLS.get(planet_name, "")),
+            "d1_sign":        pl.get("sign", ""),
+            "d1_degree":      round(pl.get("degree", 0), 2),
+            "d1_sign_symbol": pl.get("sign_symbol", SIGN_SYMBOLS.get(pl.get("sign", ""), "")),
+            "d9_sign":        d9_sign,
+            "d9_degree":      d9_degree,
+            "d9_sign_symbol": SIGN_SYMBOLS.get(d9_sign, ""),
+            "d9_sign_idx":    d9_idx,
+            "nakshatra":      nak["name"],
+            "nakshatra_lord": nak["lord"],
+            "nakshatra_pada": nak["pada"],
+        }
+
+    # D9 houses (whole sign from D9 Ascendant)
+    if "Ascendant" in navamsa:
+        d9_asc_idx = navamsa["Ascendant"]["d9_sign_idx"]
+        for nav_pl in navamsa.values():
+            nav_pl["d9_house"] = (nav_pl["d9_sign_idx"] - d9_asc_idx) % 12 + 1
+
+    # ── Marriage indicators ──────────────────────────────────────────────────
+    d9_lagna_sign = navamsa.get("Ascendant", {}).get("d9_sign", "Aries")
+    d9_lagna_idx  = navamsa.get("Ascendant", {}).get("d9_sign_idx", 0)
+
+    # 7th from D9 lagna
+    d9_7th_sign = SIGNS[(d9_lagna_idx + 6) % 12]
+
+    # Venus in D9
+    d9_venus_sign = navamsa.get("Venus", {}).get("d9_sign", "")
+
+    # Chara karakas
+    karakas = get_chara_karakas(placements)
+    dk_planet = karakas.get("DK", "Venus")
+    ak_planet = karakas.get("AK", "Sun")
+
+    dk_d9_sign = navamsa.get(dk_planet, {}).get("d9_sign", "")
+    ak_d9_sign = navamsa.get(ak_planet, {}).get("d9_sign", "")
+
+    # 7th lord of D9
+    d9_7th_lord = _SIGN_LORDS.get(d9_7th_sign, "Venus")
+    d9_7th_lord_sign = navamsa.get(d9_7th_lord, {}).get("d9_sign", "")
+    d9_7th_lord_house = navamsa.get(d9_7th_lord, {}).get("d9_house", 0)
+
+    return {
+        "placements":        navamsa,
+        "d9_lagna_sign":     d9_lagna_sign,
+        "d9_7th_sign":       d9_7th_sign,
+        "d9_7th_lord":       d9_7th_lord,
+        "d9_7th_lord_sign":  d9_7th_lord_sign,
+        "d9_7th_lord_house": d9_7th_lord_house,
+        "d9_venus_sign":     d9_venus_sign,
+        "darakaraka":        dk_planet,
+        "darakaraka_d9_sign": dk_d9_sign,
+        "atmakaraka":        ak_planet,
+        "atmakaraka_d9_sign": ak_d9_sign,
+        "karakas":           karakas,
+        # Interpretations
+        "lagna_interp":      NAVAMSA_LAGNA_INTERP.get(d9_lagna_sign, ""),
+        "venus_interp":      NAVAMSA_VENUS_INTERP.get(d9_venus_sign, ""),
+        "seventh_interp":    NAVAMSA_7TH_SIGN_INTERP.get(d9_7th_sign, ""),
+        "dk_interp":         DARAKARAKA_INTERP.get(dk_planet, ""),
+    }

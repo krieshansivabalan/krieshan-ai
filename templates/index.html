@@ -1196,6 +1196,89 @@
       font-size: .72rem; color: rgba(226,223,245,.7); line-height: 1.5;
     }
     @media (max-width: 600px) { .char-grid { grid-template-columns: 1fr 1fr; } }
+
+    /* ── Chart Tabs ─────────────────────────────────────────────── */
+    .chart-tabs {
+      display: flex; gap: .25rem;
+      background: rgba(255,255,255,.03); border: 1px solid var(--border);
+      border-radius: 10px; padding: .22rem;
+    }
+    .chart-tab {
+      padding: .28rem .9rem; border-radius: 7px; border: none;
+      background: none; color: var(--muted);
+      font-family: 'Cinzel', serif; font-size: .7rem; font-weight: 600;
+      letter-spacing: .06em; cursor: pointer; transition: all .2s; white-space: nowrap;
+    }
+    .chart-tab.active {
+      background: linear-gradient(135deg, rgba(201,168,76,.18), rgba(124,92,191,.18));
+      color: var(--gold-light); border: 1px solid rgba(201,168,76,.2);
+    }
+    .chart-tab:not(.active):hover { color: var(--text); }
+
+    /* ── D9 Pane ────────────────────────────────────────────────── */
+    .d9-cta {
+      max-width: 760px; margin: 3rem auto;
+      text-align: center; padding: 3rem 2rem;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; color: var(--muted); font-size: .9rem; line-height: 1.7;
+    }
+    .d9-cta strong { color: var(--gold); display: block; font-family: 'Cinzel', serif;
+      font-size: 1.1rem; margin-bottom: .5rem; }
+    .d9-planet-table { width: 100%; border-collapse: collapse; font-size: .83rem; }
+    .d9-planet-table th {
+      text-align: left; padding: .5rem .8rem;
+      font-size: .62rem; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted); border-bottom: 1px solid var(--border);
+      font-family: 'Cinzel', serif;
+    }
+    .d9-planet-table td {
+      padding: .6rem .8rem; border-bottom: 1px solid rgba(255,255,255,.04);
+      vertical-align: middle;
+    }
+    .d9-planet-table tr:hover td { background: rgba(255,255,255,.02); }
+    .d9-house-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; border-radius: 7px;
+      background: rgba(201,168,76,.1); color: var(--gold);
+      font-size: .72rem; font-weight: 700;
+    }
+    .d9-dignity { font-size: .68rem; padding: .1rem .35rem; border-radius: 4px; margin-left: .4rem; }
+    .d9-dignity.exalted     { background: rgba(232,201,106,.12); color: #e8c96a; }
+    .d9-dignity.debilitated { background: rgba(248,113,113,.12); color: #f87171; }
+    .d9-dignity.own-sign    { background: rgba(201,168,76,.12);  color: var(--gold); }
+    .d9-karakas-strip { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .d9-karaka-chip {
+      background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+      padding: .3rem .65rem; font-size: .72rem;
+    }
+    .d9-karaka-chip .kl { color: var(--muted); margin-right: .3rem; font-size: .65rem; }
+    .d9-karaka-chip .kv { color: var(--text); font-weight: 600; }
+    .d9-indicators { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; margin-bottom: 1.5rem; }
+    .d9-indicator {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.1rem 1.2rem;
+    }
+    .d9-indicator.full { grid-column: 1 / -1; }
+    .d9-indicator-label { font-size: .62rem; text-transform: uppercase; letter-spacing: .1em;
+      color: var(--muted); margin-bottom: .3rem; font-family: 'Cinzel', serif; }
+    .d9-indicator-value { font-size: 1rem; font-weight: 700; color: var(--gold-light);
+      margin-bottom: .55rem; font-family: 'Cinzel', serif; }
+    .d9-indicator-text { font-size: .82rem; color: rgba(226,223,245,.8); line-height: 1.65; }
+    .d9-partner-card {
+      background: linear-gradient(135deg, rgba(255,150,180,.05), rgba(201,168,76,.06));
+      border: 1px solid rgba(255,150,180,.18); border-radius: 18px; padding: 1.8rem 2rem; margin-bottom: 1.5rem;
+    }
+    .d9-partner-header { display: flex; align-items: center; gap: .8rem; margin-bottom: 1.4rem; }
+    .d9-partner-title { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700; color: #ffb3c8; }
+    .d9-partner-sub { font-size: .78rem; color: var(--muted); margin-top: .15rem; }
+    .d9-partner-rows { display: flex; flex-direction: column; gap: 1rem; }
+    .d9-partner-row-label { font-size: .62rem; text-transform: uppercase; letter-spacing: .1em;
+      color: var(--muted); margin-bottom: .25rem; font-family: 'Cinzel', serif; }
+    .d9-partner-row-text { font-size: .86rem; line-height: 1.65; }
+    @media (max-width: 600px) {
+      .d9-indicators { grid-template-columns: 1fr; }
+      .d9-indicator.full { grid-column: 1; }
+      .chart-tabs { display: none; } /* collapse on very small screens */
+    }
   </style>
 </head>
 <body>
@@ -1223,6 +1306,10 @@
 
   <div class="container">
     <div class="header-meta">
+      <div class="chart-tabs" id="chart-tabs">
+        <button class="chart-tab active" id="tab-d1-btn" onclick="switchChartTab('d1')">D1 Chart</button>
+        <button class="chart-tab"        id="tab-d9-btn" onclick="switchChartTab('d9')">D9 Navamsa</button>
+      </div>
       <a href="/synastry" class="nav-top-link">Synastry</a>
       <a href="/journal"  class="nav-top-link">Journal</a>
       <a href="/learn"    class="nav-top-link">Learn</a>
@@ -1299,6 +1386,11 @@
         <button class="ayanamsa-modal-close" onclick="closeAyanamsaModal()">Close</button>
       </div>
     </div>
+
+    <!-- ════════════════════════════════════════════════════════════
+         D1 CHART PANE
+    ════════════════════════════════════════════════════════════ -->
+    <div id="pane-d1">
 
     <!-- ── Daily Horoscope (shown after chart calculated) ──────── -->
     <div class="daily-horoscope-section" id="daily-horoscope-section" style="display:none">
@@ -1726,6 +1818,83 @@
         <button class="reset-btn" id="reset-btn">↩ New Reading</button>
       </div>
     </div>
+
+    </div><!-- /pane-d1 -->
+
+    <!-- ════════════════════════════════════════════════════════════
+         D9 NAVAMSA PANE
+    ════════════════════════════════════════════════════════════ -->
+    <div id="pane-d9" style="display:none">
+
+      <!-- Placeholder shown before D1 is calculated -->
+      <div class="d9-cta" id="d9-placeholder">
+        <strong>✦ D9 Navamsa — Marriage &amp; Soul Chart</strong>
+        Calculate your D1 birth chart first — your Navamsa reading will appear here automatically on the same birth data.
+      </div>
+
+      <!-- D9 Reading (shown after D1 is calculated) -->
+      <div id="d9-reading" style="display:none">
+
+        <!-- Big Four: D9 Lagna / Venus / 7th / DK -->
+        <div class="big-four" id="d9-big-four" style="margin-bottom:2rem">
+          <div class="big-four-card">
+            <div class="label">↑ D9 Lagna</div>
+            <div class="sign-symbol" id="d9-lagna-sym"></div>
+            <div class="sign-name"   id="d9-lagna-name"></div>
+          </div>
+          <div class="big-four-card">
+            <div class="label">♀ Venus D9</div>
+            <div class="sign-symbol" id="d9-venus-sym"></div>
+            <div class="sign-name"   id="d9-venus-name"></div>
+          </div>
+          <div class="big-four-card">
+            <div class="label">⚷ 7th House D9</div>
+            <div class="sign-symbol" id="d9-seventh-sym"></div>
+            <div class="sign-name"   id="d9-seventh-name"></div>
+          </div>
+          <div class="big-four-card mc-card">
+            <div class="label">★ Darakaraka</div>
+            <div class="sign-symbol" id="d9-dk-sym"></div>
+            <div class="sign-name"   id="d9-dk-name"></div>
+          </div>
+        </div>
+
+        <!-- Planet Table -->
+        <div class="section-title">D9 Navamsa Placements</div>
+        <div style="overflow-x:auto;margin-bottom:1.5rem">
+          <table class="d9-planet-table">
+            <thead>
+              <tr>
+                <th>Planet</th>
+                <th>D1 Sign</th>
+                <th>→ D9 Sign</th>
+                <th>House</th>
+                <th>Nakshatra (D9)</th>
+              </tr>
+            </thead>
+            <tbody id="d9-planet-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- Chara Karakas -->
+        <div class="section-title">Chara Karakas</div>
+        <div class="d9-karakas-strip" id="d9-karakas-strip"></div>
+        <p style="font-size:.78rem;color:var(--muted);line-height:1.6;margin-bottom:1.5rem">
+          Ranked by each planet's degree within its sign (highest→lowest). The
+          <strong style="color:var(--gold-light)">Atmakaraka (AK)</strong> carries the soul's deepest karmic lessons.
+          The <strong style="color:var(--gold-light)">Darakaraka (DK)</strong> is the primary spouse significator.
+        </p>
+
+        <!-- Marriage Indicators -->
+        <div class="section-title">Marriage Indicators</div>
+        <div class="d9-indicators" id="d9-indicators"></div>
+
+        <!-- Partner Profile -->
+        <div class="d9-partner-card" id="d9-partner-card"></div>
+
+      </div>
+    </div><!-- /pane-d9 -->
+
   </div>
 
   <!-- Deep Analysis Modal -->
@@ -2167,6 +2336,9 @@
 
     // Character Archetypes
     renderCharacters(data.characters || {});
+
+    // D9 Navamsa (auto-rendered alongside D1)
+    renderD9(data.navamsa || null);
 
     // Daily Horoscope
     loadDailyHoroscope(data.sun_sign, data.moon_sign, data.rising_sign);
@@ -3052,6 +3224,116 @@
       if (!pl) return;
       card.addEventListener('click', () => openDeepModal(name, pl));
     });
+  }
+
+  // ── Chart Tabs ────────────────────────────────────────────────
+  function switchChartTab(tab) {
+    document.getElementById('pane-d1').style.display = (tab === 'd1') ? '' : 'none';
+    document.getElementById('pane-d9').style.display = (tab === 'd9') ? '' : 'none';
+    document.getElementById('tab-d1-btn').classList.toggle('active', tab === 'd1');
+    document.getElementById('tab-d9-btn').classList.toggle('active', tab === 'd9');
+  }
+
+  // ── D9 Navamsa Rendering ──────────────────────────────────────
+  const D9_DIGNITY_MAP = {
+    'Sun-Aries':'exalted','Sun-Libra':'debilitated',
+    'Moon-Taurus':'exalted','Moon-Scorpio':'debilitated',
+    'Mars-Capricorn':'exalted','Mars-Cancer':'debilitated',
+    'Mercury-Virgo':'own-sign',
+    'Jupiter-Cancer':'exalted','Jupiter-Capricorn':'debilitated',
+    'Venus-Pisces':'exalted','Venus-Virgo':'debilitated',
+    'Venus-Taurus':'own-sign','Venus-Libra':'own-sign',
+    'Saturn-Libra':'exalted','Saturn-Aries':'debilitated',
+    'Saturn-Capricorn':'own-sign','Saturn-Aquarius':'own-sign',
+  };
+  const D9_KARAKA_LABELS = {
+    AK:'Atmakaraka',AmK:'Amatyakaraka',BK:'Bhratrukaraka',
+    MK:'Matrukaraka',PiK:'Pitrukaraka',PuK:'Putrakaraka',DK:'Darakaraka'
+  };
+
+  function renderD9(nav) {
+    if (!nav) return;
+    const pl = nav.placements || {};
+
+    // Big Four summary
+    const lagna = pl['Ascendant'] || {};
+    const venus = pl['Venus'] || {};
+    const dk    = pl[nav.darakaraka] || {};
+
+    document.getElementById('d9-lagna-sym').textContent  = lagna.d9_sign_symbol || '';
+    document.getElementById('d9-lagna-name').textContent = nav.d9_lagna_sign || '';
+    document.getElementById('d9-venus-sym').textContent  = venus.d9_sign_symbol || '';
+    document.getElementById('d9-venus-name').textContent = nav.d9_venus_sign || '';
+    document.getElementById('d9-seventh-sym').textContent  = SIGN_SYMBOLS_JS[nav.d9_7th_sign] || '';
+    document.getElementById('d9-seventh-name').textContent = nav.d9_7th_sign || '';
+    document.getElementById('d9-dk-sym').textContent  = pl[nav.darakaraka]?.symbol || '';
+    document.getElementById('d9-dk-name').textContent = nav.darakaraka || '';
+
+    // Planet table
+    const tbody = document.getElementById('d9-planet-tbody');
+    tbody.innerHTML = PLANET_ORDER.filter(p => pl[p]).map(p => {
+      const row = pl[p];
+      const dKey = `${p}-${row.d9_sign}`;
+      const dClass = D9_DIGNITY_MAP[dKey] || '';
+      const dTag = dClass ? `<span class="d9-dignity ${dClass}">${dClass === 'own-sign' ? 'own sign' : dClass}</span>` : '';
+      return `<tr>
+        <td><span style="color:${PLANET_COLORS[p]||'var(--text)'};margin-right:.3rem">${row.symbol||''}</span>${p}</td>
+        <td><span style="color:var(--gold);margin-right:.2rem">${SIGN_SYMBOLS_JS[row.d1_sign]||''}</span>${row.d1_sign} <span style="color:var(--muted);font-size:.72rem">${row.d1_degree}°</span></td>
+        <td><span style="color:var(--gold);margin-right:.2rem">${row.d9_sign_symbol||''}</span>${row.d9_sign} <span style="color:var(--muted);font-size:.72rem">${row.d9_degree}°</span>${dTag}</td>
+        <td><span class="d9-house-badge">${row.d9_house||'—'}</span></td>
+        <td style="color:var(--muted);font-size:.75rem">${row.nakshatra} (pada ${row.nakshatra_pada})</td>
+      </tr>`;
+    }).join('');
+
+    // Karakas
+    document.getElementById('d9-karakas-strip').innerHTML = Object.entries(nav.karakas || {}).map(([k, p]) =>
+      `<div class="d9-karaka-chip"><span class="kl">${D9_KARAKA_LABELS[k]||k}</span><span class="kv">${(k==='AK'||k==='DK')?'★ ':''}${p}</span></div>`
+    ).join('');
+
+    // Indicators
+    const indicators = [
+      { label:'D9 Lagna — Marriage Persona',            value:`${lagna.d9_sign_symbol||''} ${nav.d9_lagna_sign}`,                           text: nav.lagna_interp },
+      { label:'Venus in D9 — Love in Marriage',         value:`${venus.d9_sign_symbol||''} ${nav.d9_venus_sign}`,                           text: nav.venus_interp },
+      { label:`Darakaraka — ${nav.darakaraka} (Spouse)`,value:`${dk.symbol||''} ${nav.darakaraka} → D9 ${nav.darakaraka_d9_sign}`,          text: nav.dk_interp },
+      { label:`Atmakaraka — ${nav.atmakaraka} (Soul)`,  value:`${(pl[nav.atmakaraka]||{}).symbol||''} ${nav.atmakaraka} → ${nav.atmakaraka_d9_sign}`, text:`Your ${nav.atmakaraka} Atmakaraka in ${nav.atmakaraka_d9_sign} (D9) reveals the spiritual purpose embedded in your marriage — the deeper karmic lesson your soul is working through in the domain of intimate partnership.` },
+      { label:'7th House D9 — Nature of Your Partner',  value:`${SIGN_SYMBOLS_JS[nav.d9_7th_sign]||''} ${nav.d9_7th_sign}`, text: (nav.seventh_interp||{}).personality||'', full: true },
+    ];
+    document.getElementById('d9-indicators').innerHTML = indicators.map(c =>
+      `<div class="d9-indicator${c.full?' full':''}">
+        <div class="d9-indicator-label">${c.label}</div>
+        <div class="d9-indicator-value">${c.value}</div>
+        <div class="d9-indicator-text">${c.text||''}</div>
+      </div>`
+    ).join('');
+
+    // Partner card
+    const sp = nav.seventh_interp || {};
+    document.getElementById('d9-partner-card').innerHTML = `
+      <div class="d9-partner-header">
+        <span style="font-size:1.8rem">💫</span>
+        <div>
+          <div class="d9-partner-title">Your Partner Profile — ${nav.d9_7th_sign} 7th House</div>
+          <div class="d9-partner-sub">Based on D9 7th house sign, Venus D9 &amp; Darakaraka</div>
+        </div>
+      </div>
+      <div class="d9-partner-rows">
+        ${sp.personality?`<div><div class="d9-partner-row-label">Personality &amp; Character</div><div class="d9-partner-row-text">${sp.personality}</div></div>`:''}
+        ${sp.appearance ?`<div><div class="d9-partner-row-label">Physical Appearance</div><div class="d9-partner-row-text">${sp.appearance}</div></div>`:''}
+        ${sp.meeting    ?`<div><div class="d9-partner-row-label">How You May Meet</div><div class="d9-partner-row-text">${sp.meeting}</div></div>`:''}
+        ${sp.chemistry  ?`<div><div class="d9-partner-row-label">Relationship Chemistry</div><div class="d9-partner-row-text">${sp.chemistry}</div></div>`:''}
+        <div>
+          <div class="d9-partner-row-label">7th Lord of D9 — ${nav.d9_7th_lord}</div>
+          <div class="d9-partner-row-text">
+            The lord of your D9 7th house is <strong style="color:var(--gold-light)">${nav.d9_7th_lord}</strong>,
+            placed in <strong style="color:var(--gold-light)">${nav.d9_7th_lord_sign}</strong> (house
+            <strong style="color:var(--gold-light)">${nav.d9_7th_lord_house}</strong>) of the Navamsa.
+            ${nav.d9_7th_lord_sign?`Your partner's core nature carries ${nav.d9_7th_lord_sign} qualities, filtered through ${nav.d9_7th_lord}.`:''}
+          </div>
+        </div>
+      </div>`;
+
+    document.getElementById('d9-placeholder').style.display = 'none';
+    document.getElementById('d9-reading').style.display = '';
   }
 
   // ── Init ──────────────────────────────────────────────────────

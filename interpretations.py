@@ -2236,3 +2236,297 @@ def get_arudha_interpretation(sign):
 
 def get_indu_interpretation(sign):
     return INDU_INTERP.get(sign, {})
+
+
+# ── D9 Navamsa Interpretations ───────────────────────────────────────────────
+
+NAVAMSA_LAGNA_INTERP = {
+    "Aries": (
+        "Your Navamsa Ascendant in Aries signals a marriage destined to be vibrant, direct, and full of "
+        "mutual independence. You bring courage and initiative to partnership — you need a spouse who matches "
+        "your fire rather than dampening it. The best unions are those where both partners pursue individual "
+        "goals while celebrating each other's victories. Expect an early marriage or a partner who appears "
+        "suddenly and decisively."
+    ),
+    "Taurus": (
+        "A Navamsa Lagna in Taurus blesses your marriage with sensuality, stability, and a deep appreciation "
+        "for beauty and material comfort. You seek enduring love built on trust and shared pleasures — fine "
+        "food, art, nature, and physical warmth. Your spouse will likely be reliable, aesthetically attuned, "
+        "and financially grounded. Patience defines the courtship; once committed, the bond is remarkably lasting."
+    ),
+    "Gemini": (
+        "Gemini Navamsa Lagna makes communication and intellectual chemistry the cornerstone of your marriage. "
+        "You need a partner who can hold a stimulating conversation at midnight as much as share silence at dawn. "
+        "There may be more than one significant relationship, or a partner who is youthful, witty, and versatile. "
+        "Variety and mental freedom within the relationship are non-negotiable for long-term happiness."
+    ),
+    "Cancer": (
+        "Cancer on the Navamsa Ascendant makes emotional depth, domestic warmth, and nurturing care the defining "
+        "energies of your marriage. You are drawn to partners who feel like home — who offer genuine emotional "
+        "safety and who wish to build a true sanctuary together. Your spouse may be deeply intuitive, family-oriented, "
+        "or connected to water in some way. Marriage transforms you at the soul level."
+    ),
+    "Leo": (
+        "Leo Navamsa Lagna brings royalty and generous devotion to your marriage. You are drawn to partners who "
+        "are confident, warm-hearted, and proud to stand beside you — and in turn you offer a love that is "
+        "theatrical, loyal, and deeply celebratory. Your marriage is meant to shine. You may meet your spouse "
+        "through a creative, dramatic, or public setting, and the partnership will hold a quality of mutual admiration."
+    ),
+    "Virgo": (
+        "Virgo Navamsa Lagna brings discernment, devotion through service, and a refined sensitivity to "
+        "your partnership. You love through acts — through healing, organizing, and making your partner's life "
+        "better in practical ways. You seek someone intelligent, health-conscious, and genuinely good rather "
+        "than flashy. The marriage deepens over time as both partners commit to ongoing growth and improvement."
+    ),
+    "Libra": (
+        "Libra Navamsa Lagna is perhaps the most powerful for marriage — the 7th sign as lagna creates a "
+        "deep soul orientation toward partnership. You were born for relationship. Beauty, fairness, refined "
+        "communication, and artistic sensibility define what you bring and what you seek. Your spouse will likely "
+        "be gracious, aesthetically gifted, and socially adept. Marriage is a central vehicle for your spiritual evolution."
+    ),
+    "Scorpio": (
+        "Scorpio Navamsa Lagna signals that your marriage will be transformative — a deep, alchemical union "
+        "that changes both partners at their core. You do not accept surface-level love; you require total "
+        "psychological honesty and emotional depth. Your spouse may be intense, private, psychologically perceptive, "
+        "or connected to the hidden dimensions of life. The marriage will involve profound growth through vulnerability."
+    ),
+    "Sagittarius": (
+        "Sagittarius Navamsa Lagna draws you toward a partner who is a fellow philosopher, adventurer, and "
+        "truth-seeker. Your marriage is built on shared vision, philosophical alignment, and a mutual love of "
+        "expansion — geographic, intellectual, or spiritual. Your spouse may be from a different culture, city, "
+        "or belief background, and the relationship will be defined by freedom within commitment and growth through exploration."
+    ),
+    "Capricorn": (
+        "Capricorn Navamsa Lagna signals a marriage built on ambition, mutual respect, and the patient "
+        "construction of a lasting legacy together. You are drawn to a partner with substance — someone dependable, "
+        "professionally accomplished, and emotionally mature. The marriage may come later in life or after careful "
+        "consideration. Once committed, it is extraordinarily solid and designed to endure."
+    ),
+    "Aquarius": (
+        "Aquarius Navamsa Lagna brings an unconventional, friendship-first quality to your marriage. You need "
+        "a partner who is your intellectual equal and your truest friend — someone who respects your individuality "
+        "and brings their own originality to the union. The relationship may begin unusually or in an unexpected "
+        "social context. Freedom, shared ideals, and genuine mutual curiosity are the foundations of your best love."
+    ),
+    "Pisces": (
+        "Pisces Navamsa Lagna blesses your marriage with spiritual depth, compassionate love, and a sense of "
+        "fated connection. You seek a partner who resonates at the soul level — someone you may feel you have "
+        "known before, in another life or another time. Your spouse may be artistic, spiritually inclined, empathic, "
+        "or associated with water, healing, or creative arts. The union carries a quality of sacred devotion."
+    ),
+}
+
+NAVAMSA_VENUS_INTERP = {
+    "Aries": (
+        "Venus in Aries in the Navamsa brings passionate, spontaneous love to your marriage. "
+        "You express affection boldly and directly — love is an act, not just a feeling. "
+        "Your spouse will experience you as exciting and ardent, though you'll need to cultivate patience "
+        "for the slower rhythms of sustained partnership."
+    ),
+    "Taurus": (
+        "Venus in Taurus Navamsa is exalted — a powerful blessing for marriage. Love expressed through "
+        "physical tenderness, loyal devotion, and the creation of beautiful shared spaces. "
+        "Your spouse will feel deeply treasured and materially secure. This placement suggests a marriage "
+        "of rare sensory richness and quiet, enduring happiness."
+    ),
+    "Gemini": (
+        "Venus in Gemini Navamsa brings a lively, communicative quality to love within marriage. "
+        "Shared wit, intellectual play, and the art of conversation keep the partnership alive and stimulating. "
+        "Your spouse appreciates your curiosity and adaptability. Emotional depth may need to be cultivated "
+        "consciously alongside the natural lightness this placement brings."
+    ),
+    "Cancer": (
+        "Venus in Cancer Navamsa deepens love with nurturing, empathy, and emotional attunement. "
+        "You love by creating safety — by remembering what matters, by showing up in the tender moments. "
+        "Your spouse will feel cared for at a soul level. This is a placement of strong familial love "
+        "and a deeply protective quality toward those you cherish."
+    ),
+    "Leo": (
+        "Venus in Leo Navamsa makes love generous, theatrical, and heart-led. You want to celebrate your "
+        "spouse — publicly and privately — and in turn you need to feel truly seen and admired. "
+        "The marriage holds a quality of warmth, creativity, and mutual pride. Your love language is "
+        "grand gestures and unwavering loyalty."
+    ),
+    "Virgo": (
+        "Venus in Virgo Navamsa is debilitated — love expressed through careful service, thoughtful "
+        "attention, and the quiet devotion of doing things right. You show love through quality rather "
+        "than quantity. The challenge is learning to receive as well as give, and to let love be "
+        "imperfect and still real. Your spouse will feel genuinely cared for in the most practical sense."
+    ),
+    "Libra": (
+        "Venus in Libra Navamsa is in its own sign — a harmonious, refined, and beautifully balanced "
+        "expression of love in marriage. You bring grace, fairness, and aesthetic thoughtfulness to the "
+        "partnership. Your spouse will experience you as a genuinely devoted and elegant companion. "
+        "This is one of the most auspicious positions for Venus in the Navamsa."
+    ),
+    "Scorpio": (
+        "Venus in Scorpio Navamsa intensifies love beyond the ordinary — you love with your entire being, "
+        "and you require total psychological intimacy from your spouse. Passion, loyalty, and transformation "
+        "define how you experience partnership. This placement can indicate a love that heals old wounds "
+        "or a marriage that fundamentally reshapes both partners' understanding of themselves."
+    ),
+    "Sagittarius": (
+        "Venus in Sagittarius Navamsa brings philosophical warmth and adventurous generosity to marriage. "
+        "You love expansively — through shared exploration, honest conversation, and the freedom to grow. "
+        "Your spouse will experience you as inspiring and spiritually generous. The best marriages with this "
+        "placement involve genuine shared vision and a mutual love of wisdom."
+    ),
+    "Capricorn": (
+        "Venus in Capricorn Navamsa expresses love through commitment, responsibility, and the quiet "
+        "building of something enduring together. You may not be demonstratively romantic, but your loyalty "
+        "and consistency are profound. Your spouse will feel the security of your love in practical ways. "
+        "This placement suggests a marriage that deepens significantly with time."
+    ),
+    "Aquarius": (
+        "Venus in Aquarius Navamsa brings a unique, unconventional quality to love — you love through "
+        "friendship, intellectual connection, and genuine respect for your spouse's individuality. "
+        "The partnership has a quality of genuine companionship and shared ideals. You need a spouse "
+        "who celebrates your originality and doesn't mistake independence for indifference."
+    ),
+    "Pisces": (
+        "Venus in Pisces Navamsa is exalted — the highest possible expression of love. You love with "
+        "oceanic compassion, poetic devotion, and spiritual depth. Your marriage carries a quality of "
+        "sacred union — a sense that this connection transcends the ordinary and holds a fated, beautiful "
+        "quality. Your spouse will experience being loved by you as a transformative spiritual gift."
+    ),
+}
+
+NAVAMSA_7TH_SIGN_INTERP = {
+    "Aries": {
+        "personality": "Your partner is likely to be bold, self-directed, and energetic — someone with a strong identity and the courage to pursue what they want. They may be athletic, entrepreneurial, or drawn to leadership. They initiate, and they prefer directness over diplomacy.",
+        "appearance": "Strong physical presence, often athletic build, confident posture. May have a prominent forehead, expressive eyes, or a quick, decisive manner of moving.",
+        "meeting": "You may meet through physical activity, sports, competition, a spontaneous encounter, or through a colleague who acts quickly and decisively.",
+        "chemistry": "The attraction will feel immediate and electric. Physical chemistry and shared ambition bond you. Expect some friction — but the spark never dies.",
+    },
+    "Taurus": {
+        "personality": "Your partner is reliable, sensually attuned, and values material and emotional security. They are patient, artistic in some way, and deeply loyal once committed. They take their time — but when they love, it is completely.",
+        "appearance": "Often physically attractive with a strong, well-proportioned build. May have a beautiful voice, warm eyes, or a naturally graceful and grounded presence.",
+        "meeting": "Through shared aesthetic interests — art, food, music, nature — or through a mutual friend in a comfortable, unhurried social setting.",
+        "chemistry": "A slow, sensory build that becomes one of the most enduring bonds you'll know. Comfort and beauty are the love languages you share.",
+    },
+    "Gemini": {
+        "personality": "Your partner is witty, communicative, intellectually agile, and may seem to contain multitudes — curious about everything, adaptable, and socially adept. They keep you thinking and laughing. They may be in a field involving words, media, or education.",
+        "appearance": "Often youthful in appearance regardless of age, animated facial expressions, bright eyes, quick hands. Their presence has a quality of perpetual mental energy.",
+        "meeting": "In a setting involving communication, learning, social events, travel, or digital connection. The first conversation may feel like you've known each other before.",
+        "chemistry": "Mental and verbal — you talk for hours and never run out. The relationship thrives on intellectual reciprocity and playful exchange.",
+    },
+    "Cancer": {
+        "personality": "Your partner is emotionally deep, family-oriented, nurturing, and instinctively protective of those they love. They feel things intensely and may be highly intuitive. Home, heritage, and belonging matter enormously to them.",
+        "appearance": "Often has a gentle, moonlike quality — round features, soft eyes, a naturally comforting presence. May be drawn to traditional or vintage aesthetics.",
+        "meeting": "Through family connections, home settings, a mutual friend who feels like family, or in a domestic, familiar context that carries an emotional charge.",
+        "chemistry": "Deep emotional attunement — you feel understood in ways you rarely do with others. The relationship has a quality of having come home.",
+    },
+    "Leo": {
+        "personality": "Your partner is warm, magnanimous, proud, and fully alive in their own right. They have presence — they enter a room and it shifts. Generous, creative, and devoted when they commit, they need genuine admiration and will give it abundantly in return.",
+        "appearance": "Often striking and well put-together — may have a mane-like quality to their hair, warm coloring, or a naturally regal bearing that draws attention without effort.",
+        "meeting": "Through creative events, social gatherings, arts, entertainment, or through someone prominent. The meeting is likely to feel memorable from the first moment.",
+        "chemistry": "Dramatic, celebratory, and full of warmth. You admire each other openly. The relationship carries a quality of mutual pride and joyful devotion.",
+    },
+    "Virgo": {
+        "personality": "Your partner is intelligent, discerning, health-conscious, and devoted through practical service. They show love by making your life better — remembering details, solving problems, showing up consistently. They are modest, genuinely good, and often quietly brilliant.",
+        "appearance": "Often neat, refined, and understated in presentation. Thoughtful about health and appearance. May have a graceful, precise quality to how they move and speak.",
+        "meeting": "Through work, health-related settings, shared routines, or being introduced by someone who knows you both well and trusts the match.",
+        "chemistry": "A quiet, deepening bond — less dramatic than some, but more genuinely sustaining. The relationship improves with time as both partners refine their connection.",
+    },
+    "Libra": {
+        "personality": "Your partner is gracious, aesthetically gifted, socially adept, and deeply invested in fairness and harmony. They are genuinely beautiful in manner — thoughtful communicators, natural diplomats, and someone who makes every environment more refined simply by being there.",
+        "appearance": "Often conventionally attractive, with a natural elegance and a pleasing symmetry. Well-dressed, careful about presentation, and genuinely charming.",
+        "meeting": "Through social events, creative or artistic environments, mutual introductions, or a setting with particular beauty — a gallery, a gathering, an aesthetically rich space.",
+        "chemistry": "Graceful and harmonious — a sense of ease and mutual appreciation. The relationship has a refined, almost idealized quality.",
+    },
+    "Scorpio": {
+        "personality": "Your partner is intense, psychologically perceptive, and capable of profound depth and total loyalty. They do not love halfway. They may be connected to psychology, healing, investigation, or the hidden dimensions of life. They transform everyone they love.",
+        "appearance": "Often magnetic and compelling — deep eyes that seem to see through you, an air of mystery or contained power. Presence is felt before they speak.",
+        "meeting": "In a charged, perhaps unexpected context — a situation involving shared vulnerability, a crisis, or a setting with depth and psychological weight.",
+        "chemistry": "Intensely transformative — this relationship will change you fundamentally, and vice versa. There is nothing surface-level about it.",
+    },
+    "Sagittarius": {
+        "personality": "Your partner is enthusiastic, philosophically curious, freedom-loving, and often connected to foreign cultures, higher learning, or spiritual inquiry. They are generous, honest (sometimes uncomfortably so), and at their best when exploring.",
+        "appearance": "Often has an expansive, outdoorsy quality — tall or with a strong, athletic build, bright eyes, a warm laugh. A presence that suggests openness and vitality.",
+        "meeting": "While traveling, studying, at a lecture or retreat, through a cross-cultural connection, or in a context involving philosophy, religion, or adventure.",
+        "chemistry": "Inspiring and expansive — you feel more yourself around them and more capable of becoming who you are meant to be.",
+    },
+    "Capricorn": {
+        "personality": "Your partner is ambitious, composed, and deeply reliable — someone who has built themselves through discipline and values the long view. They may be older, more established, or simply carry an elder-soul quality of maturity and responsibility.",
+        "appearance": "Often has a composed, distinguished bearing. May appear more serious or formal initially, with a quality that becomes more attractive over time as the depth reveals itself.",
+        "meeting": "Through professional contexts, established social circles, family introductions, or a setting that carries weight and structure.",
+        "chemistry": "Slow to develop and profound once established. This is a love built over years, not hours — and it becomes one of the most solid and enduring of all.",
+    },
+    "Aquarius": {
+        "personality": "Your partner is original, intellectually brilliant, socially conscious, and genuinely unlike anyone you've known before. They may be involved in technology, activism, humanitarian work, or progressive fields. They will value your individuality as much as they protect their own.",
+        "appearance": "Often has an unusual or distinctive quality — may look unconventional, dress differently, or carry themselves with a particular independence that sets them apart.",
+        "meeting": "Through group settings, social movements, intellectual communities, technology, or a friend group with a shared vision or cause.",
+        "chemistry": "Mentally electric and genuinely friendship-deep. The relationship has an unusual quality that can't quite be defined — and that's precisely why it works.",
+    },
+    "Pisces": {
+        "personality": "Your partner is empathic, imaginative, spiritually sensitive, and capable of a love that transcends the ordinary. They may be artistic, musical, involved in healing or spiritual work, or simply carry a quality of otherworldly gentleness. They love with oceanic compassion.",
+        "appearance": "Often has dreamy, soft features — expressive eyes, a gentle manner, something that makes them seem like they belong to another, more beautiful world.",
+        "meeting": "Through artistic, spiritual, or healing settings — perhaps near water, in a dreamlike context, or through a connection that feels strangely fated.",
+        "chemistry": "Soul-level — you feel you have known this person before, and the love that develops has a quality of completion and spiritual recognition.",
+    },
+}
+
+DARAKARAKA_INTERP = {
+    "Sun": (
+        "Your Darakaraka is the Sun — your spouse significator is the planet of royalty, authority, "
+        "and radiant self-expression. Your partner is likely to be proud, dignified, generous-hearted, "
+        "and someone with genuine presence and leadership quality. They may be in a position of authority, "
+        "government, or medicine. The relationship will have a quality of mutual respect and the shared "
+        "warmth of two people who genuinely shine in each other's presence."
+    ),
+    "Moon": (
+        "Your Darakaraka is the Moon — the planet of emotional depth, nurturing, and the inner world. "
+        "Your spouse is someone deeply intuitive, empathic, and perhaps maternal or paternal in their "
+        "care for you. They may be connected to home, family, hospitality, or the healing arts. "
+        "The marriage will be defined by emotional attunement, and your partner will know your heart "
+        "in ways that feel almost psychic."
+    ),
+    "Mars": (
+        "Your Darakaraka is Mars — the planet of action, drive, and passionate desire. Your spouse "
+        "will be someone courageous, physically vital, and decisive — possibly athletic, entrepreneurial, "
+        "or working in engineering, military, surgery, or another Mars-ruled field. The marriage has "
+        "a quality of passionate intensity, shared ambition, and mutual courage. Expect both fire and energy."
+    ),
+    "Mercury": (
+        "Your Darakaraka is Mercury — the planet of communication, intelligence, and agile thought. "
+        "Your partner will be communicative, witty, intellectually curious, and likely skilled in "
+        "writing, teaching, trade, or another Mercury-ruled profession. You will bond through conversation "
+        "and shared ideas. The marriage has a youthful, mentally stimulating quality that keeps it fresh."
+    ),
+    "Jupiter": (
+        "Your Darakaraka is Jupiter — the planet of wisdom, grace, and spiritual generosity. "
+        "Your spouse will be learned, philosophical, expansive in their worldview, and naturally wise. "
+        "They may be connected to education, law, religion, counseling, or spiritual teaching. "
+        "The marriage will carry a quality of genuine blessing — a sense that this person brings grace "
+        "and growth into your life simply by being present."
+    ),
+    "Venus": (
+        "Your Darakaraka is Venus — the natural karaka of love and partnership. This is a particularly "
+        "auspicious placement: your spouse will be beautiful in nature and often in appearance, artistically "
+        "gifted, sensually attuned, and devoted to love and harmony. The marriage has a quality of genuine "
+        "aesthetic pleasure, physical tenderness, and a shared appreciation for the beautiful things in life."
+    ),
+    "Saturn": (
+        "Your Darakaraka is Saturn — the planet of endurance, discipline, and karmic bonds. Your spouse "
+        "may be older, more serious, or carry a quality of hard-won wisdom and profound reliability. "
+        "They will be deeply committed once they choose you, and the marriage — though it may develop slowly "
+        "or come later in life — will be built on rock. This partnership is karmic in nature and designed to last."
+    ),
+}
+
+
+NAVAMSA_PLANET_SIGN_NOTES = {
+    ("Sun", "Aries"): "Exalted Sun in Navamsa — your soul force within marriage is powerful and initiating.",
+    ("Sun", "Libra"): "Debilitated Sun in Navamsa — identity requires conscious nourishment within partnership.",
+    ("Moon", "Taurus"): "Exalted Moon in Navamsa — deep emotional comfort and nourishment within marriage.",
+    ("Moon", "Scorpio"): "Debilitated Moon in Navamsa — emotional transformation is a core theme of your marriage.",
+    ("Mars", "Capricorn"): "Exalted Mars in Navamsa — drive and ambition serve the marriage with discipline.",
+    ("Mars", "Cancer"): "Debilitated Mars in Navamsa — learn to channel protective instinct rather than reactivity.",
+    ("Mercury", "Virgo"): "Mercury in own sign Navamsa — intelligence and discernment serve the marriage beautifully.",
+    ("Jupiter", "Cancer"): "Exalted Jupiter in Navamsa — wisdom, grace, and abundance bless the marriage.",
+    ("Jupiter", "Capricorn"): "Debilitated Jupiter in Navamsa — wisdom is earned through the challenges of commitment.",
+    ("Venus", "Pisces"): "Exalted Venus in Navamsa — the most auspicious placement for love and marriage.",
+    ("Venus", "Virgo"): "Debilitated Venus in Navamsa — love is expressed through service; learn to also receive.",
+    ("Saturn", "Libra"): "Exalted Saturn in Navamsa — deep karmic commitment brings lasting marital bonds.",
+    ("Saturn", "Aries"): "Debilitated Saturn in Navamsa — karmic lessons around patience and commitment.",
+}

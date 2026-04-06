@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>D9 Navamsa — Krieshan AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:         #c9a84c;
+      --gold-lt:      #e8c96a;
+      --gold-light:   #e8c96a;
+      --bg:           #07080f;
+      --surface:      #0d0f1e;
+      --card:         rgba(255,255,255,.04);
+      --border:       rgba(255,255,255,.08);
+      --text:         #e2dff5;
+      --muted:        #7a789a;
+      --violet:       #7c5cbf;
+      --violet-light: #a884e8;
+    }
+
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Raleway', sans-serif; font-weight: 400;
+      min-height: 100vh;
+    }
+
+    /* starfield */
+    #stars {
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse at 20% 30%, rgba(124,92,191,.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 70%, rgba(201,168,76,.06) 0%, transparent 50%),
+        var(--bg);
+      pointer-events: none;
+    }
+    #stars::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 40%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50%  8%, rgba(255,255,255,.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 55%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 20%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 60% 30%, rgba(255,255,255,.8) 0%, transparent 100%);
+      background-size: 400px 300px;
+      animation: twinkle 8s ease-in-out infinite alternate;
+    }
+    @keyframes twinkle { 0% { opacity:.5; } 100% { opacity:1; } }
+
+    /* ── Nav ── */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem; border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; background: var(--bg); z-index: 10;
+    }
+    .nav-logo { display: flex; align-items: center; gap: .6rem; text-decoration: none; }
+    .nav-logo svg { width: 28px; height: 28px; }
+    .nav-logo span { font-size: 1rem; font-weight: 600; color: var(--gold); letter-spacing: .04em; font-family: 'Cinzel', serif; }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: .85rem; transition: color .2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; position: relative; z-index: 1; }
+
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { font-size: 1.5rem; color: var(--gold); margin-bottom: .4rem; font-family: 'Cinzel', serif; letter-spacing: .06em; }
+    .page-header p { color: var(--muted); font-size: .9rem; line-height: 1.6; max-width: 640px; }
+
+    /* ── Form card ── */
+    .form-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 1.8rem; margin-bottom: 2rem;
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: .4rem; }
+    .form-group.full { grid-column: 1 / -1; }
+    label { font-size: .75rem; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+    input, select {
+      background: rgba(255,255,255,.05); border: 1px solid var(--border);
+      border-radius: 8px; padding: .6rem .85rem; color: var(--text);
+      font-size: .9rem; outline: none; width: 100%;
+    }
+    input:focus, select:focus { border-color: var(--gold); }
+    select option { background: #12131e; }
+
+    .btn-calc {
+      margin-top: 1.2rem; width: 100%; padding: .75rem; border: none; border-radius: 10px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-lt));
+      color: #07080f; font-weight: 700; font-size: .9rem; cursor: pointer;
+      transition: opacity .2s; font-family: 'Cinzel', serif; letter-spacing: .06em;
+    }
+    .btn-calc:hover { opacity: .9; }
+    .btn-calc:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* ── Loading / error ── */
+    .loading { display: none; text-align: center; padding: 2rem; color: var(--muted); font-size: .9rem; }
+    .error-msg { display: none; background: rgba(248,113,113,.1); border: 1px solid rgba(248,113,113,.3);
+      border-radius: 10px; padding: 1rem 1.2rem; color: #f87171; font-size: .9rem; margin-top: 1rem; }
+
+    /* ── Result sections ── */
+    #result { display: none; }
+
+    .section { margin-bottom: 2.5rem; }
+    .section-title {
+      font-size: .65rem; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 1rem; padding-bottom: .5rem;
+      border-bottom: 1px solid var(--border);
+      font-family: 'Cinzel', serif;
+    }
+
+    /* ── Summary bar ── */
+    .summary-bar {
+      display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;
+    }
+    .summary-chip {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: .6rem 1rem; display: flex; flex-direction: column; gap: .2rem;
+    }
+    .summary-chip .chip-label { font-size: .65rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    .summary-chip .chip-val { font-size: .95rem; color: var(--text); font-weight: 600; }
+
+    /* ── D9 Planet Table ── */
+    .planet-table { width: 100%; border-collapse: collapse; font-size: .83rem; }
+    .planet-table th {
+      text-align: left; padding: .5rem .8rem; font-size: .62rem; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border);
+    }
+    .planet-table td {
+      padding: .6rem .8rem; border-bottom: 1px solid rgba(255,255,255,.04);
+      vertical-align: middle;
+    }
+    .planet-table tr:hover td { background: rgba(255,255,255,.02); }
+    .planet-sym { font-size: 1rem; margin-right: .3rem; }
+    .sign-sym { color: var(--gold); margin-right: .2rem; }
+    .house-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; border-radius: 6px;
+      background: rgba(201,168,76,.1); color: var(--gold);
+      font-size: .7rem; font-weight: 700;
+    }
+    .arrow { color: var(--muted); margin: 0 .4rem; }
+    .nak-text { color: var(--muted); font-size: .75rem; }
+    .dignity-note {
+      font-size: .68rem; padding: .1rem .35rem; border-radius: 4px; margin-left: .4rem;
+    }
+    .exalted { background: rgba(134,239,172,.12); color: #86efac; }
+    .debilitated { background: rgba(248,113,113,.12); color: #f87171; }
+    .own-sign { background: rgba(201,168,76,.12); color: var(--gold); }
+
+    /* ── Indicator cards ── */
+    .indicator-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .indicator-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.2rem;
+    }
+    .indicator-card .ic-label {
+      font-size: .62rem; text-transform: uppercase; letter-spacing: .1em;
+      color: var(--muted); margin-bottom: .3rem;
+    }
+    .indicator-card .ic-value {
+      font-size: 1.05rem; font-weight: 700; color: var(--gold); margin-bottom: .6rem;
+      display: flex; align-items: center; gap: .35rem;
+    }
+    .indicator-card .ic-text { font-size: .82rem; color: rgba(226,223,245,.8); line-height: 1.65; }
+    .indicator-card.full { grid-column: 1 / -1; }
+
+    /* ── Partner profile card ── */
+    .partner-card {
+      background: linear-gradient(135deg, rgba(201,168,76,.06), rgba(255,255,255,.02));
+      border: 1px solid rgba(201,168,76,.2); border-radius: 16px; padding: 1.5rem;
+    }
+    .partner-header { display: flex; align-items: center; gap: .8rem; margin-bottom: 1.2rem; }
+    .partner-icon { font-size: 1.8rem; }
+    .partner-title { font-size: 1rem; font-weight: 700; color: var(--gold); font-family: 'Cinzel', serif; }
+    .partner-subtitle { font-size: .78rem; color: var(--muted); margin-top: .1rem; }
+    .partner-rows { display: flex; flex-direction: column; gap: 1rem; }
+    .partner-row { display: flex; flex-direction: column; gap: .3rem; }
+    .partner-row-label { font-size: .65rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+    .partner-row-text { font-size: .87rem; line-height: 1.65; color: var(--text); }
+
+    /* ── Karakas strip ── */
+    .karakas-strip { display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .karaka-chip {
+      background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+      padding: .35rem .7rem; font-size: .72rem;
+    }
+    .karaka-chip span:first-child { color: var(--muted); margin-right: .3rem; }
+    .karaka-chip span:last-child { color: var(--text); font-weight: 600; }
+
+    /* ── Spinner ── */
+    .spinner {
+      width: 28px; height: 28px; border: 3px solid rgba(201,168,76,.2);
+      border-top-color: var(--gold); border-radius: 50%;
+      animation: spin .7s linear infinite; margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .indicator-grid { grid-template-columns: 1fr; }
+      .indicator-card.full { grid-column: 1; }
+      .summary-bar { gap: .6rem; }
+    }
+  </style>
+</head>
+<body>
+<div id="stars"></div>
+
+<nav style="position:relative;z-index:10">
+  <a href="/" class="nav-logo">
+    <img src="/static/lion.svg?v=2" alt="logo" style="width:28px;height:28px;">
+    <span>Krieshan AI</span>
+  </a>
+  <div class="nav-links">
+    <a href="/">D1 Chart</a>
+    <a href="/navamsa" class="active">D9 Navamsa</a>
+    <a href="/synastry">Synastry</a>
+    <a href="/journal">Journal</a>
+    <a href="/learn">Learn</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <div class="page-header">
+    <h1>✦ D9 Navamsa — Marriage & Soul Chart</h1>
+    <p>
+      The Navamsa (D9) divides each zodiac sign into 9 equal parts of 3°20', producing a deeper chart
+      that reveals the soul's orientation toward marriage, the nature of the future spouse, and the
+      spiritual purpose embedded within your partnerships. Enter your birth details below.
+    </p>
+  </div>
+
+  <!-- Form -->
+  <div class="form-card">
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="name">Name (optional)</label>
+        <input type="text" id="name" placeholder="Your name"/>
+      </div>
+      <div class="form-group">
+        <label for="city">Birth City</label>
+        <input type="text" id="city" placeholder="e.g. Mumbai, India"/>
+      </div>
+      <div class="form-group">
+        <label for="date">Birth Date</label>
+        <input type="date" id="date"/>
+      </div>
+      <div class="form-group">
+        <label for="time">Birth Time</label>
+        <input type="time" id="time"/>
+      </div>
+      <div class="form-group full">
+        <label for="ayanamsa">Ayanamsa System</label>
+        <select id="ayanamsa">
+          <option value="lahiri">Lahiri (IAU Official — most common)</option>
+          <option value="krishnamurti">Krishnamurti (KP System)</option>
+          <option value="true_chitrapaksha">True Chitrapaksha (Spica at 180°)</option>
+          <option value="fagan_bradley">Fagan-Bradley (Western Sidereal)</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-calc" id="calc-btn" onclick="calculate()">Calculate D9 Navamsa</button>
+    <div class="error-msg" id="err"></div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    Calculating your Navamsa chart…
+  </div>
+
+  <!-- Result -->
+  <div id="result">
+
+    <!-- Summary bar -->
+    <div class="summary-bar" id="summary-bar"></div>
+
+    <!-- D9 Planet Table -->
+    <div class="section">
+      <div class="section-title">D9 Navamsa Placements — All Planets</div>
+      <table class="planet-table" id="planet-table">
+        <thead>
+          <tr>
+            <th>Planet</th>
+            <th>D1 Sign</th>
+            <th>→ D9 Sign</th>
+            <th>D9 House</th>
+            <th>Nakshatra (D9)</th>
+          </tr>
+        </thead>
+        <tbody id="planet-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- Chara Karakas -->
+    <div class="section">
+      <div class="section-title">Chara Karakas — Jaimini Soul Significators</div>
+      <div class="karakas-strip" id="karakas-strip"></div>
+      <p style="font-size:.8rem;color:var(--muted);line-height:1.6">
+        Karakas are ranked by each planet's degree within its sign (highest→lowest). The
+        <strong style="color:var(--gold)">Atmakaraka (AK)</strong> is the soul planet — its D9 sign
+        reveals your spiritual purpose. The <strong style="color:var(--gold)">Darakaraka (DK)</strong>
+        is the spouse significator — its nature and D9 sign describe your partner.
+      </p>
+    </div>
+
+    <!-- Key marriage indicators -->
+    <div class="section">
+      <div class="section-title">Key Marriage Indicators</div>
+      <div class="indicator-grid" id="indicators"></div>
+    </div>
+
+    <!-- Partner profile -->
+    <div class="section">
+      <div class="section-title">Your Partner Profile</div>
+      <div class="partner-card" id="partner-card"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const DIGNITY_MAP = {
+  "Sun-Aries": "exalted", "Sun-Libra": "debilitated",
+  "Moon-Taurus": "exalted", "Moon-Scorpio": "debilitated",
+  "Mars-Capricorn": "exalted", "Mars-Cancer": "debilitated",
+  "Mercury-Virgo": "own-sign",
+  "Jupiter-Cancer": "exalted", "Jupiter-Capricorn": "debilitated",
+  "Venus-Pisces": "exalted", "Venus-Virgo": "debilitated",
+  "Venus-Taurus": "own-sign", "Venus-Libra": "own-sign",
+  "Saturn-Libra": "exalted", "Saturn-Aries": "debilitated",
+  "Saturn-Capricorn": "own-sign", "Saturn-Aquarius": "own-sign",
+};
+
+const PLANET_ORDER = ["Ascendant","Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Rahu","Ketu","Midheaven"];
+
+function dignity(planet, sign) {
+  return DIGNITY_MAP[`${planet}-${sign}`] || "";
+}
+
+function dignityTag(planet, sign) {
+  const d = dignity(planet, sign);
+  if (!d) return "";
+  const label = d === "own-sign" ? "own sign" : d;
+  return `<span class="dignity-note ${d}">${label}</span>`;
+}
+
+async function calculate() {
+  const btn = document.getElementById("calc-btn");
+  const err = document.getElementById("err");
+  const loading = document.getElementById("loading");
+  const result = document.getElementById("result");
+
+  const date = document.getElementById("date").value;
+  const time = document.getElementById("time").value;
+  const city = document.getElementById("city").value.trim();
+
+  err.style.display = "none";
+  if (!date || !time || !city) {
+    err.textContent = "Please fill in birth date, time, and city.";
+    err.style.display = "block";
+    return;
+  }
+
+  btn.disabled = true;
+  loading.style.display = "block";
+  result.style.display = "none";
+
+  try {
+    const res = await fetch("/api/navamsa", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name:     document.getElementById("name").value.trim(),
+        date, time,
+        city,
+        ayanamsa: document.getElementById("ayanamsa").value,
+      }),
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    render(data);
+  } catch (e) {
+    err.textContent = e.message;
+    err.style.display = "block";
+  } finally {
+    btn.disabled = false;
+    loading.style.display = "none";
+  }
+}
+
+function render(data) {
+  const nav = data.navamsa;
+  const placements = nav.placements;
+
+  // Summary bar
+  const sb = document.getElementById("summary-bar");
+  sb.innerHTML = [
+    { label: "Name",        val: data.name || "—" },
+    { label: "D9 Lagna",    val: `${placements.Ascendant?.d9_sign || "—"}` },
+    { label: "Venus D9",    val: `${placements.Venus?.d9_sign || "—"}` },
+    { label: "7th House D9",val: nav.d9_7th_sign },
+    { label: "Darakaraka",  val: nav.darakaraka },
+    { label: "Ayanamsa",    val: data.ayanamsa_label },
+  ].map(c => `
+    <div class="summary-chip">
+      <div class="chip-label">${c.label}</div>
+      <div class="chip-val">${c.val}</div>
+    </div>
+  `).join("");
+
+  // Planet table
+  const tbody = document.getElementById("planet-tbody");
+  tbody.innerHTML = PLANET_ORDER
+    .filter(p => placements[p])
+    .map(p => {
+      const pl = placements[p];
+      const dg = dignityTag(p, pl.d9_sign);
+      return `
+        <tr>
+          <td><span class="planet-sym">${pl.symbol}</span>${p}</td>
+          <td><span class="sign-sym">${pl.d1_sign_symbol}</span>${pl.d1_sign} <span style="color:var(--muted);font-size:.75rem">${pl.d1_degree}°</span></td>
+          <td><span class="sign-sym">${pl.d9_sign_symbol}</span>${pl.d9_sign} <span style="color:var(--muted);font-size:.75rem">${pl.d9_degree}°</span>${dg}</td>
+          <td><span class="house-badge">${pl.d9_house || "—"}</span></td>
+          <td class="nak-text">${pl.nakshatra} (pada ${pl.nakshatra_pada})</td>
+        </tr>`;
+    }).join("");
+
+  // Karakas
+  const karLabels = { AK: "Atmakaraka", AmK: "Amatyakaraka", BK: "Bhratrukaraka",
+                      MK: "Matrukaraka", PiK: "Pitrukaraka", PuK: "Putrakaraka", DK: "Darakaraka" };
+  document.getElementById("karakas-strip").innerHTML = Object.entries(nav.karakas || {})
+    .map(([k, p]) => `<div class="karaka-chip"><span>${karLabels[k] || k}</span><span>${k === "AK" || k === "DK" ? "★ " : ""}${p}</span></div>`)
+    .join("");
+
+  // Indicator cards
+  const indicators = [
+    {
+      label: "D9 Lagna — Your Marriage Persona",
+      value: `${placements.Ascendant?.d9_sign_symbol || ""} ${nav.d9_lagna_sign}`,
+      text: nav.lagna_interp,
+      full: false,
+    },
+    {
+      label: "Venus in D9 — Love in Marriage",
+      value: `${placements.Venus?.d9_sign_symbol || ""} ${nav.d9_venus_sign}`,
+      text: nav.venus_interp,
+      full: false,
+    },
+    {
+      label: `Darakaraka — ${nav.darakaraka} (Spouse Significator)`,
+      value: `${placements[nav.darakaraka]?.symbol || ""} ${nav.darakaraka} in D9: ${nav.darakaraka_d9_sign}`,
+      text: nav.dk_interp,
+      full: false,
+    },
+    {
+      label: `Atmakaraka — ${nav.atmakaraka} (Soul Planet in D9)`,
+      value: `${placements[nav.atmakaraka]?.symbol || ""} ${nav.atmakaraka} → ${nav.atmakaraka_d9_sign}`,
+      text: `The Atmakaraka is the planet that has traveled the furthest within its sign — it carries the highest concentration of your soul's karmic lessons. In the Navamsa, your ${nav.atmakaraka} Atmakaraka placed in ${nav.atmakaraka_d9_sign} reveals the spiritual dimension of your marriage: what your soul is here to learn through partnership, and the deeper purpose beneath the relationship.`,
+      full: false,
+    },
+    {
+      label: "7th House of D9 — The Nature of Your Partner",
+      value: `${nav.d9_7th_sign} (7th from ${nav.d9_lagna_sign} lagna)`,
+      text: nav.seventh_interp?.personality || "",
+      full: true,
+    },
+  ];
+
+  document.getElementById("indicators").innerHTML = indicators.map(card => `
+    <div class="indicator-card ${card.full ? "full" : ""}">
+      <div class="ic-label">${card.label}</div>
+      <div class="ic-value">${card.value}</div>
+      <div class="ic-text">${card.text || ""}</div>
+    </div>
+  `).join("");
+
+  // Partner profile
+  const sp = nav.seventh_interp || {};
+  document.getElementById("partner-card").innerHTML = `
+    <div class="partner-header">
+      <div class="partner-icon">💫</div>
+      <div>
+        <div class="partner-title">Your Partner Profile — ${nav.d9_7th_sign} 7th House</div>
+        <div class="partner-subtitle">Based on D9 7th house sign, Venus D9, and Darakaraka</div>
+      </div>
+    </div>
+    <div class="partner-rows">
+      ${sp.personality ? `
+        <div class="partner-row">
+          <div class="partner-row-label">Personality & Character</div>
+          <div class="partner-row-text">${sp.personality}</div>
+        </div>` : ""}
+      ${sp.appearance ? `
+        <div class="partner-row">
+          <div class="partner-row-label">Physical Appearance</div>
+          <div class="partner-row-text">${sp.appearance}</div>
+        </div>` : ""}
+      ${sp.meeting ? `
+        <div class="partner-row">
+          <div class="partner-row-label">How You May Meet</div>
+          <div class="partner-row-text">${sp.meeting}</div>
+        </div>` : ""}
+      ${sp.chemistry ? `
+        <div class="partner-row">
+          <div class="partner-row-label">Relationship Chemistry</div>
+          <div class="partner-row-text">${sp.chemistry}</div>
+        </div>` : ""}
+      <div class="partner-row">
+        <div class="partner-row-label">7th Lord of D9 — ${nav.d9_7th_lord}</div>
+        <div class="partner-row-text">
+          The lord of your D9 7th house is <strong style="color:var(--gold)">${nav.d9_7th_lord}</strong>,
+          placed in <strong style="color:var(--gold)">${nav.d9_7th_lord_sign}</strong> in house
+          <strong style="color:var(--gold)">${nav.d9_7th_lord_house}</strong> of the Navamsa.
+          ${nav.d9_7th_lord_sign ? `Your partner's core nature carries the qualities of ${nav.d9_7th_lord_sign}, filtered through the influence of ${nav.d9_7th_lord}.` : ""}
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById("result").style.display = "block";
+  document.getElementById("result").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+</script>
+
+</body>
+</html>
