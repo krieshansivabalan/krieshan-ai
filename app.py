@@ -2,7 +2,7 @@ import os
 import json
 import traceback
 import datetime as dt
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import stripe
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
@@ -28,6 +28,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
     "DATABASE_URL", "sqlite:///sidereal.db"
 )
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=8)
 db.init_app(app)
 
 # Flask-Login
@@ -634,23 +635,44 @@ def delete_account():
 
 
 # ── Admin Panel ───────────────────────────────────────────────────
-_ADMIN_PASSWORD = "Witstypeai2026!"
+_ADMIN_PASSWORD  = "Witstypeai2026!"
+_ADMIN_SESSION_HOURS = 8   # session expires after 8 hours
+
+def _admin_session_valid():
+    """Return True only if admin_auth is set AND was granted within the last 8 hours."""
+    if not session.get("admin_auth"):
+        return False
+    granted_at = session.get("admin_auth_ts")
+    if not granted_at:
+        return False
+    try:
+        delta = datetime.utcnow() - datetime.fromisoformat(granted_at)
+        return delta.total_seconds() < _ADMIN_SESSION_HOURS * 3600
+    except Exception:
+        return False
 
 def admin_required(f):
     from functools import wraps
     @wraps(f)
     def decorated(*args, **kwargs):
-        if not session.get("admin_auth"):
+        if not _admin_session_valid():
+            session.pop("admin_auth", None)
+            session.pop("admin_auth_ts", None)
             return redirect(url_for("admin_login"))
         return f(*args, **kwargs)
     return decorated
 
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
+    # If already authenticated with a valid session, skip straight to dashboard
+    if _admin_session_valid():
+        return redirect(url_for("admin_dashboard"))
     error = None
     if request.method == "POST":
         if request.form.get("password") == _ADMIN_PASSWORD:
-            session["admin_auth"] = True
+            session["admin_auth"]    = True
+            session["admin_auth_ts"] = datetime.utcnow().isoformat()
+            session.permanent        = True
             return redirect(url_for("admin_dashboard"))
         error = "Incorrect password."
     return render_template("admin_login.html", error=error)
@@ -658,6 +680,7 @@ def admin_login():
 @app.route("/admin/logout")
 def admin_logout():
     session.pop("admin_auth", None)
+    session.pop("admin_auth_ts", None)
     return redirect(url_for("admin_login"))
 
 @app.route("/admin")
