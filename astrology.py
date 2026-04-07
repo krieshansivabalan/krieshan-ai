@@ -1387,3 +1387,168 @@ def get_navamsa_chart(placements):
         "d9_jupiter_sign":     d9_jupiter_sign,
         "jupiter_interp":      NAVAMSA_JUPITER_INTERP.get(d9_jupiter_sign, ""),
     }
+
+
+# ─── D10 Dasamsa Chart ─────────────────────────────────────────────────────────
+
+# Dasamsa starting sign by D1 sign index (0=Aries … 11=Pisces)
+# Odd signs start from themselves; even signs start from the 9th from them.
+_D10_START = {
+    0:  0,   # Aries       → Aries
+    1:  9,   # Taurus      → Capricorn
+    2:  2,   # Gemini      → Gemini
+    3:  11,  # Cancer      → Pisces
+    4:  4,   # Leo         → Leo
+    5:  1,   # Virgo       → Taurus
+    6:  6,   # Libra       → Libra
+    7:  3,   # Scorpio     → Cancer
+    8:  8,   # Sagittarius → Sagittarius
+    9:  5,   # Capricorn   → Virgo
+    10: 10,  # Aquarius    → Aquarius
+    11: 7,   # Pisces      → Scorpio
+}
+
+_D10_SPAN = 3.0   # 3° per dasamsa part
+
+
+def longitude_to_dasamsa(longitude):
+    """Return (d10_sign, d10_degree, d10_sign_index) for a sidereal longitude."""
+    sign_idx    = int(longitude / 30) % 12
+    pos_in_sign = longitude % 30
+    part        = int(pos_in_sign / _D10_SPAN)     # 0–9
+    d10_idx     = (_D10_START[sign_idx] + part) % 12
+    d10_sign    = SIGNS[d10_idx]
+    pos_in_part = pos_in_sign % _D10_SPAN
+    d10_degree  = round((pos_in_part / _D10_SPAN) * 30, 2)
+    return d10_sign, d10_degree, d10_idx
+
+
+def get_dasamsa_chart(placements):
+    """
+    Calculate the D10 Dasamsa chart from a set of sidereal D1 placements.
+    Returns a comprehensive career-analysis dict.
+    """
+    from interpretations import (
+        D10_LAGNA_INTERP, D10_10TH_INTERP,
+        D10_SUN_INTERP, D10_SATURN_INTERP, D10_MERCURY_INTERP,
+        AMATYAKARAKA_INTERP,
+    )
+
+    dasamsa = {}
+    for planet_name, pl in placements.items():
+        lon         = pl["longitude"]
+        d10_sign, d10_degree, d10_idx = longitude_to_dasamsa(lon)
+        d10_pseudo_lon = d10_idx * 30 + d10_degree
+        nak = get_nakshatra(d10_pseudo_lon)
+        dasamsa[planet_name] = {
+            "planet":          planet_name,
+            "symbol":          pl.get("symbol", PLANET_SYMBOLS.get(planet_name, "")),
+            "d1_sign":         pl.get("sign", ""),
+            "d1_degree":       round(pl.get("degree", 0), 2),
+            "d1_sign_symbol":  pl.get("sign_symbol", SIGN_SYMBOLS.get(pl.get("sign", ""), "")),
+            "d10_sign":        d10_sign,
+            "d10_degree":      d10_degree,
+            "d10_sign_symbol": SIGN_SYMBOLS.get(d10_sign, ""),
+            "d10_sign_idx":    d10_idx,
+            "nakshatra":       nak["name"],
+            "nakshatra_lord":  nak["lord"],
+            "nakshatra_pada":  nak["pada"],
+        }
+
+    # D10 houses (whole sign from D10 Ascendant)
+    if "Ascendant" in dasamsa:
+        d10_asc_idx = dasamsa["Ascendant"]["d10_sign_idx"]
+        for dp in dasamsa.values():
+            dp["d10_house"] = (dp["d10_sign_idx"] - d10_asc_idx) % 12 + 1
+
+    # ── Core indicators ────────────────────────────────────────────────────────
+    d10_lagna_sign = dasamsa.get("Ascendant", {}).get("d10_sign", "Aries")
+    d10_lagna_idx  = dasamsa.get("Ascendant", {}).get("d10_sign_idx", 0)
+
+    # 10th house from D10 lagna
+    d10_10th_sign  = SIGNS[(d10_lagna_idx + 9) % 12]
+    d10_10th_lord  = _SIGN_LORDS.get(d10_10th_sign, "Sun")
+    d10_10th_lord_sign  = dasamsa.get(d10_10th_lord, {}).get("d10_sign", "")
+    d10_10th_lord_house = dasamsa.get(d10_10th_lord, {}).get("d10_house", 0)
+
+    # Planets in 10th house of D10
+    planets_in_10th = [
+        {"planet": pn, "symbol": pd["symbol"], "sign": pd["d10_sign"]}
+        for pn, pd in dasamsa.items()
+        if pd.get("d10_house") == 10 and pn != "Ascendant"
+    ]
+
+    # Key planet signs in D10
+    d10_sun_sign     = dasamsa.get("Sun",     {}).get("d10_sign", "")
+    d10_saturn_sign  = dasamsa.get("Saturn",  {}).get("d10_sign", "")
+    d10_mercury_sign = dasamsa.get("Mercury", {}).get("d10_sign", "")
+    d10_moon_sign    = dasamsa.get("Moon",    {}).get("d10_sign", "")
+    d10_mars_sign    = dasamsa.get("Mars",    {}).get("d10_sign", "")
+    d10_jupiter_sign = dasamsa.get("Jupiter", {}).get("d10_sign", "")
+    d10_venus_sign   = dasamsa.get("Venus",   {}).get("d10_sign", "")
+
+    # Chara Karakas — Amatyakaraka (AmK) = career significator
+    karakas   = get_chara_karakas(placements)
+    amk_planet = karakas.get("AmK", "Mercury")
+    ak_planet  = karakas.get("AK", "Sun")
+    amk_d10_sign = dasamsa.get(amk_planet, {}).get("d10_sign", "")
+    ak_d10_sign  = dasamsa.get(ak_planet,  {}).get("d10_sign", "")
+
+    # ── Vargottama ─────────────────────────────────────────────────────────────
+    vargottama_planets = []
+    for pname, pdata in dasamsa.items():
+        if pdata["d1_sign"] == pdata["d10_sign"]:
+            vargottama_planets.append({
+                "planet": pname,
+                "symbol": pdata.get("symbol", ""),
+                "sign":   pdata["d10_sign"],
+                "interp": f"{pname} is Vargottama in D10 — its qualities are fully expressed in your career, amplified and consistent across both the birth chart and the Dasamsa.",
+            })
+
+    # ── Elemental balance of D10 ───────────────────────────────────────────────
+    _SIGN_ELEMENTS = {
+        "Aries": "Fire", "Leo": "Fire", "Sagittarius": "Fire",
+        "Taurus": "Earth", "Virgo": "Earth", "Capricorn": "Earth",
+        "Gemini": "Air", "Libra": "Air", "Aquarius": "Air",
+        "Cancer": "Water", "Scorpio": "Water", "Pisces": "Water",
+    }
+    element_counts = {"Fire": 0, "Earth": 0, "Air": 0, "Water": 0}
+    for pdata in dasamsa.values():
+        el = _SIGN_ELEMENTS.get(pdata["d10_sign"])
+        if el:
+            element_counts[el] += 1
+    max_count = max(element_counts.values()) if element_counts else 0
+    dominant_elements = [el for el, cnt in element_counts.items() if cnt == max_count]
+    dominant_element = dominant_elements[0] if len(dominant_elements) == 1 else "Balanced"
+
+    return {
+        "placements":            dasamsa,
+        "d10_lagna_sign":        d10_lagna_sign,
+        "d10_10th_sign":         d10_10th_sign,
+        "d10_10th_lord":         d10_10th_lord,
+        "d10_10th_lord_sign":    d10_10th_lord_sign,
+        "d10_10th_lord_house":   d10_10th_lord_house,
+        "planets_in_10th":       planets_in_10th,
+        "d10_sun_sign":          d10_sun_sign,
+        "d10_saturn_sign":       d10_saturn_sign,
+        "d10_mercury_sign":      d10_mercury_sign,
+        "d10_moon_sign":         d10_moon_sign,
+        "d10_mars_sign":         d10_mars_sign,
+        "d10_jupiter_sign":      d10_jupiter_sign,
+        "d10_venus_sign":        d10_venus_sign,
+        "amatyakaraka":          amk_planet,
+        "amatyakaraka_d10_sign": amk_d10_sign,
+        "atmakaraka":            ak_planet,
+        "atmakaraka_d10_sign":   ak_d10_sign,
+        "karakas":               karakas,
+        "vargottama_planets":    vargottama_planets,
+        "element_counts":        element_counts,
+        "dominant_element":      dominant_element,
+        # Interpretations
+        "lagna_interp":          D10_LAGNA_INTERP.get(d10_lagna_sign, ""),
+        "tenth_interp":          D10_10TH_INTERP.get(d10_10th_sign, {}),
+        "sun_interp":            D10_SUN_INTERP.get(d10_sun_sign, ""),
+        "saturn_interp":         D10_SATURN_INTERP.get(d10_saturn_sign, ""),
+        "mercury_interp":        D10_MERCURY_INTERP.get(d10_mercury_sign, ""),
+        "amk_interp":            AMATYAKARAKA_INTERP.get(amk_planet, ""),
+    }

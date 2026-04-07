@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>D10 Dasamsa — Career Chart · Krieshan AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:         #c9a84c;
+      --gold-lt:      #e8c96a;
+      --gold-light:   #e8c96a;
+      --bg:           #07080f;
+      --surface:      #0d0f1e;
+      --card:         rgba(255,255,255,.04);
+      --border:       rgba(255,255,255,.08);
+      --text:         #e2dff5;
+      --muted:        #7a789a;
+      --violet:       #7c5cbf;
+      --violet-light: #a884e8;
+      --teal:         #2dd4bf;
+      --teal-dim:     rgba(45,212,191,.12);
+    }
+
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Raleway', sans-serif; font-weight: 400;
+      min-height: 100vh;
+    }
+
+    /* starfield */
+    #stars {
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse at 20% 30%, rgba(45,212,191,.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 70%, rgba(201,168,76,.06) 0%, transparent 50%),
+        var(--bg);
+      pointer-events: none;
+    }
+    #stars::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 40%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50%  8%, rgba(255,255,255,.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 55%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 20%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 60% 30%, rgba(255,255,255,.8) 0%, transparent 100%);
+      background-size: 400px 300px;
+      animation: twinkle 8s ease-in-out infinite alternate;
+    }
+    @keyframes twinkle { 0% { opacity:.5; } 100% { opacity:1; } }
+
+    /* ── Nav ── */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem; border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; background: var(--bg); z-index: 10;
+    }
+    .nav-logo { display: flex; align-items: center; gap: .6rem; text-decoration: none; }
+    .nav-logo span { font-size: 1rem; font-weight: 600; color: var(--gold); letter-spacing: .04em; font-family: 'Cinzel', serif; }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: .85rem; transition: color .2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+
+    /* ── Layout ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; position: relative; z-index: 1; }
+
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 {
+      font-size: 1.5rem; color: var(--gold); margin-bottom: .4rem;
+      font-family: 'Cinzel', serif; letter-spacing: .06em;
+    }
+    .page-header p { color: var(--muted); font-size: .9rem; line-height: 1.65; max-width: 660px; }
+
+    /* ── Form card ── */
+    .form-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 1.8rem; margin-bottom: 2rem;
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: .4rem; }
+    .form-group.full { grid-column: 1 / -1; }
+    label { font-size: .75rem; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; font-family: 'Cinzel', serif; }
+    input, select {
+      background: rgba(255,255,255,.05); border: 1px solid var(--border);
+      border-radius: 8px; padding: .6rem .85rem; color: var(--text);
+      font-size: .9rem; outline: none; width: 100%;
+    }
+    input:focus, select:focus { border-color: var(--gold); }
+    select option { background: #12131e; }
+
+    .btn-calc {
+      margin-top: 1.2rem; width: 100%; padding: .75rem; border: none; border-radius: 10px;
+      background: linear-gradient(135deg, var(--teal), #14b8a6);
+      color: #07080f; font-weight: 700; font-size: .9rem; cursor: pointer;
+      transition: opacity .2s; font-family: 'Cinzel', serif; letter-spacing: .06em;
+    }
+    .btn-calc:hover { opacity: .9; }
+    .btn-calc:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* ── Loading / error ── */
+    .loading { display: none; text-align: center; padding: 2rem; color: var(--muted); font-size: .9rem; }
+    .error-msg {
+      display: none; background: rgba(248,113,113,.1); border: 1px solid rgba(248,113,113,.3);
+      border-radius: 10px; padding: 1rem 1.2rem; color: #f87171; font-size: .9rem; margin-top: 1rem;
+    }
+
+    /* ── Result ── */
+    #result { display: none; }
+
+    .section { margin-bottom: 2.5rem; }
+    .section-title {
+      font-size: .65rem; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 1rem; padding-bottom: .5rem;
+      border-bottom: 1px solid var(--border); font-family: 'Cinzel', serif;
+    }
+
+    /* ── Summary chips ── */
+    .summary-bar { display: flex; gap: .8rem; flex-wrap: wrap; margin-bottom: 2rem; }
+    .summary-chip {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: .6rem 1rem; display: flex; flex-direction: column; gap: .2rem;
+    }
+    .summary-chip .chip-label { font-size: .62rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-family: 'Cinzel', serif; }
+    .summary-chip .chip-val { font-size: .92rem; color: var(--text); font-weight: 600; }
+
+    /* ── Big Four strip ── */
+    .big-strip {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: .8rem;
+      margin-bottom: 2rem;
+    }
+    .big-strip-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 1rem; text-align: center;
+    }
+    .big-strip-card .bsc-label { font-size: .6rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-family: 'Cinzel', serif; margin-bottom: .5rem; }
+    .big-strip-card .bsc-glyph { font-size: 1.6rem; color: var(--teal); margin-bottom: .25rem; }
+    .big-strip-card .bsc-name { font-size: .82rem; font-weight: 600; color: var(--text); font-family: 'Cinzel', serif; }
+
+    /* ── Planet table ── */
+    .planet-table { width: 100%; border-collapse: collapse; font-size: .83rem; }
+    .planet-table th {
+      text-align: left; padding: .5rem .8rem; font-size: .62rem; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border);
+      font-family: 'Cinzel', serif;
+    }
+    .planet-table td {
+      padding: .6rem .8rem; border-bottom: 1px solid rgba(255,255,255,.04);
+      vertical-align: middle;
+    }
+    .planet-table tr:hover td { background: rgba(255,255,255,.02); }
+    .planet-sym { font-size: 1rem; margin-right: .3rem; }
+    .sign-sym { color: var(--gold); margin-right: .2rem; }
+    .house-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; border-radius: 6px;
+      background: var(--teal-dim); color: var(--teal);
+      font-size: .7rem; font-weight: 700;
+    }
+    .house-badge.h10 { background: rgba(201,168,76,.15); color: var(--gold); }
+    .nak-text { color: var(--muted); font-size: .75rem; }
+    .dignity-note {
+      font-size: .68rem; padding: .1rem .35rem; border-radius: 4px; margin-left: .4rem;
+    }
+    .exalted   { background: rgba(134,239,172,.12); color: #86efac; }
+    .debilitated { background: rgba(248,113,113,.12); color: #f87171; }
+    .own-sign  { background: rgba(201,168,76,.12); color: var(--gold); }
+
+    /* ── Karakas strip ── */
+    .karakas-strip { display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .karaka-chip {
+      background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+      padding: .35rem .7rem; font-size: .72rem;
+    }
+    .karaka-chip .kl { color: var(--muted); margin-right: .3rem; }
+    .karaka-chip .kv { color: var(--text); font-weight: 600; }
+    .karaka-chip.amk { border-color: rgba(45,212,191,.3); background: rgba(45,212,191,.06); }
+    .karaka-chip.amk .kv { color: var(--teal); }
+
+    /* ── Indicator cards ── */
+    .indicator-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .indicator-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.2rem;
+    }
+    .indicator-card .ic-label {
+      font-size: .62rem; text-transform: uppercase; letter-spacing: .1em;
+      color: var(--muted); margin-bottom: .3rem; font-family: 'Cinzel', serif;
+    }
+    .indicator-card .ic-value {
+      font-size: 1rem; font-weight: 700; color: var(--teal); margin-bottom: .6rem;
+    }
+    .indicator-card .ic-text { font-size: .82rem; color: rgba(226,223,245,.8); line-height: 1.65; }
+    .indicator-card.full { grid-column: 1 / -1; }
+    .indicator-card.gold { border-color: rgba(201,168,76,.2); }
+    .indicator-card.gold .ic-value { color: var(--gold); }
+
+    /* ── Career profile card ── */
+    .career-card {
+      background: linear-gradient(135deg, rgba(45,212,191,.06), rgba(201,168,76,.04));
+      border: 1px solid rgba(45,212,191,.2); border-radius: 16px; padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .career-header { display: flex; align-items: center; gap: .8rem; margin-bottom: 1.2rem; }
+    .career-icon { font-size: 1.8rem; }
+    .career-title { font-size: 1rem; font-weight: 700; color: var(--teal); font-family: 'Cinzel', serif; }
+    .career-subtitle { font-size: .78rem; color: var(--muted); margin-top: .1rem; }
+    .career-rows { display: flex; flex-direction: column; gap: 1rem; }
+    .career-row-label {
+      font-size: .65rem; text-transform: uppercase; letter-spacing: .1em;
+      color: var(--muted); margin-bottom: .25rem; font-family: 'Cinzel', serif;
+    }
+    .career-row-text { font-size: .87rem; line-height: 1.65; color: var(--text); }
+
+    /* ── Planets in 10th ── */
+    .tenth-planets { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem; }
+    .tenth-planet-chip {
+      background: rgba(201,168,76,.08); border: 1px solid rgba(201,168,76,.2);
+      border-radius: 8px; padding: .3rem .7rem; font-size: .78rem; color: var(--gold-light);
+    }
+
+    /* ── Vargottama ── */
+    .vargottama-list { display: flex; flex-direction: column; gap: .75rem; }
+    .vargottama-item {
+      background: linear-gradient(135deg, rgba(45,212,191,.06), rgba(201,168,76,.04));
+      border: 1px solid rgba(45,212,191,.18); border-radius: 12px; padding: 1rem 1.2rem;
+    }
+    .vargottama-tag {
+      display: inline-flex; align-items: center; gap: .4rem;
+      font-family: 'Cinzel', serif; font-size: .72rem; font-weight: 600;
+      color: var(--teal); background: rgba(45,212,191,.08);
+      border: 1px solid rgba(45,212,191,.2); border-radius: 20px;
+      padding: .2rem .65rem; margin-bottom: .55rem;
+    }
+    .vargottama-interp { font-size: .82rem; line-height: 1.65; color: rgba(226,223,245,.85); }
+
+    /* ── Element balance ── */
+    .element-card {
+      background: linear-gradient(135deg, rgba(45,212,191,.05), rgba(124,92,191,.05));
+      border: 1px solid rgba(45,212,191,.15); border-radius: 14px;
+      padding: 1.2rem 1.4rem; margin-bottom: 1.5rem;
+    }
+    .element-header { display: flex; align-items: center; gap: .6rem; margin-bottom: .8rem; }
+    .element-title {
+      font-family: 'Cinzel', serif; font-size: .8rem; font-weight: 700;
+      color: var(--teal); text-transform: uppercase; letter-spacing: .08em;
+    }
+    .element-bars { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: .7rem; }
+    .element-bar { display: flex; align-items: center; gap: .4rem; }
+    .element-bar-fill { height: 7px; border-radius: 4px; min-width: 18px; }
+    .element-bar-label { font-size: .7rem; color: var(--muted); }
+
+    /* ── Spinner ── */
+    .spinner {
+      width: 28px; height: 28px; border: 3px solid rgba(45,212,191,.2);
+      border-top-color: var(--teal); border-radius: 50%;
+      animation: spin .7s linear infinite; margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 600px) {
+      .form-grid  { grid-template-columns: 1fr; }
+      .big-strip  { grid-template-columns: 1fr 1fr; }
+      .indicator-grid { grid-template-columns: 1fr; }
+      .indicator-card.full { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+<div id="stars"></div>
+
+<nav style="position:relative;z-index:10">
+  <a href="/" class="nav-logo">
+    <img src="/static/lion.svg?v=2" alt="logo" style="width:28px;height:28px;">
+    <span>Krieshan AI</span>
+  </a>
+  <div class="nav-links">
+    <a href="/">D1 Chart</a>
+    <a href="/navamsa">D9 Navamsa</a>
+    <a href="/d10" class="active">D10 Career</a>
+    <a href="/synastry">Synastry</a>
+    <a href="/journal">Journal</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <div class="page-header">
+    <h1>◈ D10 Dasamsa — Career & Purpose Chart</h1>
+    <p>
+      The Dasamsa (D10) divides each zodiac sign into 10 equal parts of 3° each, producing the
+      most precise chart for career, profession, and public life. It reveals your dharmic vocation,
+      the domains where recognition comes naturally, and the path to lasting professional success.
+    </p>
+  </div>
+
+  <!-- Form -->
+  <div class="form-card">
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="name">Name (optional)</label>
+        <input type="text" id="name" placeholder="Your name"/>
+      </div>
+      <div class="form-group">
+        <label for="city">Birth City</label>
+        <input type="text" id="city" placeholder="e.g. New York, USA"/>
+      </div>
+      <div class="form-group">
+        <label for="date">Birth Date</label>
+        <input type="date" id="date"/>
+      </div>
+      <div class="form-group">
+        <label for="time">Birth Time</label>
+        <input type="time" id="time"/>
+      </div>
+      <div class="form-group full">
+        <label for="ayanamsa">Ayanamsa System</label>
+        <select id="ayanamsa">
+          <option value="lahiri">Lahiri (IAU Official — most common)</option>
+          <option value="krishnamurti">Krishnamurti (KP System)</option>
+          <option value="true_chitrapaksha">True Chitrapaksha (Spica at 180°)</option>
+          <option value="fagan_bradley">Fagan-Bradley (Western Sidereal)</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-calc" id="calc-btn" onclick="calculate()">Calculate D10 Dasamsa</button>
+    <div class="error-msg" id="err"></div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    Calculating your Dasamsa chart…
+  </div>
+
+  <!-- Result -->
+  <div id="result">
+
+    <!-- Summary chips -->
+    <div class="summary-bar" id="summary-bar"></div>
+
+    <!-- Big Four -->
+    <div class="big-strip" id="big-strip">
+      <div class="big-strip-card">
+        <div class="bsc-label">↑ D10 Lagna</div>
+        <div class="bsc-glyph" id="bs-lagna-sym"></div>
+        <div class="bsc-name" id="bs-lagna-name"></div>
+      </div>
+      <div class="big-strip-card">
+        <div class="bsc-label">◈ 10th House D10</div>
+        <div class="bsc-glyph" id="bs-10th-sym"></div>
+        <div class="bsc-name" id="bs-10th-name"></div>
+      </div>
+      <div class="big-strip-card">
+        <div class="bsc-label">★ Amatyakaraka</div>
+        <div class="bsc-glyph" id="bs-amk-sym"></div>
+        <div class="bsc-name" id="bs-amk-name"></div>
+      </div>
+      <div class="big-strip-card">
+        <div class="bsc-label">♄ Saturn D10</div>
+        <div class="bsc-glyph" id="bs-sat-sym"></div>
+        <div class="bsc-name" id="bs-sat-name"></div>
+      </div>
+    </div>
+
+    <!-- Planet Table -->
+    <div class="section">
+      <div class="section-title">D10 Dasamsa Placements — All Planets</div>
+      <div style="overflow-x:auto">
+        <table class="planet-table">
+          <thead>
+            <tr>
+              <th>Planet</th>
+              <th>D1 Sign</th>
+              <th>→ D10 Sign</th>
+              <th>House</th>
+              <th>Nakshatra (D10)</th>
+            </tr>
+          </thead>
+          <tbody id="planet-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Karakas -->
+    <div class="section">
+      <div class="section-title">Chara Karakas — Jaimini Significators</div>
+      <div class="karakas-strip" id="karakas-strip"></div>
+      <p style="font-size:.8rem;color:var(--muted);line-height:1.6">
+        The <strong style="color:var(--teal)">Amatyakaraka (AmK)</strong> is your primary career
+        significator — the planet with the 2nd-highest degree. Its sign in D10, its natural significations,
+        and the domain it rules form the core of your professional destiny.
+        The <strong style="color:var(--gold-light)">Atmakaraka (AK)</strong> brings your soul's purpose into your career.
+      </p>
+    </div>
+
+    <!-- Career Indicators -->
+    <div class="section">
+      <div class="section-title">Career Indicators</div>
+      <div class="indicator-grid" id="indicators"></div>
+    </div>
+
+    <!-- Career Profile card -->
+    <div class="section">
+      <div class="section-title">Your Career Profile — 10th House</div>
+      <div class="career-card" id="career-card"></div>
+    </div>
+
+    <!-- Planets in 10th -->
+    <div class="section" id="tenth-planets-section" style="display:none">
+      <div class="section-title">Planets in the 10th House of D10</div>
+      <div class="tenth-planets" id="tenth-planets-list"></div>
+      <p id="tenth-planets-note" style="font-size:.83rem;color:rgba(226,223,245,.8);line-height:1.65"></p>
+    </div>
+
+    <!-- Vargottama -->
+    <div class="section" id="vargottama-section" style="display:none">
+      <div class="section-title">✦ Vargottama Planets in D10</div>
+      <p style="font-size:.8rem;color:var(--muted);line-height:1.6;margin-bottom:1rem">
+        A Vargottama planet occupies the same sign in both D1 and D10 — its career qualities are amplified,
+        consistent, and unmistakable in your professional life.
+      </p>
+      <div class="vargottama-list" id="vargottama-list"></div>
+    </div>
+
+    <!-- Element Balance -->
+    <div class="section">
+      <div class="section-title">Elemental Balance of D10</div>
+      <div class="element-card" id="element-card"></div>
+    </div>
+
+  </div><!-- /result -->
+</div><!-- /page -->
+
+<script>
+const SIGN_SYMBOLS = {
+  "Aries":"♈","Taurus":"♉","Gemini":"♊","Cancer":"♋","Leo":"♌","Virgo":"♍",
+  "Libra":"♎","Scorpio":"♏","Sagittarius":"♐","Capricorn":"♑","Aquarius":"♒","Pisces":"♓"
+};
+const PLANET_COLORS = {
+  "Sun":"#fbbf24","Moon":"#c4b5fd","Mercury":"#6ee7b7","Venus":"#f9a8d4",
+  "Mars":"#f87171","Jupiter":"#fde68a","Saturn":"#94a3b8","Rahu":"#a78bfa","Ketu":"#f97316"
+};
+const DIGNITY_MAP = {
+  "Sun-Aries":"exalted","Sun-Libra":"debilitated",
+  "Moon-Taurus":"exalted","Moon-Scorpio":"debilitated",
+  "Mars-Capricorn":"exalted","Mars-Cancer":"debilitated",
+  "Mercury-Virgo":"own-sign",
+  "Jupiter-Cancer":"exalted","Jupiter-Capricorn":"debilitated",
+  "Venus-Pisces":"exalted","Venus-Virgo":"debilitated",
+  "Venus-Taurus":"own-sign","Venus-Libra":"own-sign",
+  "Saturn-Libra":"exalted","Saturn-Aries":"debilitated",
+  "Saturn-Capricorn":"own-sign","Saturn-Aquarius":"own-sign",
+};
+const PLANET_ORDER = ["Ascendant","Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Rahu","Ketu","Midheaven"];
+const KARAKA_LABELS = {
+  AK:"Atmakaraka", AmK:"Amatyakaraka", BK:"Bhratrukaraka",
+  MK:"Matrukaraka", PiK:"Pitrukaraka", PuK:"Putrakaraka", DK:"Darakaraka"
+};
+const ELEM_COLORS = { Fire:"#f97316", Earth:"#84cc16", Air:"#38bdf8", Water:"#818cf8" };
+const ELEM_EMOJI  = { Fire:"🔥", Earth:"🌍", Air:"💨", Water:"🌊", Balanced:"⚖" };
+
+function dignityTag(planet, sign) {
+  const d = DIGNITY_MAP[`${planet}-${sign}`];
+  if (!d) return "";
+  return `<span class="dignity-note ${d}">${d === "own-sign" ? "own sign" : d}</span>`;
+}
+
+async function calculate() {
+  const btn     = document.getElementById("calc-btn");
+  const err     = document.getElementById("err");
+  const loading = document.getElementById("loading");
+  const result  = document.getElementById("result");
+
+  const date = document.getElementById("date").value;
+  const time = document.getElementById("time").value;
+  const city = document.getElementById("city").value.trim();
+
+  err.style.display = "none";
+  if (!date || !time || !city) {
+    err.textContent = "Please fill in birth date, time, and city.";
+    err.style.display = "block";
+    return;
+  }
+
+  btn.disabled = true;
+  loading.style.display = "block";
+  result.style.display  = "none";
+
+  try {
+    const res = await fetch("/api/d10", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name:     document.getElementById("name").value.trim(),
+        date, time, city,
+        ayanamsa: document.getElementById("ayanamsa").value,
+      }),
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    render(data);
+  } catch (e) {
+    err.textContent = e.message;
+    err.style.display = "block";
+  } finally {
+    btn.disabled = false;
+    loading.style.display = "none";
+  }
+}
+
+function render(data) {
+  const d = data.dasamsa;
+  const pl = d.placements || {};
+
+  // ── Summary bar ─────────────────────────────────────────────────────────
+  document.getElementById("summary-bar").innerHTML = [
+    { label: "Name",         val: data.name || "—" },
+    { label: "D10 Lagna",    val: d.d10_lagna_sign },
+    { label: "10th House",   val: d.d10_10th_sign },
+    { label: "Amatyakaraka", val: d.amatyakaraka },
+    { label: "Sun D10",      val: d.d10_sun_sign },
+    { label: "Saturn D10",   val: d.d10_saturn_sign },
+    { label: "Ayanamsa",     val: data.ayanamsa_label },
+  ].map(c => `
+    <div class="summary-chip">
+      <div class="chip-label">${c.label}</div>
+      <div class="chip-val">${c.val || "—"}</div>
+    </div>`).join("");
+
+  // ── Big Four ─────────────────────────────────────────────────────────────
+  const lagna = pl["Ascendant"] || {};
+  const sat   = pl["Saturn"]    || {};
+  const amkPl = pl[d.amatyakaraka] || {};
+  document.getElementById("bs-lagna-sym").textContent = SIGN_SYMBOLS[d.d10_lagna_sign]   || "";
+  document.getElementById("bs-lagna-name").textContent = d.d10_lagna_sign                || "";
+  document.getElementById("bs-10th-sym").textContent  = SIGN_SYMBOLS[d.d10_10th_sign]    || "";
+  document.getElementById("bs-10th-name").textContent  = d.d10_10th_sign                  || "";
+  document.getElementById("bs-amk-sym").textContent   = amkPl.symbol                     || "★";
+  document.getElementById("bs-amk-name").textContent   = d.amatyakaraka                   || "";
+  document.getElementById("bs-sat-sym").textContent   = SIGN_SYMBOLS[d.d10_saturn_sign]  || "";
+  document.getElementById("bs-sat-name").textContent   = d.d10_saturn_sign                || "";
+
+  // ── Planet table ─────────────────────────────────────────────────────────
+  document.getElementById("planet-tbody").innerHTML = PLANET_ORDER
+    .filter(p => pl[p])
+    .map(p => {
+      const row = pl[p];
+      const dg  = dignityTag(p, row.d10_sign);
+      const hCls = row.d10_house === 10 ? " h10" : "";
+      return `<tr>
+        <td><span class="planet-sym" style="color:${PLANET_COLORS[p]||'var(--text)'}">${row.symbol||""}</span>${p}</td>
+        <td><span class="sign-sym">${row.d1_sign_symbol||""}</span>${row.d1_sign} <span style="color:var(--muted);font-size:.73rem">${row.d1_degree}°</span></td>
+        <td><span class="sign-sym">${row.d10_sign_symbol||""}</span>${row.d10_sign} <span style="color:var(--muted);font-size:.73rem">${row.d10_degree}°</span>${dg}</td>
+        <td><span class="house-badge${hCls}" title="${row.d10_house===10?'10th house':'house '+row.d10_house}">${row.d10_house||"—"}</span></td>
+        <td class="nak-text">${row.nakshatra} (pada ${row.nakshatra_pada})</td>
+      </tr>`;
+    }).join("");
+
+  // ── Karakas strip ─────────────────────────────────────────────────────────
+  document.getElementById("karakas-strip").innerHTML = Object.entries(d.karakas || {})
+    .map(([k, p]) => `
+      <div class="karaka-chip ${k==="AmK"?"amk":""}">
+        <span class="kl">${KARAKA_LABELS[k]||k}</span>
+        <span class="kv">${(k==="AK"||k==="AmK")?"★ ":""}${p}</span>
+      </div>`).join("");
+
+  // ── Indicator cards ───────────────────────────────────────────────────────
+  const indicators = [
+    {
+      label: "D10 Lagna — Professional Persona",
+      value: `${SIGN_SYMBOLS[d.d10_lagna_sign]||""} ${d.d10_lagna_sign}`,
+      text: d.lagna_interp, full: false, gold: false,
+    },
+    {
+      label: `Amatyakaraka — ${d.amatyakaraka} (Career Significator)`,
+      value: `${amkPl.symbol||"★"} ${d.amatyakaraka} in D10: ${d.amatyakaraka_d10_sign}`,
+      text: d.amk_interp, full: false, gold: true,
+    },
+    {
+      label: "Sun in D10 — Authority & Leadership",
+      value: `${SIGN_SYMBOLS[d.d10_sun_sign]||""} ${d.d10_sun_sign}`,
+      text: d.sun_interp, full: false, gold: false,
+    },
+    {
+      label: "Saturn in D10 — Career Karma & Discipline",
+      value: `${SIGN_SYMBOLS[d.d10_saturn_sign]||""} ${d.d10_saturn_sign}`,
+      text: d.saturn_interp, full: false, gold: false,
+    },
+    {
+      label: "Mercury in D10 — Professional Skills",
+      value: `${SIGN_SYMBOLS[d.d10_mercury_sign]||""} ${d.d10_mercury_sign}`,
+      text: d.mercury_interp, full: false, gold: false,
+    },
+    {
+      label: `Atmakaraka — ${d.atmakaraka} (Soul Purpose in Career)`,
+      value: `${(pl[d.atmakaraka]||{}).symbol||""} ${d.atmakaraka} → D10 ${d.atmakaraka_d10_sign}`,
+      text: `Your ${d.atmakaraka} Atmakaraka placed in ${d.atmakaraka_d10_sign} in D10 reveals how your soul's highest purpose intersects with your public life and career. The work that aligns with your Atmakaraka's nature is the work that will feel most deeply meaningful — and the path where you will have the most to contribute.`,
+      full: false, gold: false,
+    },
+    {
+      label: `10th House D10 — ${d.d10_10th_sign} — Career Domain`,
+      value: `${SIGN_SYMBOLS[d.d10_10th_sign]||""} ${d.d10_10th_sign} (10th from D10 Lagna)`,
+      text: (d.tenth_interp||{}).domain || "", full: true, gold: true,
+    },
+  ];
+  document.getElementById("indicators").innerHTML = indicators.map(c => `
+    <div class="indicator-card ${c.full?"full":""} ${c.gold?"gold":""}">
+      <div class="ic-label">${c.label}</div>
+      <div class="ic-value">${c.value}</div>
+      <div class="ic-text">${c.text||""}</div>
+    </div>`).join("");
+
+  // ── Career Profile card ───────────────────────────────────────────────────
+  const tp = d.tenth_interp || {};
+  const tl = d.d10_10th_lord;
+  document.getElementById("career-card").innerHTML = `
+    <div class="career-header">
+      <div class="career-icon">◈</div>
+      <div>
+        <div class="career-title">Career Profile — ${d.d10_10th_sign} 10th House</div>
+        <div class="career-subtitle">Based on D10 10th house sign, 10th lord (${tl}), and Amatyakaraka (${d.amatyakaraka})</div>
+      </div>
+    </div>
+    <div class="career-rows">
+      ${tp.domain ? `<div>
+        <div class="career-row-label">Career Domain</div>
+        <div class="career-row-text">${tp.domain}</div>
+      </div>` : ""}
+      ${tp.professions ? `<div>
+        <div class="career-row-label">Aligned Professions</div>
+        <div class="career-row-text">${tp.professions}</div>
+      </div>` : ""}
+      ${tp.success_path ? `<div>
+        <div class="career-row-label">Path to Success</div>
+        <div class="career-row-text">${tp.success_path}</div>
+      </div>` : ""}
+      <div>
+        <div class="career-row-label">10th Lord — ${tl} in D10</div>
+        <div class="career-row-text">
+          The lord of your D10 10th house is <strong style="color:var(--teal)">${tl}</strong>,
+          placed in <strong style="color:var(--teal)">${d.d10_10th_lord_sign}</strong>
+          (house <strong style="color:var(--teal)">${d.d10_10th_lord_house}</strong>) of the Dasamsa.
+          ${d.d10_10th_lord_sign ? `The qualities of ${d.d10_10th_lord_sign} color how your career goals mature and how professional recognition arrives.` : ""}
+        </div>
+      </div>
+    </div>`;
+
+  // ── Planets in 10th ───────────────────────────────────────────────────────
+  const p10 = d.planets_in_10th || [];
+  const p10Section = document.getElementById("tenth-planets-section");
+  if (p10.length > 0) {
+    document.getElementById("tenth-planets-list").innerHTML = p10
+      .map(p => `<div class="tenth-planet-chip">${p.symbol} ${p.planet} in ${p.sign}</div>`)
+      .join("");
+    document.getElementById("tenth-planets-note").textContent =
+      `Planets in the 10th house of D10 are especially visible in your career. ` +
+      `${p10.map(p => p.planet).join(", ")} ${p10.length === 1 ? "brings" : "bring"} ` +
+      `${p10.length === 1 ? "its" : "their"} energy directly to bear on your public life and reputation. ` +
+      `These placements often indicate the domains that will define your professional legacy.`;
+    p10Section.style.display = "";
+  } else {
+    p10Section.style.display = "none";
+  }
+
+  // ── Vargottama ────────────────────────────────────────────────────────────
+  const vp = d.vargottama_planets || [];
+  const vpSection = document.getElementById("vargottama-section");
+  if (vp.length > 0) {
+    document.getElementById("vargottama-list").innerHTML = vp.map(v => `
+      <div class="vargottama-item">
+        <div class="vargottama-tag">${v.symbol} ${v.planet} in ${v.sign} ✦ Vargottama</div>
+        <div class="vargottama-interp">${v.interp}</div>
+      </div>`).join("");
+    vpSection.style.display = "";
+  } else {
+    vpSection.style.display = "none";
+  }
+
+  // ── Elemental Balance ─────────────────────────────────────────────────────
+  const ec = d.element_counts || {};
+  const dom = d.dominant_element || "Balanced";
+  const total = Object.values(ec).reduce((a,b)=>a+b,0) || 1;
+  document.getElementById("element-card").innerHTML = `
+    <div class="element-header">
+      <span style="font-size:1.3rem">${ELEM_EMOJI[dom]||"⚖"}</span>
+      <span class="element-title">${dom} Dominant — Career Elemental Balance</span>
+    </div>
+    <div class="element-bars">
+      ${["Fire","Earth","Air","Water"].map(el => {
+        const cnt = ec[el] || 0;
+        const pct = Math.max(Math.round((cnt/total)*90), 12);
+        return `<div class="element-bar">
+          <div class="element-bar-fill" style="width:${pct}px;background:${ELEM_COLORS[el]};opacity:.75"></div>
+          <span class="element-bar-label">${el} ${cnt}</span>
+        </div>`;
+      }).join("")}
+    </div>
+    <p style="font-size:.83rem;color:rgba(226,223,245,.8);line-height:1.65">
+      ${domElementCareerNote(dom)}
+    </p>`;
+
+  document.getElementById("result").style.display = "block";
+  document.getElementById("result").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function domElementCareerNote(el) {
+  const notes = {
+    Fire:     "Your D10 chart is Fire-dominant — Aries, Leo, and Sagittarius energize your career. You are built for leadership, initiation, and high-visibility roles. The career thrives when you are given autonomy, a bold vision, and permission to move fast. Bureaucracy and slow-moving institutions drain your professional energy; the work that fits is the work that demands courage and rewards it.",
+    Earth:    "Your D10 chart is Earth-dominant — Taurus, Virgo, and Capricorn anchor your career. You build steadily, produce tangible results, and are at your best in roles that reward reliability and long-term vision. The career thrives when there is structure, measurable output, and the satisfaction of genuine mastery over time. Quick-change industries or roles without clear deliverables tend to frustrate your professional nature.",
+    Air:      "Your D10 chart is Air-dominant — Gemini, Libra, and Aquarius energize your career. You thrive in roles that involve communication, ideas, collaboration, and the exchange of information. The career thrives in environments where thinking out loud is valued, where connections between concepts matter, and where the ability to influence through words and ideas is the primary currency. Isolated or purely physical work tends to constrain your professional expression.",
+    Water:    "Your D10 chart is Water-dominant — Cancer, Scorpio, and Pisces define your career energy. You bring extraordinary emotional intelligence, intuitive reading of environments, and deep sensitivity to your professional life. The career thrives when you are working in service of others, in healing professions, creative fields, or roles that require empathy and psychological depth. Highly competitive or emotionally arid workplaces tend to deplete rather than sustain you.",
+    Balanced: "Your D10 chart shows a balanced elemental distribution — no single element dominates. This gives you unusual versatility: you can adapt to many professional environments and find common ground across very different organizational cultures. The practice with a balanced D10 is clarity about your deepest vocational pull, since the chart does not give a single strong signal — that knowledge must come from honest self-reflection about where your energy is most naturally expressed.",
+  };
+  return notes[el] || "";
+}
+</script>
+
+</body>
+</html>

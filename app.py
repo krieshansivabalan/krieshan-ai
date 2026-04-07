@@ -11,7 +11,7 @@ from authlib.integrations.flask_client import OAuth
 
 from models import db, User, BirthChart, Subscription, JournalEntry
 from auth import auth_bp, init_oauth
-from astrology import get_chart, get_transits, get_today_moon_nakshatra, AYANAMSA_EXPLAINERS, get_navamsa_chart
+from astrology import get_chart, get_transits, get_today_moon_nakshatra, AYANAMSA_EXPLAINERS, get_navamsa_chart, get_dasamsa_chart
 from characters import get_characters
 from interpretations import (
     get_daily_horoscope, get_nakshatra_ritual, get_dasha_interpretation,
@@ -119,6 +119,12 @@ def navamsa():
     return render_template("navamsa.html", user=current_user, ayanamsa_explainers=AYANAMSA_EXPLAINERS)
 
 
+@app.route("/d10")
+@login_required
+def d10():
+    return render_template("d10.html", user=current_user, ayanamsa_explainers=AYANAMSA_EXPLAINERS)
+
+
 # ── Chart calculation ─────────────────────────────────────────────
 @app.route("/chart", methods=["POST"])
 @login_required
@@ -174,6 +180,9 @@ def chart():
         # D9 Navamsa chart
         navamsa = get_navamsa_chart(result["placements"])
 
+        # D10 Dasamsa chart
+        dasamsa = get_dasamsa_chart(result["placements"])
+
         # Persist to database
         birth_chart = BirthChart(
             user_id=current_user.id,
@@ -190,7 +199,7 @@ def chart():
         db.session.add(birth_chart)
         db.session.commit()
 
-        return jsonify({**result, "chart_id": birth_chart.id, "characters": characters, "navamsa": navamsa})
+        return jsonify({**result, "chart_id": birth_chart.id, "characters": characters, "navamsa": navamsa, "dasamsa": dasamsa})
 
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
@@ -234,6 +243,50 @@ def api_navamsa():
             "moon_sign":       result["moon_sign"],
             "rising_sign":     result["rising_sign"],
             "navamsa":         navamsa,
+        })
+
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": f"Calculation error: {str(e)}"}), 500
+
+
+@app.route("/api/d10", methods=["POST"])
+@login_required
+def api_d10():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No data received."}), 400
+
+        name            = (data.get("name") or "").strip()
+        date            = (data.get("date") or "").strip()
+        time_val        = (data.get("time") or "").strip()
+        city            = (data.get("city") or "").strip()
+        ayanamsa_system = (data.get("ayanamsa") or "lahiri").strip()
+
+        if not date:
+            return jsonify({"error": "Please enter a birth date."}), 400
+        if not time_val:
+            return jsonify({"error": "Please enter a birth time."}), 400
+        if not city:
+            return jsonify({"error": "Please enter a birth city."}), 400
+
+        result  = get_chart(name, date, time_val, city, ayanamsa_system=ayanamsa_system)
+        dasamsa = get_dasamsa_chart(result["placements"])
+
+        return jsonify({
+            "name":           result["name"],
+            "date":           result["date"],
+            "time":           result["time"],
+            "city":           result["city"],
+            "full_address":   result["full_address"],
+            "ayanamsa_label": result["ayanamsa_label"],
+            "sun_sign":       result["sun_sign"],
+            "moon_sign":      result["moon_sign"],
+            "rising_sign":    result["rising_sign"],
+            "dasamsa":        dasamsa,
         })
 
     except ValueError as e:

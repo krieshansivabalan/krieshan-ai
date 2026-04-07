@@ -1366,8 +1366,9 @@
   <div class="container">
     <div class="header-meta">
       <div class="chart-tabs" id="chart-tabs">
-        <button class="chart-tab active" id="tab-d1-btn" onclick="switchChartTab('d1')">D1 Chart</button>
-        <button class="chart-tab"        id="tab-d9-btn" onclick="switchChartTab('d9')">D9 Navamsa</button>
+        <button class="chart-tab active" id="tab-d1-btn"  onclick="switchChartTab('d1')">D1 Chart</button>
+        <button class="chart-tab"        id="tab-d9-btn"  onclick="switchChartTab('d9')">D9 Navamsa</button>
+        <button class="chart-tab"        id="tab-d10-btn" onclick="switchChartTab('d10')">D10 Career</button>
       </div>
       <a href="/synastry" class="nav-top-link">Synastry</a>
       <a href="/journal"  class="nav-top-link">Journal</a>
@@ -1977,6 +1978,109 @@
       </div>
     </div><!-- /pane-d9 -->
 
+    <!-- ════════════════════════════════════════════════════════════
+         D10 DASAMSA PANE
+    ════════════════════════════════════════════════════════════ -->
+    <div id="pane-d10" style="display:none">
+
+      <!-- Placeholder -->
+      <div class="d9-cta" id="d10-placeholder">
+        <strong>◈ D10 Dasamsa — Career &amp; Purpose Chart</strong>
+        Calculate your D1 birth chart first — your Dasamsa career reading will appear here automatically.
+      </div>
+
+      <!-- D10 Reading -->
+      <div id="d10-reading" style="display:none">
+
+        <!-- Big Four -->
+        <div class="big-four" id="d10-big-four" style="margin-bottom:2rem">
+          <div class="big-four-card">
+            <div class="label">↑ D10 Lagna</div>
+            <div class="sign-symbol" id="d10-lagna-sym"></div>
+            <div class="sign-name"   id="d10-lagna-name"></div>
+          </div>
+          <div class="big-four-card">
+            <div class="label">◈ 10th House</div>
+            <div class="sign-symbol" id="d10-tenth-sym"></div>
+            <div class="sign-name"   id="d10-tenth-name"></div>
+          </div>
+          <div class="big-four-card">
+            <div class="label">★ Amatyakaraka</div>
+            <div class="sign-symbol" id="d10-amk-sym"></div>
+            <div class="sign-name"   id="d10-amk-name"></div>
+          </div>
+          <div class="big-four-card mc-card">
+            <div class="label">♄ Saturn D10</div>
+            <div class="sign-symbol" id="d10-sat-sym"></div>
+            <div class="sign-name"   id="d10-sat-name"></div>
+          </div>
+        </div>
+
+        <!-- Planet Table -->
+        <div class="section-title">D10 Dasamsa Placements</div>
+        <div style="overflow-x:auto;margin-bottom:1.5rem">
+          <table class="d9-planet-table">
+            <thead>
+              <tr>
+                <th>Planet</th>
+                <th>D1 Sign</th>
+                <th>→ D10 Sign</th>
+                <th>House</th>
+                <th>Nakshatra (D10)</th>
+              </tr>
+            </thead>
+            <tbody id="d10-planet-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- Chara Karakas -->
+        <div class="section-title">Chara Karakas</div>
+        <div class="d9-karakas-strip" id="d10-karakas-strip"></div>
+        <p style="font-size:.78rem;color:var(--muted);line-height:1.6;margin-bottom:1.5rem">
+          The <strong style="color:var(--gold-light)">Amatyakaraka (AmK)</strong> — 2nd-highest degree planet — is your career significator in Jaimini astrology.
+          The <strong style="color:var(--gold-light)">Atmakaraka (AK)</strong> connects your soul's purpose to your professional calling.
+        </p>
+
+        <!-- Career Indicators -->
+        <div class="section-title">Career Indicators</div>
+        <div class="d9-indicators" id="d10-indicators"></div>
+
+        <!-- Career Profile card -->
+        <div class="d9-partner-card" id="d10-career-card" style="border-color:rgba(45,212,191,.18);background:linear-gradient(135deg,rgba(45,212,191,.05),rgba(201,168,76,.04))"></div>
+
+        <!-- Planets in 10th -->
+        <div id="d10-tenth-planets-section" style="display:none">
+          <div class="section-title">Planets in the 10th House of D10</div>
+          <div class="d9-karakas-strip" id="d10-tenth-planets-list"></div>
+          <p id="d10-tenth-planets-note" style="font-size:.83rem;color:rgba(226,223,245,.8);line-height:1.65;margin-bottom:1.5rem"></p>
+        </div>
+
+        <!-- Deeper Insights: Sun / Saturn / Mercury -->
+        <div class="section-title">Deeper Career Insights</div>
+        <div class="d9-insight-grid" id="d10-personality-insights"></div>
+
+        <!-- Vargottama -->
+        <div id="d10-vargottama-section" style="display:none">
+          <div class="section-title">✦ Vargottama Planets in D10</div>
+          <p style="font-size:.8rem;color:var(--muted);line-height:1.6;margin-bottom:1rem">
+            A Vargottama planet occupies the same sign in D1 and D10 — its career qualities are amplified and unmistakable.
+          </p>
+          <div class="d9-vargottama-list" id="d10-vargottama-list"></div>
+        </div>
+
+        <!-- Elemental Balance -->
+        <div class="d9-element-card" id="d10-element-card" style="display:none;border-color:rgba(45,212,191,.15)">
+          <div class="d9-element-header">
+            <span style="font-size:1.4rem" id="d10-element-icon">⚖</span>
+            <div class="d9-element-title" id="d10-element-title" style="color:#2dd4bf">Elemental Balance</div>
+          </div>
+          <div class="d9-element-bars" id="d10-element-bars"></div>
+          <div class="d9-element-interp" id="d10-element-interp"></div>
+        </div>
+
+      </div><!-- /d10-reading -->
+    </div><!-- /pane-d10 -->
+
   </div>
 
   <!-- Deep Analysis Modal -->
@@ -2421,6 +2525,9 @@
 
     // D9 Navamsa (auto-rendered alongside D1)
     renderD9(data.navamsa || null);
+
+    // D10 Dasamsa (auto-rendered alongside D1)
+    renderD10(data.dasamsa || null);
 
     // Daily Horoscope
     loadDailyHoroscope(data.sun_sign, data.moon_sign, data.rising_sign);
@@ -3310,10 +3417,12 @@
 
   // ── Chart Tabs ────────────────────────────────────────────────
   function switchChartTab(tab) {
-    document.getElementById('pane-d1').style.display = (tab === 'd1') ? '' : 'none';
-    document.getElementById('pane-d9').style.display = (tab === 'd9') ? '' : 'none';
-    document.getElementById('tab-d1-btn').classList.toggle('active', tab === 'd1');
-    document.getElementById('tab-d9-btn').classList.toggle('active', tab === 'd9');
+    ['d1','d9','d10'].forEach(t => {
+      const pane = document.getElementById('pane-' + t);
+      const btn  = document.getElementById('tab-' + t + '-btn');
+      if (pane) pane.style.display = (t === tab) ? '' : 'none';
+      if (btn)  btn.classList.toggle('active', t === tab);
+    });
   }
 
   // ── D9 Navamsa Rendering ──────────────────────────────────────
@@ -3486,6 +3595,168 @@
 
     document.getElementById('d9-placeholder').style.display = 'none';
     document.getElementById('d9-reading').style.display = '';
+  }
+
+  // ── D10 Dasamsa Rendering ─────────────────────────────────────
+  const D10_ELEM_COLORS = { Fire:'#f97316', Earth:'#84cc16', Air:'#38bdf8', Water:'#818cf8' };
+  const D10_ELEM_EMOJI  = { Fire:'🔥', Earth:'🌍', Air:'💨', Water:'🌊', Balanced:'⚖' };
+  const D10_ELEM_NOTES  = {
+    Fire:     'Fire-dominant D10 — you thrive in leadership, pioneering roles, and high-visibility work. Autonomy and bold vision are your fuel.',
+    Earth:    'Earth-dominant D10 — you build steadily, produce tangible results, and excel in roles that reward reliability and long-term mastery.',
+    Air:      'Air-dominant D10 — communication, ideas, and collaboration energize your career. You influence through words, connections, and concepts.',
+    Water:    'Water-dominant D10 — emotional intelligence and intuition drive your professional life. Healing, creative, and empathic roles suit you best.',
+    Balanced: 'Balanced D10 — you adapt across many professional environments. Self-reflection about your deepest vocational pull is key.',
+  };
+
+  function renderD10(d) {
+    if (!d) return;
+    const pl = d.placements || {};
+
+    // Big Four
+    document.getElementById('d10-lagna-sym').textContent  = SIGN_SYMBOLS_JS[d.d10_lagna_sign]   || '';
+    document.getElementById('d10-lagna-name').textContent = d.d10_lagna_sign                      || '';
+    document.getElementById('d10-tenth-sym').textContent  = SIGN_SYMBOLS_JS[d.d10_10th_sign]     || '';
+    document.getElementById('d10-tenth-name').textContent = d.d10_10th_sign                       || '';
+    document.getElementById('d10-amk-sym').textContent    = (pl[d.amatyakaraka]||{}).symbol      || '★';
+    document.getElementById('d10-amk-name').textContent   = d.amatyakaraka                        || '';
+    document.getElementById('d10-sat-sym').textContent    = SIGN_SYMBOLS_JS[d.d10_saturn_sign]   || '';
+    document.getElementById('d10-sat-name').textContent   = d.d10_saturn_sign                     || '';
+
+    // Planet table
+    const tbody = document.getElementById('d10-planet-tbody');
+    tbody.innerHTML = PLANET_ORDER.filter(p => pl[p]).map(p => {
+      const row = pl[p];
+      const dKey = `${p}-${row.d10_sign}`;
+      const dClass = D9_DIGNITY_MAP[dKey] || '';
+      const dTag = dClass ? `<span class="d9-dignity ${dClass}">${dClass === 'own-sign' ? 'own sign' : dClass}</span>` : '';
+      const hCls = row.d10_house === 10 ? 'style="background:rgba(201,168,76,.15);color:var(--gold)"' : '';
+      return `<tr>
+        <td><span style="color:${PLANET_COLORS[p]||'var(--text)'};margin-right:.3rem">${row.symbol||''}</span>${p}</td>
+        <td><span style="color:var(--gold);margin-right:.2rem">${row.d1_sign_symbol||''}</span>${row.d1_sign} <span style="color:var(--muted);font-size:.72rem">${row.d1_degree}°</span></td>
+        <td><span style="color:var(--gold);margin-right:.2rem">${row.d10_sign_symbol||''}</span>${row.d10_sign} <span style="color:var(--muted);font-size:.72rem">${row.d10_degree}°</span>${dTag}</td>
+        <td><span class="d9-house-badge" ${hCls}>${row.d10_house||'—'}</span></td>
+        <td style="color:var(--muted);font-size:.75rem">${row.nakshatra} (pada ${row.nakshatra_pada})</td>
+      </tr>`;
+    }).join('');
+
+    // Karakas
+    document.getElementById('d10-karakas-strip').innerHTML = Object.entries(d.karakas || {}).map(([k, p]) =>
+      `<div class="d9-karaka-chip ${k==='AmK'?'style="border-color:rgba(45,212,191,.3);background:rgba(45,212,191,.06)"':''}">
+        <span class="kl">${D9_KARAKA_LABELS[k]||k}</span>
+        <span class="kv" ${k==='AmK'?'style="color:#2dd4bf"':''}>${(k==='AK'||k==='AmK')?'★ ':''}${p}</span>
+      </div>`
+    ).join('');
+
+    // Indicator cards
+    const amkPl = pl[d.amatyakaraka] || {};
+    const indicators = [
+      { label:'D10 Lagna — Professional Persona',            value:`${SIGN_SYMBOLS_JS[d.d10_lagna_sign]||''} ${d.d10_lagna_sign}`,        text:d.lagna_interp },
+      { label:`Amatyakaraka — ${d.amatyakaraka} (Career)`,  value:`${amkPl.symbol||'★'} ${d.amatyakaraka} → D10 ${d.amatyakaraka_d10_sign}`, text:d.amk_interp, gold:true },
+      { label:'Sun in D10 — Authority & Leadership',         value:`${SIGN_SYMBOLS_JS[d.d10_sun_sign]||''} ${d.d10_sun_sign}`,             text:d.sun_interp },
+      { label:'Saturn in D10 — Career Karma',                value:`${SIGN_SYMBOLS_JS[d.d10_saturn_sign]||''} ${d.d10_saturn_sign}`,       text:d.saturn_interp },
+      { label:'10th House D10 — Career Domain',              value:`${SIGN_SYMBOLS_JS[d.d10_10th_sign]||''} ${d.d10_10th_sign}`,           text:(d.tenth_interp||{}).domain||'', full:true, gold:true },
+    ];
+    document.getElementById('d10-indicators').innerHTML = indicators.map(c =>
+      `<div class="d9-indicator${c.full?' full':''}">
+        <div class="d9-indicator-label">${c.label}</div>
+        <div class="d9-indicator-value" ${c.gold?'style="color:var(--gold)"':''}>${c.value}</div>
+        <div class="d9-indicator-text">${c.text||''}</div>
+      </div>`
+    ).join('');
+
+    // Career profile card
+    const tp = d.tenth_interp || {};
+    const tl = d.d10_10th_lord;
+    document.getElementById('d10-career-card').innerHTML = `
+      <div class="d9-partner-header">
+        <span style="font-size:1.8rem">◈</span>
+        <div>
+          <div class="d9-partner-title" style="color:#2dd4bf">Career Profile — ${d.d10_10th_sign} 10th House</div>
+          <div class="d9-partner-sub">Based on D10 10th house, 10th lord (${tl}), and Amatyakaraka (${d.amatyakaraka})</div>
+        </div>
+      </div>
+      <div class="d9-partner-rows">
+        ${tp.domain?`<div><div class="d9-partner-row-label">Career Domain</div><div class="d9-partner-row-text">${tp.domain}</div></div>`:''}
+        ${tp.professions?`<div><div class="d9-partner-row-label">Aligned Professions</div><div class="d9-partner-row-text">${tp.professions}</div></div>`:''}
+        ${tp.success_path?`<div><div class="d9-partner-row-label">Path to Success</div><div class="d9-partner-row-text">${tp.success_path}</div></div>`:''}
+        <div>
+          <div class="d9-partner-row-label">10th Lord — ${tl} in D10</div>
+          <div class="d9-partner-row-text">
+            The lord of your D10 10th house is <strong style="color:#2dd4bf">${tl}</strong>,
+            placed in <strong style="color:#2dd4bf">${d.d10_10th_lord_sign}</strong>
+            (house <strong style="color:#2dd4bf">${d.d10_10th_lord_house}</strong>) of the Dasamsa.
+            ${d.d10_10th_lord_sign?`The qualities of ${d.d10_10th_lord_sign} color how your career goals mature and how professional recognition arrives.`:''}
+          </div>
+        </div>
+      </div>`;
+
+    // Planets in 10th
+    const p10 = d.planets_in_10th || [];
+    const p10sec = document.getElementById('d10-tenth-planets-section');
+    if (p10.length > 0) {
+      document.getElementById('d10-tenth-planets-list').innerHTML = p10
+        .map(p => `<div class="d9-karaka-chip" style="border-color:rgba(201,168,76,.25);color:var(--gold-light)">${p.symbol} ${p.planet} in ${p.sign}</div>`)
+        .join('');
+      document.getElementById('d10-tenth-planets-note').textContent =
+        `${p10.map(p=>p.planet).join(', ')} ${p10.length===1?'is':'are'} placed in the 10th house of D10 — directly energizing your public career and reputation. These planets define visible themes in your professional life and often indicate the domain that will define your legacy.`;
+      p10sec.style.display = '';
+    } else {
+      p10sec.style.display = 'none';
+    }
+
+    // Deeper Insights: Sun / Saturn / Mercury
+    const insights = [
+      { icon:'☉', title:`Sun in D10 — ${d.d10_sun_sign}`,     text: d.sun_interp },
+      { icon:'♄', title:`Saturn in D10 — ${d.d10_saturn_sign}`, text: d.saturn_interp },
+      { icon:'☿', title:`Mercury in D10 — ${d.d10_mercury_sign}`, text: d.mercury_interp },
+    ];
+    document.getElementById('d10-personality-insights').innerHTML = insights
+      .filter(c => c.text)
+      .map(c => `
+        <div class="d9-insight-card">
+          <div class="d9-insight-header">
+            <span class="d9-insight-icon">${c.icon}</span>
+            <span class="d9-insight-title" style="color:var(--teal,#2dd4bf)">${c.title}</span>
+          </div>
+          <div class="d9-insight-text">${c.text}</div>
+        </div>`).join('');
+
+    // Vargottama
+    const vp = d.vargottama_planets || [];
+    const vpSec = document.getElementById('d10-vargottama-section');
+    if (vp.length > 0) {
+      document.getElementById('d10-vargottama-list').innerHTML = vp.map(v => `
+        <div class="d9-vargottama-item" style="border-color:rgba(45,212,191,.18)">
+          <div class="d9-vargottama-tag" style="color:#2dd4bf;background:rgba(45,212,191,.08);border-color:rgba(45,212,191,.2)">
+            ${v.symbol} ${v.planet} in ${v.sign} ✦ Vargottama
+          </div>
+          <div class="d9-vargottama-interp">${v.interp}</div>
+        </div>`).join('');
+      vpSec.style.display = '';
+    } else {
+      vpSec.style.display = 'none';
+    }
+
+    // Elemental Balance
+    const ec = d.element_counts || {};
+    const dom = d.dominant_element || 'Balanced';
+    const total = Object.values(ec).reduce((a,b)=>a+b,0) || 1;
+    const elCard = document.getElementById('d10-element-card');
+    document.getElementById('d10-element-icon').textContent  = D10_ELEM_EMOJI[dom] || '⚖';
+    document.getElementById('d10-element-title').textContent = `${dom} Dominant — Career Elemental Balance`;
+    document.getElementById('d10-element-bars').innerHTML = ['Fire','Earth','Air','Water'].map(el => {
+      const cnt = ec[el]||0;
+      const px  = Math.max(Math.round((cnt/total)*90), 12);
+      return `<div class="d9-element-bar">
+        <div class="d9-element-bar-fill" style="width:${px}px;background:${D10_ELEM_COLORS[el]};opacity:.75"></div>
+        <span class="d9-element-bar-label">${el} ${cnt}</span>
+      </div>`;
+    }).join('');
+    document.getElementById('d10-element-interp').textContent = D10_ELEM_NOTES[dom] || '';
+    elCard.style.display = '';
+
+    document.getElementById('d10-placeholder').style.display = 'none';
+    document.getElementById('d10-reading').style.display = '';
   }
 
   // ── Init ──────────────────────────────────────────────────────
