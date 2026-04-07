@@ -1274,9 +1274,68 @@
     .d9-partner-row-label { font-size: .62rem; text-transform: uppercase; letter-spacing: .1em;
       color: var(--muted); margin-bottom: .25rem; font-family: 'Cinzel', serif; }
     .d9-partner-row-text { font-size: .86rem; line-height: 1.65; }
+
+    /* ── D9 Deeper Insights ────────────────────────────── */
+    .d9-insight-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem; margin-bottom: 1.8rem;
+    }
+    .d9-insight-card {
+      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
+      border-radius: 14px; padding: 1.2rem 1.4rem;
+    }
+    .d9-insight-header {
+      display: flex; align-items: center; gap: .5rem; margin-bottom: .7rem;
+    }
+    .d9-insight-icon { font-size: 1.3rem; }
+    .d9-insight-title {
+      font-family: 'Cinzel', serif; font-size: .72rem; font-weight: 600;
+      color: var(--gold); text-transform: uppercase; letter-spacing: .08em;
+    }
+    .d9-insight-sign {
+      font-family: 'Cinzel', serif; font-size: .88rem; color: var(--gold-light);
+      margin-bottom: .5rem;
+    }
+    .d9-insight-text { font-size: .82rem; color: rgba(226,223,245,.8); line-height: 1.65; }
+
+    /* Vargottama */
+    .d9-vargottama-list { display: flex; flex-direction: column; gap: .75rem; margin-bottom: 1.8rem; }
+    .d9-vargottama-item {
+      background: linear-gradient(135deg, rgba(201,168,76,.06), rgba(124,92,191,.06));
+      border: 1px solid rgba(201,168,76,.18); border-radius: 12px; padding: 1rem 1.2rem;
+    }
+    .d9-vargottama-tag {
+      display: inline-flex; align-items: center; gap: .4rem;
+      font-family: 'Cinzel', serif; font-size: .72rem; font-weight: 600;
+      color: var(--gold); background: rgba(201,168,76,.1);
+      border: 1px solid rgba(201,168,76,.2); border-radius: 20px;
+      padding: .2rem .65rem; margin-bottom: .55rem;
+    }
+    .d9-vargottama-interp { font-size: .82rem; line-height: 1.65; color: rgba(226,223,245,.85); }
+
+    /* Elemental balance */
+    .d9-element-card {
+      background: linear-gradient(135deg, rgba(124,92,191,.07), rgba(255,150,180,.04));
+      border: 1px solid rgba(124,92,191,.2); border-radius: 14px;
+      padding: 1.4rem 1.6rem; margin-bottom: 1.8rem;
+    }
+    .d9-element-header { display: flex; align-items: center; gap: .6rem; margin-bottom: .8rem; }
+    .d9-element-title {
+      font-family: 'Cinzel', serif; font-size: .8rem; font-weight: 700;
+      color: var(--violet-light); text-transform: uppercase; letter-spacing: .08em;
+    }
+    .d9-element-bars { display: flex; gap: .5rem; margin-bottom: .8rem; flex-wrap: wrap; }
+    .d9-element-bar { display: flex; align-items: center; gap: .4rem; }
+    .d9-element-bar-fill {
+      height: 7px; border-radius: 4px; min-width: 18px; max-width: 90px; transition: width .4s;
+    }
+    .d9-element-bar-label { font-size: .68rem; color: var(--muted); }
+    .d9-element-interp { font-size: .82rem; line-height: 1.65; color: rgba(226,223,245,.8); }
+
     @media (max-width: 600px) {
       .d9-indicators { grid-template-columns: 1fr; }
       .d9-indicator.full { grid-column: 1; }
+      .d9-insight-grid { grid-template-columns: 1fr; }
       .chart-tabs { display: none; } /* collapse on very small screens */
     }
   </style>
@@ -1891,6 +1950,29 @@
 
         <!-- Partner Profile -->
         <div class="d9-partner-card" id="d9-partner-card"></div>
+
+        <!-- Deeper Personality: Moon / Mars / Jupiter in D9 -->
+        <div class="section-title">Deeper Personality in Marriage</div>
+        <div class="d9-insight-grid" id="d9-personality-insights"></div>
+
+        <!-- Elemental Balance -->
+        <div class="d9-element-card" id="d9-element-card" style="display:none">
+          <div class="d9-element-header">
+            <span style="font-size:1.4rem">🜃</span>
+            <div class="d9-element-title" id="d9-element-title">Elemental Balance</div>
+          </div>
+          <div class="d9-element-bars" id="d9-element-bars"></div>
+          <div class="d9-element-interp" id="d9-element-interp"></div>
+        </div>
+
+        <!-- Vargottama Planets -->
+        <div id="d9-vargottama-section" style="display:none">
+          <div class="section-title">✦ Vargottama Planets</div>
+          <p style="font-size:.8rem;color:var(--muted);line-height:1.6;margin-bottom:1rem">
+            A Vargottama planet occupies the <em>same sign</em> in both D1 and D9 — its energy is amplified and unmistakable in both your worldly life and your soul's purpose in marriage.
+          </p>
+          <div class="d9-vargottama-list" id="d9-vargottama-list"></div>
+        </div>
 
       </div>
     </div><!-- /pane-d9 -->
@@ -3331,6 +3413,76 @@
           </div>
         </div>
       </div>`;
+
+    // ── Deeper Personality: Moon / Mars / Jupiter in D9 ─────────────────
+    const personalityInsights = [
+      {
+        icon: '🌙',
+        title: `Moon in D9 — ${nav.d9_moon_sign || ''}`,
+        sign: nav.d9_moon_sign || '',
+        text: nav.moon_interp || '',
+      },
+      {
+        icon: '♂',
+        title: `Mars in D9 — ${nav.d9_mars_sign || ''}`,
+        sign: nav.d9_mars_sign || '',
+        text: nav.mars_interp || '',
+      },
+      {
+        icon: '♃',
+        title: `Jupiter in D9 — ${nav.d9_jupiter_sign || ''}`,
+        sign: nav.d9_jupiter_sign || '',
+        text: nav.jupiter_interp || '',
+      },
+    ];
+    document.getElementById('d9-personality-insights').innerHTML = personalityInsights
+      .filter(c => c.text)
+      .map(c => `
+        <div class="d9-insight-card">
+          <div class="d9-insight-header">
+            <span class="d9-insight-icon">${c.icon}</span>
+            <span class="d9-insight-title">${c.title}</span>
+          </div>
+          <div class="d9-insight-text">${c.text}</div>
+        </div>`).join('');
+
+    // ── Elemental Balance ────────────────────────────────────────────────
+    const elemColors = { Fire: '#f97316', Earth: '#84cc16', Air: '#38bdf8', Water: '#818cf8' };
+    const elemEmoji  = { Fire: '🔥', Earth: '🌍', Air: '💨', Water: '🌊' };
+    const ec = nav.element_counts || {};
+    const totalPlanets = Object.values(ec).reduce((a,b)=>a+b, 0) || 1;
+    const d9ElementCard = document.getElementById('d9-element-card');
+    if (nav.dominant_element) {
+      document.getElementById('d9-element-title').textContent =
+        `${elemEmoji[nav.dominant_element]||''} ${nav.dominant_element} Dominant — Elemental Balance`;
+      document.getElementById('d9-element-bars').innerHTML = ['Fire','Earth','Air','Water'].map(el => {
+        const cnt = ec[el] || 0;
+        const pct = Math.round((cnt / totalPlanets) * 100);
+        return `<div class="d9-element-bar">
+          <div class="d9-element-bar-fill" style="width:${Math.max(pct,8)}px;background:${elemColors[el]};opacity:.75"></div>
+          <span class="d9-element-bar-label">${el} ${cnt}</span>
+        </div>`;
+      }).join('');
+      document.getElementById('d9-element-interp').textContent = nav.element_interp || '';
+      d9ElementCard.style.display = '';
+    }
+
+    // ── Vargottama Planets ───────────────────────────────────────────────
+    const vp = nav.vargottama_planets || [];
+    const vpSection = document.getElementById('d9-vargottama-section');
+    if (vp.length > 0) {
+      document.getElementById('d9-vargottama-list').innerHTML = vp.map(v => `
+        <div class="d9-vargottama-item">
+          <div class="d9-vargottama-tag">
+            <span>${v.symbol || ''}</span>
+            <span>${v.planet} in ${v.sign} ✦ Vargottama</span>
+          </div>
+          <div class="d9-vargottama-interp">${v.interp}</div>
+        </div>`).join('');
+      vpSection.style.display = '';
+    } else {
+      vpSection.style.display = 'none';
+    }
 
     document.getElementById('d9-placeholder').style.display = 'none';
     document.getElementById('d9-reading').style.display = '';

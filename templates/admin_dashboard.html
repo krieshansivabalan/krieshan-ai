@@ -3,44 +3,169 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Dashboard — Krieshan AI</title>
+  <title>Admin — Krieshan AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #07080f; color: #e2dff5; font-family: system-ui, sans-serif; padding: 2rem; }
-    header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
-    h1 { font-size: 1.3rem; color: #c9a84c; }
-    .logout { color: #7a789a; text-decoration: none; font-size: .82rem; }
-    .logout:hover { color: #c9a84c; }
-    .stats { display: flex; gap: 1rem; margin-bottom: 2rem; }
-    .stat-card { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
-      border-radius: 12px; padding: 1rem 1.5rem; }
-    .stat-num { font-size: 2rem; font-weight: 700; color: #c9a84c; }
-    .stat-label { font-size: .75rem; color: #7a789a; margin-top: .2rem; }
-    table { width: 100%; border-collapse: collapse; font-size: .83rem; }
-    th { text-align: left; padding: .6rem .8rem; font-size: .65rem; letter-spacing: .1em;
-      text-transform: uppercase; color: #7a789a; border-bottom: 1px solid rgba(255,255,255,.08); }
-    td { padding: .65rem .8rem; border-bottom: 1px solid rgba(255,255,255,.04);
-      vertical-align: top; color: rgba(226,223,245,.85); }
-    tr:hover td { background: rgba(255,255,255,.02); }
-    .badge { display: inline-block; padding: .15rem .5rem; border-radius: 999px;
-      font-size: .65rem; font-weight: 600; }
-    .badge-m { background: rgba(96,165,250,.15); color: #93c5fd; }
-    .badge-f { background: rgba(244,114,182,.15); color: #f9a8d4; }
-    .chart-row { font-size: .75rem; color: #7a789a; margin-top: .25rem; }
-    .chart-row:first-child { margin-top: 0; }
-    .no-charts { color: #7a789a; font-size: .78rem; font-style: italic; }
-    .pill { display: inline-block; padding: .1rem .45rem; border-radius: 6px;
-      font-size: .7rem; background: rgba(201,168,76,.1); color: #c9a84c; margin-right: .3rem; }
-    .section-title { font-size: .65rem; letter-spacing: .1em; text-transform: uppercase;
-      color: #7a789a; margin-bottom: 1rem; }
+    :root {
+      --bg: #07080f; --surface: #0d0f1e;
+      --card: rgba(255,255,255,.04); --border: rgba(255,255,255,.08);
+      --gold: #c9a84c; --gold-light: #e8c96a;
+      --violet: #7c5cbf; --violet-light: #a884e8;
+      --text: #e2dff5; --muted: #7a789a;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Raleway', sans-serif; min-height: 100vh; }
+
+    #stars {
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse at 20% 30%, rgba(124,92,191,.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 70%, rgba(201,168,76,.06) 0%, transparent 50%),
+        var(--bg);
+      pointer-events: none;
+    }
+    #stars::before {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 40%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 55%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 60% 30%, rgba(255,255,255,.8) 0%, transparent 100%);
+      background-size: 400px 300px;
+      animation: twinkle 8s ease-in-out infinite alternate;
+    }
+    @keyframes twinkle { 0%{opacity:.5} 100%{opacity:1} }
+
+    .container { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+
+    /* ── Top nav ── */
+    .top-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 2.5rem; padding-bottom: 1.2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { display: flex; align-items: center; gap: .6rem; text-decoration: none; }
+    .nav-logo img { width: 28px; height: 28px; filter: drop-shadow(0 0 8px rgba(201,168,76,.4)); }
+    .nav-logo-name {
+      font-family: 'Cinzel', serif; font-size: .9rem; font-weight: 700;
+      color: var(--gold); letter-spacing: .06em;
+    }
+    .nav-right { display: flex; align-items: center; gap: 1.2rem; }
+    .nav-badge {
+      background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.2);
+      border-radius: 8px; padding: .25rem .75rem;
+      font-family: 'Cinzel', serif; font-size: .65rem; font-weight: 600;
+      color: var(--gold); letter-spacing: .1em; text-transform: uppercase;
+    }
+    .logout {
+      color: var(--muted); text-decoration: none; font-size: .8rem;
+      transition: color .2s;
+    }
+    .logout:hover { color: var(--gold); }
+
+    /* ── Page title ── */
+    .page-title {
+      font-family: 'Cinzel', serif; font-size: 1.4rem; font-weight: 700;
+      background: linear-gradient(135deg, var(--gold-light), var(--violet-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; margin-bottom: .4rem;
+    }
+    .page-sub { font-size: .82rem; color: var(--muted); margin-bottom: 2rem; }
+
+    /* ── Stat cards ── */
+    .stats { display: flex; gap: 1rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.2rem 1.8rem; flex: 1; min-width: 140px;
+    }
+    .stat-num {
+      font-family: 'Cinzel', serif; font-size: 2.2rem; font-weight: 700;
+      color: var(--gold-light); line-height: 1;
+    }
+    .stat-label { font-size: .72rem; color: var(--muted); margin-top: .35rem; letter-spacing: .04em; }
+
+    /* ── Section title ── */
+    .section-title {
+      font-family: 'Cinzel', serif; font-size: .65rem; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 1rem; padding-bottom: .6rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── User cards ── */
+    .user-list { display: flex; flex-direction: column; gap: 1rem; }
+    .user-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 1.4rem 1.6rem;
+      transition: border-color .2s;
+    }
+    .user-card:hover { border-color: rgba(201,168,76,.2); }
+    .user-header {
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 1rem; flex-wrap: wrap;
+    }
+    .user-avatar {
+      width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--violet), #5a3fa0);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cinzel', serif; font-size: .9rem; font-weight: 700; color: #fff;
+      border: 1px solid rgba(201,168,76,.2);
+    }
+    .user-info { flex: 1; }
+    .user-name { font-family: 'Cinzel', serif; font-size: .95rem; font-weight: 600; color: var(--text); }
+    .user-email { font-size: .78rem; color: var(--muted); margin-top: .1rem; }
+    .user-meta { display: flex; align-items: center; gap: .75rem; margin-left: auto; flex-wrap: wrap; }
+    .user-joined { font-size: .72rem; color: var(--muted); white-space: nowrap; }
+    .chart-count-pill {
+      background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.2);
+      border-radius: 20px; padding: .2rem .7rem;
+      font-size: .7rem; font-weight: 600; color: var(--gold); white-space: nowrap;
+    }
+
+    /* ── Chart submissions ── */
+    .charts-grid { display: flex; flex-direction: column; gap: .5rem; }
+    .chart-entry {
+      background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.05);
+      border-radius: 10px; padding: .7rem 1rem;
+      display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+    }
+    .pill {
+      display: inline-block; padding: .18rem .55rem; border-radius: 7px;
+      font-size: .72rem; background: rgba(201,168,76,.08);
+      border: 1px solid rgba(201,168,76,.15); color: var(--gold-light);
+    }
+    .badge-m { background: rgba(96,165,250,.12); border: 1px solid rgba(96,165,250,.2); color: #93c5fd; border-radius: 6px; padding: .15rem .5rem; font-size: .68rem; font-weight: 600; }
+    .badge-f { background: rgba(244,114,182,.12); border: 1px solid rgba(244,114,182,.2); color: #f9a8d4; border-radius: 6px; padding: .15rem .5rem; font-size: .68rem; font-weight: 600; }
+    .chart-ts { font-size: .68rem; color: var(--muted); margin-left: auto; white-space: nowrap; }
+    .no-charts { font-size: .8rem; color: var(--muted); font-style: italic; padding: .5rem 0; }
+
+    @media (max-width: 600px) {
+      .stats { gap: .6rem; }
+      .user-meta { margin-left: 0; }
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>✦ Krieshan AI — Admin</h1>
-    <a href="/admin/logout" class="logout">Sign out</a>
-  </header>
+<div id="stars"></div>
+<div class="container">
 
+  <!-- Top Nav -->
+  <div class="top-nav">
+    <a href="/" class="nav-logo">
+      <img src="/static/lion.svg?v=2" alt="Krieshan AI"/>
+      <span class="nav-logo-name">Krieshan AI</span>
+    </a>
+    <div class="nav-right">
+      <span class="nav-badge">Admin</span>
+      <a href="/admin/logout" class="logout">Sign out</a>
+    </div>
+  </div>
+
+  <!-- Title -->
+  <div class="page-title">✦ User Dashboard</div>
+  <div class="page-sub">All registered users and their submitted birth charts</div>
+
+  <!-- Stats -->
   <div class="stats">
     <div class="stat-card">
       <div class="stat-num">{{ total }}</div>
@@ -52,50 +177,50 @@
     </div>
     <div class="stat-card">
       <div class="stat-num">{{ user_data | map(attribute='charts') | map('length') | sum }}</div>
-      <div class="stat-label">Total Charts</div>
+      <div class="stat-label">Total Charts Submitted</div>
     </div>
   </div>
 
+  <!-- User list -->
   <div class="section-title">All Users</div>
-  <table>
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Joined</th>
-        <th>Charts Submitted</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for entry in user_data %}
-      {% set u = entry.user %}
-      {% set charts = entry.charts %}
-      <tr>
-        <td style="color:#7a789a">{{ loop.index }}</td>
-        <td>
-          <strong>{{ u.name }}</strong>
-        </td>
-        <td style="color:#7a789a">{{ u.email }}</td>
-        <td style="color:#7a789a;white-space:nowrap">{{ u.created_at.strftime('%b %d, %Y') }}</td>
-        <td>
-          {% if charts %}
-            {% for c in charts %}
-            <div class="chart-row">
-              <span class="pill">{{ c.date }}</span>
-              <span class="pill">{{ c.time }}</span>
-              <span class="pill">{{ c.city }}</span>
-              {% if c.gender %}<span class="badge badge-{{ c.gender | lower }}">{{ c.gender }}</span>{% endif %}
-              <span style="color:#7a789a;font-size:.7rem;margin-left:.3rem">{{ c.created_at.strftime('%b %d %H:%M') }}</span>
-            </div>
-            {% endfor %}
-          {% else %}
-            <span class="no-charts">No charts yet</span>
+  <div class="user-list">
+    {% for entry in user_data %}
+    {% set u = entry.user %}
+    {% set charts = entry.charts %}
+    <div class="user-card">
+      <div class="user-header">
+        <div class="user-avatar">{{ u.name[0] | upper }}</div>
+        <div class="user-info">
+          <div class="user-name">{{ u.name }}</div>
+          <div class="user-email">{{ u.email }}</div>
+        </div>
+        <div class="user-meta">
+          <span class="user-joined">Joined {{ u.created_at.strftime('%b %d, %Y') }}</span>
+          <span class="chart-count-pill">{{ charts | length }} chart{{ 's' if charts | length != 1 }}</span>
+        </div>
+      </div>
+
+      {% if charts %}
+      <div class="charts-grid">
+        {% for c in charts %}
+        <div class="chart-entry">
+          <span class="pill">{{ c.date }}</span>
+          <span class="pill">{{ c.time }}</span>
+          <span class="pill">{{ c.city }}</span>
+          {% if c.gender %}
+            <span class="badge-{{ c.gender | lower }}">{{ '♂ M' if c.gender == 'M' else '♀ F' }}</span>
           {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+          <span class="chart-ts">{{ c.created_at.strftime('%b %d, %Y · %H:%M') }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="no-charts">No charts submitted yet</div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
 </body>
 </html>

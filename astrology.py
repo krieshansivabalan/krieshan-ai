@@ -1263,7 +1263,11 @@ def get_navamsa_chart(placements):
     Calculate the D9 Navamsa chart from a set of sidereal D1 placements.
     Returns a dict of navamsa placements keyed by planet name.
     """
-    from interpretations import NAVAMSA_LAGNA_INTERP, NAVAMSA_VENUS_INTERP, NAVAMSA_7TH_SIGN_INTERP, DARAKARAKA_INTERP
+    from interpretations import (
+        NAVAMSA_LAGNA_INTERP, NAVAMSA_VENUS_INTERP, NAVAMSA_7TH_SIGN_INTERP, DARAKARAKA_INTERP,
+        NAVAMSA_MOON_INTERP, NAVAMSA_MARS_INTERP, NAVAMSA_JUPITER_INTERP,
+        VARGOTTAMA_INTERP, D9_ELEMENT_INTERP,
+    )
 
     navamsa = {}
     for planet_name, pl in placements.items():
@@ -1316,6 +1320,43 @@ def get_navamsa_chart(placements):
     d9_7th_lord_sign = navamsa.get(d9_7th_lord, {}).get("d9_sign", "")
     d9_7th_lord_house = navamsa.get(d9_7th_lord, {}).get("d9_house", 0)
 
+    # ── Vargottama: planets where D1 sign == D9 sign ─────────────────────────
+    _SIGN_ELEMENTS = {
+        "Aries": "Fire", "Leo": "Fire", "Sagittarius": "Fire",
+        "Taurus": "Earth", "Virgo": "Earth", "Capricorn": "Earth",
+        "Gemini": "Air", "Libra": "Air", "Aquarius": "Air",
+        "Cancer": "Water", "Scorpio": "Water", "Pisces": "Water",
+    }
+    vargottama_planets = []
+    for pname, pdata in navamsa.items():
+        if pdata["d1_sign"] == pdata["d9_sign"]:
+            vargottama_planets.append({
+                "planet":  pname,
+                "symbol":  pdata.get("symbol", ""),
+                "sign":    pdata["d9_sign"],
+                "interp":  VARGOTTAMA_INTERP.get(pname, f"{pname} is Vargottama — its qualities are amplified and pure across both charts."),
+            })
+
+    # ── D9 Elemental Balance ─────────────────────────────────────────────────
+    element_counts = {"Fire": 0, "Earth": 0, "Air": 0, "Water": 0}
+    for pdata in navamsa.values():
+        el = _SIGN_ELEMENTS.get(pdata["d9_sign"])
+        if el:
+            element_counts[el] += 1
+    max_count = max(element_counts.values()) if element_counts else 0
+    dominant_elements = [el for el, cnt in element_counts.items() if cnt == max_count]
+    if len(dominant_elements) == 1:
+        dominant_element = dominant_elements[0]
+        element_interp = D9_ELEMENT_INTERP.get(dominant_element, "")
+    else:
+        dominant_element = "Balanced"
+        element_interp = D9_ELEMENT_INTERP.get("Balanced", "")
+
+    # ── Moon / Mars / Jupiter in D9 ─────────────────────────────────────────
+    d9_moon_sign    = navamsa.get("Moon",    {}).get("d9_sign", "")
+    d9_mars_sign    = navamsa.get("Mars",    {}).get("d9_sign", "")
+    d9_jupiter_sign = navamsa.get("Jupiter", {}).get("d9_sign", "")
+
     return {
         "placements":        navamsa,
         "d9_lagna_sign":     d9_lagna_sign,
@@ -1334,4 +1375,15 @@ def get_navamsa_chart(placements):
         "venus_interp":      NAVAMSA_VENUS_INTERP.get(d9_venus_sign, ""),
         "seventh_interp":    NAVAMSA_7TH_SIGN_INTERP.get(d9_7th_sign, ""),
         "dk_interp":         DARAKARAKA_INTERP.get(dk_planet, ""),
+        # Deeper personality insights
+        "vargottama_planets":  vargottama_planets,
+        "element_counts":      element_counts,
+        "dominant_element":    dominant_element,
+        "element_interp":      element_interp,
+        "d9_moon_sign":        d9_moon_sign,
+        "moon_interp":         NAVAMSA_MOON_INTERP.get(d9_moon_sign, ""),
+        "d9_mars_sign":        d9_mars_sign,
+        "mars_interp":         NAVAMSA_MARS_INTERP.get(d9_mars_sign, ""),
+        "d9_jupiter_sign":     d9_jupiter_sign,
+        "jupiter_interp":      NAVAMSA_JUPITER_INTERP.get(d9_jupiter_sign, ""),
     }
