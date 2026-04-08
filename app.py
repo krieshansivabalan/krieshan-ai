@@ -58,6 +58,21 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
+@app.after_request
+def no_cache_private_responses(response):
+    """
+    Prevent the browser from caching any user-specific API response.
+    Without this, user A's /api/charts response could be served to user B
+    who logs in on the same device — a serious privacy leak.
+    """
+    if request.path.startswith("/api/"):
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private, max-age=0"
+        response.headers["Pragma"]        = "no-cache"
+        response.headers["Expires"]       = "0"
+        response.headers["Vary"]          = "Cookie"
+    return response
+
+
 # Create tables on first run
 with app.app_context():
     db.create_all()
@@ -193,6 +208,7 @@ def chart():
         birth_chart = BirthChart(
             user_id=current_user.id,
             label=name or f"{city}, {date}",
+            for_person=name or None,
             date=date,
             time=time,
             city=city,
