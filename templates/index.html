@@ -4257,7 +4257,23 @@
         method: 'POST', headers: {'Content-Type':'application/json'},
         body: JSON.stringify(body)
       });
-      const d = await r.json();
+
+      // Handle non-JSON or unexpected HTTP errors first
+      if (!r.ok && r.status !== 400 && r.status !== 403 && r.status !== 429) {
+        typingEl.remove();
+        appendChatMsg('assistant', `⚠ Server error (${r.status}). Please try again or refresh the page.`);
+        send.disabled = false;
+        return;
+      }
+
+      let d;
+      try { d = await r.json(); }
+      catch(_) {
+        typingEl.remove();
+        appendChatMsg('assistant', '⚠ Unexpected server response. Please try again.');
+        send.disabled = false;
+        return;
+      }
       typingEl.remove();
 
       if (d.error === 'upgrade' || d.error === 'quota') {

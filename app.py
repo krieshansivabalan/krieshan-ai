@@ -731,7 +731,21 @@ def load_chart(chart_id):
 
 
 # ── AI Chart Chat ─────────────────────────────────────────────────
-_anthropic = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY", ""))
+_anthropic_client = None
+
+def _get_anthropic_client():
+    """Lazy-initialize the Anthropic client so a missing key doesn't break module load."""
+    global _anthropic_client
+    if _anthropic_client is None:
+        key = os.environ.get("ANTHROPIC_API_KEY", "")
+        if not key:
+            return None
+        try:
+            _anthropic_client = anthropic.Anthropic(api_key=key)
+        except Exception as e:
+            print(f"[anthropic] Client init error: {e}")
+            return None
+    return _anthropic_client
 
 def _build_chart_context(chart_id, user):
     """Build a rich text context from a saved chart for AI prompting."""
@@ -846,8 +860,12 @@ Guidelines:
 
     messages = prior_msgs + [{"role": "user", "content": question}]
 
+    client = _get_anthropic_client()
+    if not client:
+        return jsonify({"error": "AI service is not configured. Please contact support."}), 503
+
     try:
-        response = _anthropic.messages.create(
+        response = client.messages.create(
             model="claude-3-5-haiku-20241022",
             max_tokens=1024,
             system=system_prompt,
