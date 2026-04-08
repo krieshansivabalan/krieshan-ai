@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from flask import Blueprint, redirect, url_for, session, request
 from flask_login import login_user, logout_user, login_required, current_user
 from models import db, User
@@ -35,6 +36,8 @@ def login_google():
             )
             db.session.add(dev_user)
             db.session.commit()
+        dev_user.last_login_at = datetime.utcnow()
+        db.session.commit()
         login_user(dev_user, remember=True)
         return redirect(url_for("index"))
 
@@ -66,6 +69,7 @@ def callback():
 
     user.name = name
     user.picture_url = picture
+    user.last_login_at = datetime.utcnow()
     db.session.commit()
 
     login_user(user, remember=True)

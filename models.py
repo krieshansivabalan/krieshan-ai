@@ -23,6 +23,9 @@ class User(UserMixin, db.Model):
     picture_url = db.Column(db.String(512))
     created_at  = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # Login tracking
+    last_login_at = db.Column(db.DateTime, nullable=True)
+
     # AI usage tracking (resets monthly)
     ai_questions_used  = db.Column(db.Integer, default=0)
     ai_questions_reset = db.Column(db.DateTime, default=datetime.utcnow)

@@ -988,12 +988,55 @@ def admin_logout():
 @app.route("/admin")
 @admin_required
 def admin_dashboard():
+    from datetime import timedelta
+    now   = datetime.utcnow()
+    today = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    week_ago  = now - timedelta(days=7)
+    month_ago = now - timedelta(days=30)
+
     users = User.query.order_by(User.created_at.desc()).all()
+
     user_data = []
     for u in users:
         charts = u.charts.order_by(BirthChart.created_at.desc()).all()
-        user_data.append({"user": u, "charts": charts})
-    return render_template("admin_dashboard.html", user_data=user_data, total=len(users))
+        user_data.append({
+            "user":   u,
+            "charts": charts,
+            "tier":   u.plan_tier,
+        })
+
+    # ── Aggregate stats ───────────────────────────────────────────
+    total_users       = len(users)
+    users_with_charts = sum(1 for d in user_data if d["charts"])
+    total_charts      = sum(len(d["charts"]) for d in user_data)
+
+    logins_today      = sum(1 for u in users if u.last_login_at and u.last_login_at >= today)
+    logins_this_week  = sum(1 for u in users if u.last_login_at and u.last_login_at >= week_ago)
+    logins_this_month = sum(1 for u in users if u.last_login_at and u.last_login_at >= month_ago)
+
+    new_this_week  = sum(1 for u in users if u.created_at and u.created_at >= week_ago)
+    new_this_month = sum(1 for u in users if u.created_at and u.created_at >= month_ago)
+
+    tier_counts = {"free": 0, "seeker": 0, "scholar": 0, "oracle": 0}
+    for d in user_data:
+        tier_counts[d["tier"]] = tier_counts.get(d["tier"], 0) + 1
+
+    stats = {
+        "total_users":       total_users,
+        "users_with_charts": users_with_charts,
+        "total_charts":      total_charts,
+        "logins_today":      logins_today,
+        "logins_this_week":  logins_this_week,
+        "logins_this_month": logins_this_month,
+        "new_this_week":     new_this_week,
+        "new_this_month":    new_this_month,
+        "tier_free":    tier_counts.get("free", 0),
+        "tier_seeker":  tier_counts.get("seeker", 0),
+        "tier_scholar": tier_counts.get("scholar", 0),
+        "tier_oracle":  tier_counts.get("oracle", 0),
+    }
+
+    return render_template("admin_dashboard.html", user_data=user_data, stats=stats)
 
 
 if __name__ == "__main__":
