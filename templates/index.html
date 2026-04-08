@@ -1553,21 +1553,102 @@
       .d9-indicators { grid-template-columns: 1fr; }
       .d9-indicator.full { grid-column: 1; }
       .d9-insight-grid { grid-template-columns: 1fr; }
-      .chart-tabs { display: none; } /* collapse on very small screens */
+    }
+
+    /* ── Mobile overrides ───────────────────────────────────────── */
+    @media (max-width: 768px) {
+      /* Header nav — stack cleanly */
+      .header-meta {
+        justify-content: space-between;
+        gap: .6rem;
+      }
+      .nav-top-link { display: none; } /* hide text nav links on mobile */
+      .notif-wrap   { display: none; } /* hide notification bell on mobile */
+      .streak-pill  { display: none; } /* hide streak pill on mobile */
+
+      /* Chart tabs — scroll horizontally instead of hiding */
+      .chart-tabs {
+        overflow-x: auto; -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap; gap: .2rem;
+        scrollbar-width: none; /* Firefox */
+      }
+      .chart-tabs::-webkit-scrollbar { display: none; }
+      .chart-tab {
+        flex-shrink: 0;
+        padding: .4rem .85rem;
+        font-size: .68rem;
+      }
+
+      /* Planet table — horizontal scroll so columns don't squish */
+      .planet-table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .planet-table > .planet-table-row { min-width: 480px; }
+      .d9-planet-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .d9-planet-table { min-width: 460px; }
+
+      /* Form card padding */
+      .form-card { padding: 1.2rem; }
+      .form-grid { grid-template-columns: 1fr; }
+
+      /* Big four — 2×2 on mobile */
+      .big-four { grid-template-columns: 1fr 1fr; gap: .6rem; }
+      .big-four-card { padding: .9rem .8rem; }
+      .big-four-card .sign-symbol { font-size: 1.5rem; }
+
+      /* Chart wheel + readings stacked */
+      .chart-readings-row { grid-template-columns: 1fr; }
+      .chart-wheel-wrap { position: static; }
+      .chart-wheel-wrap svg { max-width: 280px; margin: 0 auto; display: block; }
+
+      /* Section columns */
+      .section-cols { grid-template-columns: 1fr; }
+
+      /* D9 partner card */
+      .d9-partner-card { padding: 1.2rem; }
+
+      /* Careers / Romance sections */
+      .career-section, .romance-section, .transit-section { padding: 1.2rem; }
+      .transit-grid { grid-template-columns: 1fr; }
+
+      /* Saved charts FAB — keep bottom-left, shrink padding slightly on mobile */
+      .charts-fab { bottom: 1.2rem; left: 1rem; font-size: .74rem; padding: .55rem .85rem; }
+
+      /* Toast container */
+      .toast-container { bottom: 5rem; right: .75rem; left: .75rem; }
+      .toast { max-width: 100%; }
+
+      /* Welcome bar */
+      .welcome-bar { flex-direction: column; align-items: flex-start; gap: .4rem; }
+
+      /* Payment banner */
+      .payment-banner { padding: .85rem 1rem; }
+
+      /* Actions row (PDF + nav buttons) */
+      .actions-row { flex-wrap: wrap; gap: .6rem; }
+      .actions-row .btn { flex: 1 1 140px; font-size: .78rem; padding: .6rem .8rem; }
+
+      /* D10 section */
+      .d9-partner-rows { gap: .75rem; }
+    }
+
+    @media (max-width: 420px) {
+      .big-four { grid-template-columns: 1fr 1fr; }
+      .chart-tab { padding: .35rem .65rem; font-size: .64rem; }
+      h1 { font-size: 1.4rem; }
+      .container { padding: 1.2rem .9rem 5rem; }
     }
   </style>
 </head>
 <body>
   <div id="stars"></div>
 
-  <!-- ── AI Chat FAB ──────────────────────────────────────────── -->
-  <button class="ai-chat-fab" id="ai-chat-fab" onclick="toggleChat()" title="Ask Your Chart">
+  <!-- ── AI Chat FAB (hidden — coming soon) ───────────────────── -->
+  <button class="ai-chat-fab" id="ai-chat-fab" onclick="toggleChat()" title="Ask Your Chart" style="display:none">
     ✦
     <span class="ai-badge" id="ai-badge">AI</span>
   </button>
 
-  <!-- ── AI Chat Panel ─────────────────────────────────────────── -->
-  <div class="ai-chat-panel" id="ai-chat-panel">
+  <!-- ── AI Chat Panel (hidden — coming soon) ──────────────────── -->
+  <div class="ai-chat-panel" id="ai-chat-panel" style="display:none">
     <div class="ai-chat-header">
       <div>
         <div class="ai-chat-title">✦ Ask Your Chart</div>

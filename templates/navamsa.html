@@ -204,7 +204,19 @@
       .form-grid { grid-template-columns: 1fr; }
       .indicator-grid { grid-template-columns: 1fr; }
       .indicator-card.full { grid-column: 1; }
-      .summary-bar { gap: .6rem; }
+      .summary-bar { gap: .6rem; flex-wrap: wrap; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: .8rem 1rem; }
+      .nav-links { gap: .9rem; }
+      .nav-links a { font-size: .78rem; }
+      .page { padding: 1.5rem 1rem 4rem; }
+      .form-grid { grid-template-columns: 1fr; }
+      /* Planet table horizontal scroll */
+      .planet-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      table { min-width: 420px; }
+      /* Summary strip wraps */
+      .summary-bar { flex-wrap: wrap; }
     }
   </style>
 </head>
@@ -285,6 +297,7 @@
     <!-- D9 Planet Table -->
     <div class="section">
       <div class="section-title">D9 Navamsa Placements — All Planets</div>
+      <div class="planet-table-wrap">
       <table class="planet-table" id="planet-table">
         <thead>
           <tr>
@@ -297,6 +310,7 @@
         </thead>
         <tbody id="planet-tbody"></tbody>
       </table>
+      </div><!-- /.planet-table-wrap -->
     </div>
 
     <!-- Chara Karakas -->

@@ -267,6 +267,19 @@
       .indicator-grid { grid-template-columns: 1fr; }
       .indicator-card.full { grid-column: 1; }
     }
+    @media (max-width: 768px) {
+      nav { padding: .8rem 1rem; }
+      .nav-links { gap: .9rem; }
+      .nav-links a { font-size: .78rem; }
+      .page { padding: 1.5rem 1rem 4rem; }
+      .form-grid { grid-template-columns: 1fr; }
+      .big-strip { grid-template-columns: 1fr 1fr; gap: .6rem; }
+      /* Planet table horizontal scroll */
+      .planet-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      table { min-width: 420px; }
+      /* Career profile card */
+      .career-profile { padding: 1.4rem; }
+    }
   </style>
 </head>
 <body>

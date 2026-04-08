@@ -204,21 +204,35 @@ def chart():
         # D10 Dasamsa chart
         dasamsa = get_dasamsa_chart(result["placements"])
 
-        # Persist to database
-        birth_chart = BirthChart(
-            user_id=current_user.id,
-            label=name or f"{city}, {date}",
-            for_person=name or None,
-            date=date,
-            time=time,
-            city=city,
-            gender=gender,
-            full_address=result.get("full_address", ""),
-            placements_json=json.dumps(result.get("placements", {})),
-            career_json=json.dumps(result.get("career", {})),
-            romance_json=json.dumps(result.get("romance", {})),
-        )
-        db.session.add(birth_chart)
+        # Persist to database — upsert so re-calculating the same chart
+        # never creates duplicate rows (same user + date + time + city)
+        birth_chart = BirthChart.query.filter_by(
+            user_id=current_user.id, date=date, time=time, city=city
+        ).first()
+        if birth_chart:
+            # Update existing record in-place
+            birth_chart.label           = name or f"{city}, {date}"
+            birth_chart.for_person      = name or None
+            birth_chart.gender          = gender
+            birth_chart.full_address    = result.get("full_address", "")
+            birth_chart.placements_json = json.dumps(result.get("placements", {}))
+            birth_chart.career_json     = json.dumps(result.get("career", {}))
+            birth_chart.romance_json    = json.dumps(result.get("romance", {}))
+        else:
+            birth_chart = BirthChart(
+                user_id=current_user.id,
+                label=name or f"{city}, {date}",
+                for_person=name or None,
+                date=date,
+                time=time,
+                city=city,
+                gender=gender,
+                full_address=result.get("full_address", ""),
+                placements_json=json.dumps(result.get("placements", {})),
+                career_json=json.dumps(result.get("career", {})),
+                romance_json=json.dumps(result.get("romance", {})),
+            )
+            db.session.add(birth_chart)
         db.session.commit()
 
         return jsonify({**result, "chart_id": birth_chart.id, "characters": characters, "navamsa": navamsa, "dasamsa": dasamsa})
