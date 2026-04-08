@@ -5,11 +5,12 @@ import datetime as dt
 from datetime import datetime, timedelta
 
 import stripe
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+import anthropic
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, Response
 from flask_login import LoginManager, login_required, current_user
 from authlib.integrations.flask_client import OAuth
 
-from models import db, User, BirthChart, Subscription, JournalEntry
+from models import db, User, BirthChart, Subscription, JournalEntry, ChatMessage, TIER_LIMITS
 from auth import auth_bp, init_oauth
 from astrology import get_chart, get_transits, get_today_moon_nakshatra, AYANAMSA_EXPLAINERS, get_navamsa_chart, get_dasamsa_chart
 from characters import get_characters
@@ -150,11 +151,16 @@ def chart():
 
         result = get_chart(name, date, time, city, ayanamsa_system=ayanamsa_system)
 
-        # Store in session for transit calculations
+        # Store in session for transit calculations + AI chat
         session["natal_lat"]        = result["latitude"]
         session["natal_lon"]        = result["longitude"]
         session["natal_placements"] = _slim_placements(result["placements"])
         session["ayanamsa_system"]  = ayanamsa_system
+        # Build a slim natal context string for AI chat (no chart_id yet)
+        ctx_lines = [f"Name: {name or 'the person'}", f"Date: {date}", f"Time: {time}", f"City: {city}", ""]
+        for pn, pd in result["placements"].items():
+            ctx_lines.append(f"  {pn}: {pd.get('sign','')} {pd.get('degree',0):.1f}° House {pd.get('house','')} Nakshatra: {pd.get('nakshatra','')}")
+        session["natal_context"] = "\n".join(ctx_lines)
 
         # Enrich dasha with interpretations
         if result.get("dasha"):
@@ -521,12 +527,22 @@ def delete_journal(entry_id):
     return jsonify({"ok": True})
 
 
-# ── Payment ───────────────────────────────────────────────────────
+# ── Payment / Tier ────────────────────────────────────────────────
 @app.route("/api/check-paid")
 @login_required
 def check_paid():
-    session["paid"] = True
-    return jsonify({"paid": True})
+    tier    = current_user.plan_tier
+    limits  = TIER_LIMITS.get(tier, TIER_LIMITS["free"])
+    ai_rem  = current_user.ai_quota_remaining()
+    session["paid"] = tier != "free"
+    return jsonify({
+        "paid":            tier != "free",
+        "tier":            tier,
+        "tier_label":      limits["label"],
+        "ai_remaining":    ai_rem,
+        "charts_limit":    limits["charts"],
+        "charts_used":     current_user.charts.count(),
+    })
 
 
 @app.route("/create-checkout-session", methods=["POST"])
@@ -623,7 +639,7 @@ def stripe_webhook():
     return jsonify({"ok": True})
 
 
-def _upsert_subscription(user, customer_id, subscription_id, status, period_end, dev_mode=False):
+def _upsert_subscription(user, customer_id, subscription_id, status, period_end, dev_mode=False, plan_tier=None):
     sub = user.subscription
     if not sub:
         sub = Subscription(user_id=user.id)
@@ -633,6 +649,10 @@ def _upsert_subscription(user, customer_id, subscription_id, status, period_end,
     if subscription_id:
         sub.stripe_subscription_id = subscription_id
     sub.status = status
+    if plan_tier:
+        sub.plan_tier = plan_tier
+    elif not sub.plan_tier:
+        sub.plan_tier = "seeker"
     if dev_mode:
         sub.current_period_end = datetime(2125, 1, 1)
     elif period_end:
@@ -678,6 +698,212 @@ def delete_chart(chart_id):
     db.session.delete(chart)
     db.session.commit()
     return jsonify({"ok": True})
+
+
+@app.route("/api/charts/<int:chart_id>/load", methods=["POST"])
+@login_required
+def load_chart(chart_id):
+    """Re-calculate and return a saved chart's full reading."""
+    chart = BirthChart.query.filter_by(id=chart_id, user_id=current_user.id).first()
+    if not chart:
+        return jsonify({"error": "Chart not found"}), 404
+    try:
+        ayanamsa_system = (request.get_json() or {}).get("ayanamsa", "lahiri")
+        result = get_chart(chart.for_person or chart.label or "", chart.date, chart.time,
+                           chart.city, ayanamsa_system=ayanamsa_system)
+        if result.get("dasha"):
+            dasha = result["dasha"]
+            if dasha.get("current_maha"):
+                dasha["current_maha"]["interpretation"] = get_dasha_interpretation(dasha["current_maha"]["lord"])
+            if dasha.get("current_antar"):
+                dasha["current_antar"]["note"] = ANTAR_DASHA_NOTES.get(dasha["current_antar"]["lord"], "")
+        for fs in result.get("fixed_stars", []):
+            fs["planet_meaning"] = get_fixed_star_interpretation(fs["star"], fs["planet"])
+        gender = chart.gender or "M"
+        characters = get_characters(result["sun_sign"], result["moon_sign"], result["rising_sign"], gender)
+        navamsa  = get_navamsa_chart(result["placements"])
+        dasamsa  = get_dasamsa_chart(result["placements"])
+        return jsonify({**result, "chart_id": chart.id, "characters": characters,
+                        "navamsa": navamsa, "dasamsa": dasamsa})
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+
+# ── AI Chart Chat ─────────────────────────────────────────────────
+_anthropic = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY", ""))
+
+def _build_chart_context(chart_id, user):
+    """Build a rich text context from a saved chart for AI prompting."""
+    chart = BirthChart.query.filter_by(id=chart_id, user_id=user.id).first()
+    if not chart:
+        return None, None
+    try:
+        placements = json.loads(chart.placements_json or "{}")
+    except Exception:
+        placements = {}
+
+    lines = [
+        f"Name: {chart.for_person or chart.label or 'the person'}",
+        f"Date of Birth: {chart.date}",
+        f"Time of Birth: {chart.time}",
+        f"City: {chart.city}",
+        "",
+        "PLANETARY PLACEMENTS (Sidereal/Vedic):",
+    ]
+    for pname, pdata in placements.items():
+        sign    = pdata.get("sign", "")
+        degree  = pdata.get("degree", 0)
+        house   = pdata.get("house", "")
+        nak     = pdata.get("nakshatra", "")
+        retro   = " (R)" if pdata.get("retrograde") else ""
+        lines.append(f"  {pname}: {sign} {degree:.1f}°{retro}  House {house}  Nakshatra: {nak}")
+
+    # Add D9 and D10 quick summary
+    try:
+        nav = get_navamsa_chart(placements)
+        das = get_dasamsa_chart(placements)
+        lines += [
+            "",
+            f"D9 NAVAMSA — Marriage & Soul Chart:",
+            f"  D9 Lagna: {nav.get('d9_lagna_sign')}  |  Venus D9: {nav.get('d9_venus_sign')}  |  7th House D9: {nav.get('d9_7th_sign')}  |  Darakaraka: {nav.get('darakaraka')}",
+            "",
+            f"D10 DASAMSA — Career Chart:",
+            f"  D10 Lagna: {das.get('d10_lagna_sign')}  |  10th House: {das.get('d10_10th_sign')}  |  Amatyakaraka: {das.get('amatyakaraka')}  |  Saturn D10: {das.get('d10_saturn_sign')}",
+        ]
+    except Exception:
+        pass
+
+    return "\n".join(lines), chart
+
+
+@app.route("/api/chat", methods=["POST"])
+@login_required
+def chart_chat():
+    data     = request.get_json() or {}
+    question = (data.get("question") or "").strip()
+    chart_id = data.get("chart_id")
+
+    if not question:
+        return jsonify({"error": "Please enter a question."}), 400
+
+    # ── Tier gate ─────────────────────────────────────────────────
+    tier   = current_user.plan_tier
+    if tier == "free":
+        return jsonify({"error": "upgrade", "tier": "free",
+                        "message": "AI Chart Chat is available on Seeker plan and above. Upgrade to unlock unlimited cosmic insight."}), 403
+
+    # ── Monthly quota ─────────────────────────────────────────────
+    now   = datetime.utcnow()
+    limit = TIER_LIMITS[tier]["ai_questions"]   # -1 = unlimited
+    if limit != -1:
+        # Reset monthly counter if new month
+        if (current_user.ai_questions_reset is None or
+                now.year  != current_user.ai_questions_reset.year or
+                now.month != current_user.ai_questions_reset.month):
+            current_user.ai_questions_used  = 0
+            current_user.ai_questions_reset = now
+            db.session.commit()
+        if (current_user.ai_questions_used or 0) >= limit:
+            return jsonify({"error": "quota",
+                            "message": f"You've used all {limit} AI questions for this month. Upgrade your plan or wait until next month."}), 429
+
+    # ── Build context ─────────────────────────────────────────────
+    if chart_id:
+        chart_context, chart_obj = _build_chart_context(chart_id, current_user)
+    else:
+        chart_context = session.get("natal_context", "")
+        chart_obj     = None
+
+    if not chart_context:
+        return jsonify({"error": "Please calculate a birth chart first before asking questions."}), 400
+
+    # ── Prior conversation (last 6 messages for context) ──────────
+    prior_msgs = []
+    if chart_obj:
+        history = (ChatMessage.query
+                   .filter_by(user_id=current_user.id, chart_id=chart_obj.id)
+                   .order_by(ChatMessage.created_at.desc())
+                   .limit(6).all())
+        for msg in reversed(history):
+            prior_msgs.append({"role": msg.role, "content": msg.content})
+
+    system_prompt = f"""You are Krieshan AI — a deeply knowledgeable Vedic astrologer and guide. You specialise in sidereal astrology, Jyotish, divisional charts (D9 Navamsa, D10 Dasamsa), Vimshottari dasha, nakshatras, and karaka theory.
+
+You are speaking with {current_user.name}. Their birth chart data is below:
+
+{chart_context}
+
+Guidelines:
+- Speak in warm, personal second-person ("you", "your")
+- Give specific, chart-grounded answers — reference actual placements, signs, houses, and nakshatras
+- Be insightful and precise, not generic
+- Keep answers to 2–4 paragraphs unless asked for more
+- Do not make up placements not in the chart data
+- When relevant, connect D1, D9, and D10 insights
+- You may suggest timing based on dasha periods if relevant
+- Never refuse to engage with astrological questions about this chart"""
+
+    messages = prior_msgs + [{"role": "user", "content": question}]
+
+    try:
+        response = _anthropic.messages.create(
+            model="claude-3-5-haiku-20241022",
+            max_tokens=1024,
+            system=system_prompt,
+            messages=messages,
+        )
+        answer = response.content[0].text
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": f"AI error: {str(e)}"}), 500
+
+    # ── Persist messages & update usage counter ───────────────────
+    try:
+        if chart_obj:
+            db.session.add(ChatMessage(user_id=current_user.id, chart_id=chart_obj.id, role="user",      content=question))
+            db.session.add(ChatMessage(user_id=current_user.id, chart_id=chart_obj.id, role="assistant", content=answer))
+        if limit != -1:
+            current_user.ai_questions_used = (current_user.ai_questions_used or 0) + 1
+        db.session.commit()
+    except Exception:
+        traceback.print_exc()
+
+    remaining = current_user.ai_quota_remaining()
+    return jsonify({"answer": answer, "remaining": remaining})
+
+
+@app.route("/api/chat/history")
+@login_required
+def chat_history():
+    chart_id = request.args.get("chart_id", type=int)
+    q = ChatMessage.query.filter_by(user_id=current_user.id)
+    if chart_id:
+        q = q.filter_by(chart_id=chart_id)
+    msgs = q.order_by(ChatMessage.created_at.asc()).limit(50).all()
+    return jsonify([{"role": m.role, "content": m.content,
+                     "created_at": m.created_at.strftime("%H:%M")} for m in msgs])
+
+
+# ── PDF / Print Report ────────────────────────────────────────────
+@app.route("/chart/<int:chart_id>/report")
+@login_required
+def chart_report(chart_id):
+    """Render a print-optimised report page for a saved chart."""
+    chart = BirthChart.query.filter_by(id=chart_id, user_id=current_user.id).first_or_404()
+    try:
+        placements = json.loads(chart.placements_json or "{}")
+        result     = get_chart(chart.for_person or chart.label or "", chart.date,
+                               chart.time, chart.city)
+        navamsa    = get_navamsa_chart(result["placements"])
+        dasamsa    = get_dasamsa_chart(result["placements"])
+    except Exception:
+        traceback.print_exc()
+        placements, result, navamsa, dasamsa = {}, {}, {}, {}
+    return render_template("chart_report.html",
+                           chart=chart, result=result,
+                           navamsa=navamsa, dasamsa=dasamsa,
+                           user=current_user)
 
 
 @app.route("/api/account", methods=["DELETE"])

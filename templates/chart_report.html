@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{{ chart.for_person or chart.label or 'Birth Chart' }} — Krieshan AI Report</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:       #c9a84c;
+      --gold-light: #e8c96a;
+      --bg:         #07080f;
+      --card:       rgba(255,255,255,.04);
+      --border:     rgba(255,255,255,.08);
+      --text:       #e2dff5;
+      --muted:      #7a789a;
+      --violet:     #7c5cbf;
+      --teal:       #2dd4bf;
+    }
+
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Raleway', sans-serif; font-size: 14px; line-height: 1.6;
+    }
+
+    /* ── Screen: action bar ── */
+    .action-bar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .8rem 2rem; gap: 1rem;
+    }
+    .action-bar-left { display: flex; align-items: center; gap: .8rem; }
+    .action-bar-left a { color: var(--muted); text-decoration: none; font-size: .85rem; }
+    .action-bar-left a:hover { color: var(--gold); }
+    .btn-print {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: #07080f; border: none; border-radius: 8px;
+      padding: .55rem 1.4rem; font-weight: 700; font-size: .85rem;
+      cursor: pointer; font-family: 'Cinzel', serif; letter-spacing: .04em;
+    }
+    .btn-print:hover { opacity: .9; }
+
+    /* ── Page ── */
+    .report {
+      max-width: 860px; margin: 4.5rem auto 4rem; padding: 0 1.5rem;
+    }
+
+    /* ── Cover ── */
+    .cover {
+      text-align: center; padding: 2.5rem 0 2rem;
+      border-bottom: 1px solid var(--border); margin-bottom: 2rem;
+    }
+    .cover-logo { font-family: 'Cinzel', serif; font-size: .85rem; color: var(--gold); letter-spacing: .18em; text-transform: uppercase; margin-bottom: 1rem; }
+    .cover-name { font-family: 'Cinzel', serif; font-size: 2rem; font-weight: 700; color: var(--gold); margin-bottom: .4rem; }
+    .cover-sub  { font-size: .9rem; color: var(--muted); }
+    .cover-meta { display: flex; justify-content: center; gap: 2rem; margin-top: 1.2rem; flex-wrap: wrap; }
+    .cover-meta-item { display: flex; flex-direction: column; align-items: center; gap: .15rem; }
+    .cover-meta-label { font-size: .6rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-family: 'Cinzel', serif; }
+    .cover-meta-val { font-size: .88rem; font-weight: 600; color: var(--text); }
+
+    /* ── Section headers ── */
+    .section { margin-bottom: 2.2rem; }
+    .section-title {
+      font-family: 'Cinzel', serif; font-size: .62rem; text-transform: uppercase;
+      letter-spacing: .14em; color: var(--muted); margin-bottom: 1rem;
+      padding-bottom: .45rem; border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Big Three ── */
+    .big-three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    .b3-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 1.2rem; text-align: center;
+    }
+    .b3-label { font-size: .6rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-family: 'Cinzel', serif; margin-bottom: .4rem; }
+    .b3-glyph { font-size: 2rem; color: var(--gold); margin-bottom: .3rem; }
+    .b3-sign  { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700; color: var(--text); }
+
+    /* ── Placement table ── */
+    table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+    th {
+      text-align: left; padding: .5rem .7rem; font-size: .58rem; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border);
+      font-family: 'Cinzel', serif;
+    }
+    td { padding: .55rem .7rem; border-bottom: 1px solid rgba(255,255,255,.04); vertical-align: middle; }
+    tr:hover td { background: rgba(255,255,255,.02); }
+    .sym { color: var(--gold); margin-right: .25rem; }
+    .muted-sm { color: var(--muted); font-size: .73rem; }
+    .house-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 20px; height: 20px; border-radius: 5px;
+      background: rgba(201,168,76,.1); color: var(--gold); font-size: .68rem; font-weight: 700;
+    }
+
+    /* ── Interpretation cards ── */
+    .interp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .interp-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1rem;
+    }
+    .interp-card .ic-label { font-size: .58rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: .25rem; font-family: 'Cinzel', serif; }
+    .interp-card .ic-value { font-size: .88rem; font-weight: 700; color: var(--gold); margin-bottom: .5rem; }
+    .interp-card .ic-text  { font-size: .8rem; color: rgba(226,223,245,.8); line-height: 1.65; }
+    .interp-card.full { grid-column: 1 / -1; }
+
+    /* ── D9/D10 summary ── */
+    .chart-summary {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 1.2rem 1.4rem; margin-bottom: 1rem;
+    }
+    .cs-title { font-family: 'Cinzel', serif; font-size: .78rem; font-weight: 700; color: var(--gold); margin-bottom: .8rem; }
+    .cs-row { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: .4rem; }
+    .cs-chip {
+      background: rgba(255,255,255,.05); border: 1px solid var(--border);
+      border-radius: 6px; padding: .2rem .6rem; font-size: .74rem;
+    }
+    .cs-chip .cl { color: var(--muted); margin-right: .25rem; font-size: .65rem; }
+    .cs-chip .cv { color: var(--text); font-weight: 600; }
+
+    /* ── Footer ── */
+    .report-footer {
+      text-align: center; padding: 2rem 0 1rem;
+      border-top: 1px solid var(--border); margin-top: 2rem;
+      color: var(--muted); font-size: .75rem;
+    }
+    .report-footer strong { color: var(--gold); }
+
+    /* ── Print styles ── */
+    @media print {
+      .action-bar { display: none !important; }
+      body { background: #fff !important; color: #111 !important; font-size: 11pt; }
+      :root {
+        --gold: #8B6914; --gold-light: #B8911A; --bg: #fff; --card: #f9f9f9;
+        --border: #ddd; --text: #111; --muted: #666; --violet: #5b3f9e; --teal: #0e8a7e;
+      }
+      .report { margin: 0 auto; padding: 0 1rem; max-width: 100%; }
+      .cover { page-break-after: avoid; }
+      .section { page-break-inside: avoid; }
+      table { page-break-inside: auto; }
+      tr { page-break-inside: avoid; page-break-after: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Screen-only action bar -->
+<div class="action-bar">
+  <div class="action-bar-left">
+    <a href="/">← Back to App</a>
+    <span style="color:var(--border)">|</span>
+    <span style="color:var(--muted);font-size:.82rem">Birth Chart Report — {{ chart.for_person or chart.label or 'Chart' }}</span>
+  </div>
+  <button class="btn-print" onclick="window.print()">⬇ Download PDF</button>
+</div>
+
+<div class="report">
+
+  <!-- Cover -->
+  <div class="cover">
+    <div class="cover-logo">✦ Krieshan AI · Sidereal Astrology Report</div>
+    <div class="cover-name">{{ chart.for_person or chart.label or 'Birth Chart' }}</div>
+    <div class="cover-sub">Vedic Sidereal Birth Chart Analysis</div>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Date of Birth</span>
+        <span class="cover-meta-val">{{ chart.date }}</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Time of Birth</span>
+        <span class="cover-meta-val">{{ chart.time }}</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Place of Birth</span>
+        <span class="cover-meta-val">{{ chart.city }}</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Report Generated</span>
+        <span class="cover-meta-val">{{ chart.created_at.strftime('%B %d, %Y') }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Big Three -->
+  {% set pl = result.get('placements', {}) %}
+  <div class="section">
+    <div class="section-title">The Big Three — Core Identity</div>
+    <div class="big-three">
+      <div class="b3-card">
+        <div class="b3-label">☉ Sun Sign</div>
+        <div class="b3-glyph">{{ pl.get('Sun', {}).get('sign_symbol', '☉') }}</div>
+        <div class="b3-sign">{{ result.get('sun_sign', '—') }}</div>
+      </div>
+      <div class="b3-card">
+        <div class="b3-label">☽ Moon Sign</div>
+        <div class="b3-glyph">{{ pl.get('Moon', {}).get('sign_symbol', '☽') }}</div>
+        <div class="b3-sign">{{ result.get('moon_sign', '—') }}</div>
+      </div>
+      <div class="b3-card">
+        <div class="b3-label">↑ Rising Sign</div>
+        <div class="b3-glyph">{{ pl.get('Ascendant', {}).get('sign_symbol', '↑') }}</div>
+        <div class="b3-sign">{{ result.get('rising_sign', '—') }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full Placements Table -->
+  <div class="section">
+    <div class="section-title">D1 Birth Chart — All Planetary Placements (Sidereal)</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Planet</th><th>Sign</th><th>Degree</th><th>House</th><th>Nakshatra</th><th>Pada</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% set planet_order = ['Ascendant','Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Rahu','Ketu'] %}
+        {% for pname in planet_order %}
+          {% set p = pl.get(pname, {}) %}
+          {% if p %}
+          <tr>
+            <td><span class="sym">{{ p.get('symbol','') }}</span>{{ pname }}{% if p.get('retrograde') %} <span class="muted-sm">(R)</span>{% endif %}</td>
+            <td><span class="sym">{{ p.get('sign_symbol','') }}</span>{{ p.get('sign','') }}</td>
+            <td class="muted-sm">{{ '%.2f'|format(p.get('degree',0)) }}°</td>
+            <td><span class="house-badge">{{ p.get('house','—') }}</span></td>
+            <td>{{ p.get('nakshatra','') }}</td>
+            <td class="muted-sm">{{ p.get('nakshatra_pada','') }}</td>
+          </tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- D9 Navamsa Summary -->
+  {% if navamsa %}
+  <div class="section">
+    <div class="section-title">D9 Navamsa — Marriage &amp; Soul Chart</div>
+    <div class="chart-summary">
+      <div class="cs-title">D9 Key Indicators</div>
+      <div class="cs-row">
+        <div class="cs-chip"><span class="cl">D9 Lagna</span><span class="cv">{{ navamsa.get('d9_lagna_sign','—') }}</span></div>
+        <div class="cs-chip"><span class="cl">Venus D9</span><span class="cv">{{ navamsa.get('d9_venus_sign','—') }}</span></div>
+        <div class="cs-chip"><span class="cl">7th House</span><span class="cv">{{ navamsa.get('d9_7th_sign','—') }}</span></div>
+        <div class="cs-chip"><span class="cl">Darakaraka</span><span class="cv">{{ navamsa.get('darakaraka','—') }}</span></div>
+        <div class="cs-chip"><span class="cl">Atmakaraka</span><span class="cv">{{ navamsa.get('atmakaraka','—') }}</span></div>
+      </div>
+    </div>
+    {% if navamsa.get('lagna_interp') %}
+    <div class="interp-grid">
+      <div class="interp-card">
+        <div class="ic-label">D9 Lagna — Marriage Persona</div>
+        <div class="ic-value">{{ navamsa.get('d9_lagna_sign') }}</div>
+        <div class="ic-text">{{ navamsa.get('lagna_interp','') }}</div>
+      </div>
+      <div class="interp-card">
+        <div class="ic-label">Venus in D9 — Love in Marriage</div>
+        <div class="ic-value">{{ navamsa.get('d9_venus_sign') }}</div>
+        <div class="ic-text">{{ navamsa.get('venus_interp','') }}</div>
+      </div>
+      <div class="interp-card full">
+        <div class="ic-label">Darakaraka — {{ navamsa.get('darakaraka') }} (Spouse Significator)</div>
+        <div class="ic-value">{{ navamsa.get('darakaraka') }} → D9 {{ navamsa.get('darakaraka_d9_sign') }}</div>
+        <div class="ic-text">{{ navamsa.get('dk_interp','') }}</div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- D10 Dasamsa Summary -->
+  {% if dasamsa %}
+  <div class="section">
+    <div class="section-title">D10 Dasamsa — Career &amp; Purpose Chart</div>
+    <div class="chart-summary">
+      <div class="cs-title">D10 Key Indicators</div>
+      <div class="cs-row">
+        <div class="cs-chip"><span class="cl">D10 Lagna</span><span class="cv">{{ dasamsa.get('d10_lagna_sign','—') }}</span></div>
+        <div class="cs-chip"><span class="cl">10th House</span><span class="cv">{{ dasamsa.get('d10_10th_sign','—') }}</span></div>
+        <div class="cs-chip"><span class="cl">Amatyakaraka</span><span class="cv">{{ dasamsa.get('amatyakaraka','—') }}</span></div>
+        <div class="cs-chip"><span class="cl">Saturn D10</span><span class="cv">{{ dasamsa.get('d10_saturn_sign','—') }}</span></div>
+        <div class="cs-chip"><span class="cl">Sun D10</span><span class="cv">{{ dasamsa.get('d10_sun_sign','—') }}</span></div>
+      </div>
+    </div>
+    {% if dasamsa.get('lagna_interp') %}
+    <div class="interp-grid">
+      <div class="interp-card">
+        <div class="ic-label">D10 Lagna — Professional Persona</div>
+        <div class="ic-value">{{ dasamsa.get('d10_lagna_sign') }}</div>
+        <div class="ic-text">{{ dasamsa.get('lagna_interp','') }}</div>
+      </div>
+      <div class="interp-card">
+        <div class="ic-label">Amatyakaraka — {{ dasamsa.get('amatyakaraka') }} (Career)</div>
+        <div class="ic-value">{{ dasamsa.get('amatyakaraka') }} → D10 {{ dasamsa.get('amatyakaraka_d10_sign') }}</div>
+        <div class="ic-text">{{ dasamsa.get('amk_interp','') }}</div>
+      </div>
+      <div class="interp-card full">
+        <div class="ic-label">10th House D10 — Career Domain</div>
+        <div class="ic-value">{{ dasamsa.get('d10_10th_sign') }}</div>
+        <div class="ic-text">{{ (dasamsa.get('tenth_interp') or {}).get('domain','') }}{% if (dasamsa.get('tenth_interp') or {}).get('success_path') %} {{ dasamsa.get('tenth_interp',{}).get('success_path','') }}{% endif %}</div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- Footer -->
+  <div class="report-footer">
+    <strong>Krieshan AI</strong> · Vedic Sidereal Astrology · Generated {{ chart.created_at.strftime('%B %d, %Y') }}<br>
+    <span style="font-size:.68rem">This report is for personal insight and reflection. Planetary positions calculated using sidereal (Vedic) coordinates.</span>
+  </div>
+
+</div><!-- /report -->
+</body>
+</html>

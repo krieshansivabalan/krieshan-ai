@@ -376,6 +376,223 @@
     .btn-pay:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,.3); }
     .modal-fine { font-size: .72rem; color: var(--muted); margin-top: .8rem; }
 
+    /* ── Tier Badge ─────────────────────────────────────────────── */
+    .tier-badge {
+      display: inline-flex; align-items: center; gap: .3rem;
+      font-size: .68rem; font-family: 'Cinzel', serif; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .08em;
+      padding: .2rem .6rem; border-radius: 20px; cursor: pointer;
+      transition: opacity .2s;
+    }
+    .tier-badge:hover { opacity: .8; }
+    .tier-badge.free    { background: rgba(122,120,154,.15); color: var(--muted); border: 1px solid rgba(122,120,154,.25); }
+    .tier-badge.seeker  { background: rgba(201,168,76,.12);  color: var(--gold);  border: 1px solid rgba(201,168,76,.25); }
+    .tier-badge.scholar { background: rgba(45,212,191,.12);  color: #2dd4bf;      border: 1px solid rgba(45,212,191,.25); }
+    .tier-badge.oracle  { background: rgba(168,132,232,.15); color: var(--violet-light); border: 1px solid rgba(168,132,232,.3); }
+
+    /* ── AI Chat Panel ──────────────────────────────────────────── */
+    .ai-chat-fab {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 200;
+      width: 54px; height: 54px; border-radius: 50%; border: none; cursor: pointer;
+      background: linear-gradient(135deg, var(--violet), #5b3f9e);
+      box-shadow: 0 4px 20px rgba(124,92,191,.5);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; transition: transform .2s, box-shadow .2s;
+    }
+    .ai-chat-fab:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(124,92,191,.6); }
+    .ai-chat-fab .ai-badge {
+      position: absolute; top: -4px; right: -4px; background: var(--gold);
+      color: #07080f; font-size: .55rem; font-weight: 800; font-family: 'Cinzel', serif;
+      border-radius: 10px; padding: 1px 5px; display: none;
+    }
+    .ai-chat-panel {
+      position: fixed; bottom: 0; right: 0; width: 400px; max-width: 100vw;
+      height: 540px; z-index: 300;
+      background: #0d0f1e; border: 1px solid rgba(168,132,232,.25);
+      border-bottom: none; border-radius: 18px 18px 0 0;
+      display: flex; flex-direction: column;
+      box-shadow: 0 -8px 40px rgba(0,0,0,.5);
+      transform: translateY(100%); transition: transform .35s cubic-bezier(.4,0,.2,1);
+    }
+    .ai-chat-panel.open { transform: translateY(0); }
+    .ai-chat-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.2rem; border-bottom: 1px solid rgba(255,255,255,.06);
+      flex-shrink: 0;
+    }
+    .ai-chat-title { font-family: 'Cinzel', serif; font-size: .88rem; font-weight: 700; color: var(--violet-light); display: flex; align-items: center; gap: .5rem; }
+    .ai-chat-quota { font-size: .7rem; color: var(--muted); }
+    .ai-chat-close { background: none; border: none; color: var(--muted); font-size: 1.1rem; cursor: pointer; line-height: 1; }
+    .ai-chat-close:hover { color: var(--text); }
+    .ai-chat-messages {
+      flex: 1; overflow-y: auto; padding: 1rem 1.2rem;
+      display: flex; flex-direction: column; gap: .75rem;
+      scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.1) transparent;
+    }
+    .ai-chat-msg { display: flex; gap: .6rem; }
+    .ai-chat-msg.user { flex-direction: row-reverse; }
+    .ai-chat-bubble {
+      max-width: 82%; padding: .65rem .9rem; border-radius: 12px;
+      font-size: .83rem; line-height: 1.6;
+    }
+    .ai-chat-msg.user .ai-chat-bubble {
+      background: rgba(168,132,232,.18); border: 1px solid rgba(168,132,232,.2);
+      color: var(--text); border-radius: 12px 4px 12px 12px;
+    }
+    .ai-chat-msg.assistant .ai-chat-bubble {
+      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+      color: rgba(226,223,245,.9); border-radius: 4px 12px 12px 12px;
+    }
+    .ai-chat-typing { display: flex; gap: .3rem; align-items: center; padding: .4rem .2rem; }
+    .ai-chat-typing span {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--violet-light);
+      animation: typing-bounce .9s ease-in-out infinite;
+    }
+    .ai-chat-typing span:nth-child(2) { animation-delay: .15s; }
+    .ai-chat-typing span:nth-child(3) { animation-delay: .3s; }
+    @keyframes typing-bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+    .ai-chat-input-row {
+      padding: .9rem 1rem; border-top: 1px solid rgba(255,255,255,.06); flex-shrink: 0;
+      display: flex; gap: .6rem; align-items: flex-end;
+    }
+    .ai-chat-input {
+      flex: 1; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px; padding: .6rem .9rem; color: var(--text); font-size: .85rem;
+      font-family: 'Raleway', sans-serif; resize: none; max-height: 100px;
+      outline: none; line-height: 1.5;
+    }
+    .ai-chat-input:focus { border-color: rgba(168,132,232,.4); }
+    .ai-chat-send {
+      width: 38px; height: 38px; flex-shrink: 0; border-radius: 10px; border: none; cursor: pointer;
+      background: linear-gradient(135deg, var(--violet), #5b3f9e);
+      color: #fff; font-size: 1rem; display: flex; align-items: center; justify-content: center;
+      transition: opacity .2s;
+    }
+    .ai-chat-send:hover { opacity: .85; }
+    .ai-chat-send:disabled { opacity: .4; cursor: not-allowed; }
+    .ai-chat-locked {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 1.5rem; text-align: center; gap: .8rem;
+    }
+    .ai-chat-locked-icon { font-size: 2.2rem; }
+    .ai-chat-locked-title { font-family: 'Cinzel', serif; font-size: .92rem; font-weight: 700; color: var(--gold); }
+    .ai-chat-locked-sub { font-size: .8rem; color: var(--muted); line-height: 1.6; max-width: 260px; }
+    .ai-chat-locked-btn {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: #07080f; border: none; border-radius: 8px; padding: .55rem 1.3rem;
+      font-family: 'Cinzel', serif; font-weight: 700; font-size: .82rem;
+      cursor: pointer; letter-spacing: .04em;
+    }
+
+    /* ── Saved Charts Panel ──────────────────────────────────────── */
+    .charts-fab {
+      position: fixed; bottom: 2rem; left: 2rem; z-index: 200;
+      background: rgba(201,168,76,.12); border: 1px solid rgba(201,168,76,.25);
+      border-radius: 12px; padding: .6rem 1rem; cursor: pointer;
+      display: flex; align-items: center; gap: .5rem;
+      font-size: .78rem; font-family: 'Cinzel', serif; font-weight: 600;
+      color: var(--gold); transition: background .2s, box-shadow .2s;
+    }
+    .charts-fab:hover { background: rgba(201,168,76,.2); box-shadow: 0 4px 16px rgba(201,168,76,.2); }
+    .charts-fab .charts-count {
+      background: var(--gold); color: #07080f; border-radius: 10px;
+      font-size: .65rem; font-weight: 800; padding: 0 6px; min-width: 18px; text-align: center;
+    }
+    .charts-drawer {
+      position: fixed; left: 0; top: 0; bottom: 0; width: 320px; max-width: 90vw;
+      z-index: 400; background: #0b0d1c; border-right: 1px solid rgba(201,168,76,.15);
+      display: flex; flex-direction: column;
+      transform: translateX(-100%); transition: transform .35s cubic-bezier(.4,0,.2,1);
+      box-shadow: 4px 0 32px rgba(0,0,0,.5);
+    }
+    .charts-drawer.open { transform: translateX(0); }
+    .charts-drawer-overlay {
+      position: fixed; inset: 0; z-index: 399; background: rgba(0,0,0,.5);
+      display: none;
+    }
+    .charts-drawer-overlay.open { display: block; }
+    .charts-drawer-header {
+      padding: 1.3rem 1.2rem 1rem; border-bottom: 1px solid rgba(255,255,255,.06);
+      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+    }
+    .charts-drawer-title { font-family: 'Cinzel', serif; font-size: .92rem; font-weight: 700; color: var(--gold); }
+    .charts-drawer-close { background: none; border: none; color: var(--muted); font-size: 1.2rem; cursor: pointer; }
+    .charts-drawer-close:hover { color: var(--text); }
+    .charts-drawer-list { flex: 1; overflow-y: auto; padding: .8rem; scrollbar-width: thin; }
+    .chart-item {
+      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
+      border-radius: 10px; padding: .85rem 1rem; margin-bottom: .6rem; cursor: pointer;
+      transition: border-color .2s, background .2s; position: relative;
+    }
+    .chart-item:hover { border-color: rgba(201,168,76,.3); background: rgba(201,168,76,.04); }
+    .chart-item.active { border-color: rgba(201,168,76,.4); background: rgba(201,168,76,.06); }
+    .chart-item-name { font-family: 'Cinzel', serif; font-size: .83rem; font-weight: 600; color: var(--text); margin-bottom: .25rem; }
+    .chart-item-meta { font-size: .73rem; color: var(--muted); }
+    .chart-item-del {
+      position: absolute; top: .7rem; right: .7rem;
+      background: none; border: none; color: rgba(248,113,113,.4); font-size: .9rem;
+      cursor: pointer; padding: .1rem; line-height: 1;
+    }
+    .chart-item-del:hover { color: #f87171; }
+    .charts-drawer-new {
+      padding: 1rem; border-top: 1px solid rgba(255,255,255,.06); flex-shrink: 0;
+    }
+    .charts-drawer-limit { font-size: .72rem; color: var(--muted); text-align: center; margin-bottom: .6rem; }
+    .btn-new-chart {
+      width: 100%; padding: .65rem; border: 1px dashed rgba(201,168,76,.3);
+      border-radius: 10px; background: transparent; color: var(--gold);
+      font-family: 'Cinzel', serif; font-size: .78rem; font-weight: 600;
+      cursor: pointer; transition: background .2s; letter-spacing: .04em;
+    }
+    .btn-new-chart:hover { background: rgba(201,168,76,.08); }
+
+    /* ── PDF download button ─────────────────────────────────────── */
+    .btn-pdf {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: rgba(45,212,191,.1); border: 1px solid rgba(45,212,191,.25);
+      border-radius: 8px; padding: .45rem .9rem; color: #2dd4bf;
+      font-size: .75rem; font-family: 'Cinzel', serif; font-weight: 600;
+      cursor: pointer; text-decoration: none; transition: background .2s;
+      letter-spacing: .04em;
+    }
+    .btn-pdf:hover { background: rgba(45,212,191,.18); }
+
+    /* ── Upgrade Overlay (for locked features) ──────────────────── */
+    .upgrade-overlay {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(7,8,15,.88); backdrop-filter: blur(10px);
+      display: none; align-items: center; justify-content: center;
+    }
+    .upgrade-overlay.open { display: flex; }
+    .upgrade-card {
+      background: #0d0f1e; border: 1px solid rgba(201,168,76,.25);
+      border-radius: 22px; padding: 2.5rem; max-width: 460px; width: 92%;
+      text-align: center; position: relative;
+    }
+    .upgrade-close {
+      position: absolute; top: 1rem; right: 1.2rem;
+      background: none; border: none; color: var(--muted); font-size: 1.3rem; cursor: pointer;
+    }
+    .upgrade-icon { font-size: 2.8rem; margin-bottom: 1rem; }
+    .upgrade-title { font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 700; color: var(--gold-light); margin-bottom: .5rem; }
+    .upgrade-sub { font-size: .85rem; color: var(--muted); line-height: 1.7; margin-bottom: 1.8rem; }
+    .upgrade-tiers { display: flex; flex-direction: column; gap: .7rem; margin-bottom: 1.5rem; }
+    .upgrade-tier {
+      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+      border-radius: 12px; padding: .9rem 1.1rem;
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; transition: border-color .2s, background .2s;
+    }
+    .upgrade-tier:hover { border-color: rgba(201,168,76,.3); background: rgba(201,168,76,.04); }
+    .upgrade-tier.recommended { border-color: rgba(201,168,76,.35); }
+    .upgrade-tier-left { text-align: left; }
+    .upgrade-tier-name { font-family: 'Cinzel', serif; font-size: .85rem; font-weight: 700; color: var(--text); }
+    .upgrade-tier-desc { font-size: .73rem; color: var(--muted); margin-top: .15rem; }
+    .upgrade-tier-price { font-family: 'Cinzel', serif; font-size: .95rem; font-weight: 700; color: var(--gold); }
+    .upgrade-tier.recommended .upgrade-tier-name::after {
+      content: ' ✦ Popular'; font-size: .6rem; color: var(--gold); margin-left: .4rem;
+    }
+
     /* ── Form Card ─────────────────────────────────────────────── */
     .form-card {
       background: var(--card);
@@ -1343,6 +1560,99 @@
 <body>
   <div id="stars"></div>
 
+  <!-- ── AI Chat FAB ──────────────────────────────────────────── -->
+  <button class="ai-chat-fab" id="ai-chat-fab" onclick="toggleChat()" title="Ask Your Chart">
+    ✦
+    <span class="ai-badge" id="ai-badge">AI</span>
+  </button>
+
+  <!-- ── AI Chat Panel ─────────────────────────────────────────── -->
+  <div class="ai-chat-panel" id="ai-chat-panel">
+    <div class="ai-chat-header">
+      <div>
+        <div class="ai-chat-title">✦ Ask Your Chart</div>
+        <div class="ai-chat-quota" id="ai-chat-quota"></div>
+      </div>
+      <button class="ai-chat-close" onclick="toggleChat()">✕</button>
+    </div>
+    <div class="ai-chat-messages" id="ai-chat-messages">
+      <div class="ai-chat-msg assistant">
+        <div class="ai-chat-bubble">
+          Welcome — I am your Vedic astrology guide. Calculate your birth chart first, then ask me anything: career timing, relationship patterns, your life purpose, or what's coming in your dasha period.
+        </div>
+      </div>
+    </div>
+    <div id="ai-chat-locked-panel" class="ai-chat-locked" style="display:none">
+      <div class="ai-chat-locked-icon">🔮</div>
+      <div class="ai-chat-locked-title">AI Chart Chat</div>
+      <div class="ai-chat-locked-sub">Ask unlimited questions about your chart — career, love, timing, purpose. Available on Seeker plan and above.</div>
+      <button class="ai-chat-locked-btn" onclick="openUpgrade('chat')">Unlock AI Chat ✦</button>
+    </div>
+    <div class="ai-chat-input-row" id="ai-chat-input-row">
+      <textarea class="ai-chat-input" id="ai-chat-input" rows="1"
+        placeholder="Ask about your chart…"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
+      <button class="ai-chat-send" id="ai-chat-send" onclick="sendChat()">➤</button>
+    </div>
+  </div>
+
+  <!-- ── Saved Charts FAB ───────────────────────────────────────── -->
+  <button class="charts-fab" id="charts-fab" onclick="openChartsDrawer()" title="My Charts">
+    📋 My Charts
+    <span class="charts-count" id="charts-count">0</span>
+  </button>
+
+  <!-- ── Saved Charts Drawer ───────────────────────────────────── -->
+  <div class="charts-drawer-overlay" id="charts-drawer-overlay" onclick="closeChartsDrawer()"></div>
+  <div class="charts-drawer" id="charts-drawer">
+    <div class="charts-drawer-header">
+      <div class="charts-drawer-title">📋 Saved Charts</div>
+      <button class="charts-drawer-close" onclick="closeChartsDrawer()">✕</button>
+    </div>
+    <div class="charts-drawer-list" id="charts-drawer-list">
+      <div style="text-align:center;color:var(--muted);font-size:.82rem;padding:1.5rem">Loading charts…</div>
+    </div>
+    <div class="charts-drawer-new">
+      <div class="charts-drawer-limit" id="charts-drawer-limit"></div>
+      <button class="btn-new-chart" onclick="closeChartsDrawer()">+ Calculate New Chart</button>
+    </div>
+  </div>
+
+  <!-- ── Upgrade Modal ─────────────────────────────────────────── -->
+  <div class="upgrade-overlay" id="upgrade-overlay">
+    <div class="upgrade-card">
+      <button class="upgrade-close" onclick="closeUpgrade()">✕</button>
+      <div class="upgrade-icon" id="upgrade-icon">✦</div>
+      <div class="upgrade-title" id="upgrade-title">Unlock Premium Features</div>
+      <div class="upgrade-sub" id="upgrade-sub">Choose a plan to access this feature.</div>
+      <div class="upgrade-tiers">
+        <div class="upgrade-tier" onclick="triggerCheckout()">
+          <div class="upgrade-tier-left">
+            <div class="upgrade-tier-name">Seeker</div>
+            <div class="upgrade-tier-desc">D9 &amp; D10 charts · 10 AI questions/mo · 5 saved charts · PDF export</div>
+          </div>
+          <div class="upgrade-tier-price">$14/mo</div>
+        </div>
+        <div class="upgrade-tier recommended" onclick="triggerCheckout()">
+          <div class="upgrade-tier-left">
+            <div class="upgrade-tier-name">Scholar</div>
+            <div class="upgrade-tier-desc">All charts · 50 AI questions/mo · 20 saved charts · Muhurta · Year Ahead</div>
+          </div>
+          <div class="upgrade-tier-price">$39/mo</div>
+        </div>
+        <div class="upgrade-tier" onclick="triggerCheckout()">
+          <div class="upgrade-tier-left">
+            <div class="upgrade-tier-name">Oracle</div>
+            <div class="upgrade-tier-desc">Everything · Unlimited AI · Unlimited charts · Priority features</div>
+          </div>
+          <div class="upgrade-tier-price">$89/mo</div>
+        </div>
+      </div>
+      <div class="modal-fine">Cancel anytime. Secure payment via Stripe.</div>
+    </div>
+  </div>
+
   <!-- ── Payment Modal ────────────────────────────────────────── -->
   <div class="modal-overlay" id="payment-modal">
     <div class="modal-card">
@@ -1393,6 +1703,12 @@
       <div class="streak-pill" id="streak-pill" title="Daily streak — keep coming back!">
         🔥 <span id="streak-count">1</span>
       </div>
+
+      <!-- Tier badge -->
+      <span class="tier-badge free" id="tier-badge" onclick="openUpgrade('general')" title="Your plan">Free</span>
+
+      <!-- PDF download (shown after chart calculated) -->
+      <a id="pdf-btn" class="btn-pdf" style="display:none" href="#" target="_blank">⬇ PDF Report</a>
 
       <a href="/admin" class="user-pill">
         {% if user.picture_url %}
@@ -2367,6 +2683,13 @@
     const career = data.career;
     const romance = data.romance;
 
+    // Track current chart id for PDF + AI chat
+    if (data.chart_id) {
+      _currentChartId = data.chart_id;
+      showPdfButton(data.chart_id);
+      loadSavedCharts(); // refresh drawer count
+    }
+
     $('out-name').textContent = data.name === 'The Seeker' ? 'Your Birth Chart' : `${data.name}'s Birth Chart`;
     $('out-info').innerHTML = `${data.local_datetime}<br>${data.full_address}`;
 
@@ -3094,7 +3417,7 @@
     if (chartData) renderReading(chartData);
   });
 
-  $('pdf-btn').addEventListener('click', () => { if (chartData) generatePDF(chartData); });
+  // pdf-btn is now a plain <a> link to the report page — no JS click handler needed
   $('reset-btn').addEventListener('click', () => {
     $('reading').style.display = 'none';
     $('form-section').scrollIntoView({ behavior: 'smooth' });
@@ -3757,6 +4080,234 @@
 
     document.getElementById('d10-placeholder').style.display = 'none';
     document.getElementById('d10-reading').style.display = '';
+  }
+
+  // ── Tier & Plan State ─────────────────────────────────────────
+  let _tier = 'free';
+  let _aiRemaining = 0;
+  let _chartLimit  = 1;
+  let _chartsUsed  = 0;
+  let _currentChartId = null;
+
+  async function checkPaidStatus() {
+    try {
+      const r = await fetch('/api/check-paid');
+      const d = await r.json();
+      _tier        = d.tier        || 'free';
+      _aiRemaining = d.ai_remaining !== undefined ? d.ai_remaining : 0;
+      _chartLimit  = d.charts_limit || 1;
+      _chartsUsed  = d.charts_used  || 0;
+      updateTierUI();
+    } catch(e) {}
+  }
+
+  function updateTierUI() {
+    const badge = $('tier-badge');
+    if (badge) {
+      const labels = { free:'Free', seeker:'Seeker ✦', scholar:'Scholar ◈', oracle:'Oracle ★' };
+      badge.textContent = labels[_tier] || _tier;
+      badge.className = `tier-badge ${_tier}`;
+    }
+    updateAIChatUI();
+    loadSavedCharts();
+  }
+
+  // ── Upgrade Modal ──────────────────────────────────────────────
+  const _upgradeMessages = {
+    chat:    { icon:'✦', title:'Unlock AI Chart Chat', sub:'Ask unlimited questions about your Vedic birth chart — career timing, relationships, dasha periods, and your life purpose. Available on Seeker and above.' },
+    pdf:     { icon:'⬇', title:'Unlock PDF Reports',   sub:'Download a beautifully formatted PDF of your full chart reading — D1, D9, and D10 — to keep, print, or share. Available on Seeker and above.' },
+    charts:  { icon:'📋', title:'Save More Charts',     sub:'Save charts for your family, partner, and children. Load any saved chart instantly and switch between readings without re-entering data.' },
+    general: { icon:'✦', title:'Upgrade Your Plan',    sub:'Unlock the full power of Vedic astrology — AI chat, divisional charts, PDF reports, saved charts, and much more.' },
+  };
+  function openUpgrade(type) {
+    const cfg = _upgradeMessages[type] || _upgradeMessages.general;
+    $('upgrade-icon').textContent  = cfg.icon;
+    $('upgrade-title').textContent = cfg.title;
+    $('upgrade-sub').textContent   = cfg.sub;
+    $('upgrade-overlay').classList.add('open');
+  }
+  function closeUpgrade() { $('upgrade-overlay').classList.remove('open'); }
+  function triggerCheckout() {
+    closeUpgrade();
+    openModal();  // existing payment modal
+  }
+  $('upgrade-overlay').addEventListener('click', e => { if(e.target === $('upgrade-overlay')) closeUpgrade(); });
+
+  // ── Saved Charts Drawer ────────────────────────────────────────
+  let _savedCharts = [];
+
+  async function loadSavedCharts() {
+    try {
+      const r = await fetch('/api/charts');
+      _savedCharts = await r.json();
+      _chartsUsed  = _savedCharts.length;
+      renderChartsDrawer();
+    } catch(e) {}
+  }
+
+  function renderChartsDrawer() {
+    const list = $('charts-drawer-list');
+    $('charts-count').textContent = _savedCharts.length;
+    const limitText = _chartLimit === -1 ? 'Unlimited' : `${_chartsUsed} / ${_chartLimit}`;
+    $('charts-drawer-limit').textContent = `${limitText} charts saved`;
+
+    if (_savedCharts.length === 0) {
+      list.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:.82rem;padding:2rem 1rem">No saved charts yet.<br>Calculate a chart to save it.</div>';
+      return;
+    }
+    list.innerHTML = _savedCharts.map(c => `
+      <div class="chart-item ${c.id === _currentChartId ? 'active' : ''}" data-id="${c.id}" onclick="loadSavedChart(${c.id})">
+        <button class="chart-item-del" onclick="event.stopPropagation();deleteSavedChart(${c.id})" title="Delete">✕</button>
+        <div class="chart-item-name">${c.label || 'Chart'}</div>
+        <div class="chart-item-meta">${c.date} · ${c.city}</div>
+        <div class="chart-item-meta" style="font-size:.68rem;margin-top:.15rem">${c.created_at}</div>
+      </div>`).join('');
+  }
+
+  async function loadSavedChart(chartId) {
+    closeChartsDrawer();
+    _currentChartId = chartId;
+    const btn = $('calc-btn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Loading…'; }
+    $('loading-overlay') && ($('loading-overlay').style.display = 'flex');
+    try {
+      const r = await fetch(`/api/charts/${chartId}/load`, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ ayanamsa: document.getElementById('ayanamsa')?.value || 'lahiri' })
+      });
+      const data = await r.json();
+      if (data.error) throw new Error(data.error);
+      renderReading(data);
+      // Update PDF button
+      const pdfBtn = $('pdf-btn');
+      if (pdfBtn) { pdfBtn.href = `/chart/${chartId}/report`; pdfBtn.style.display = ''; }
+    } catch(e) {
+      showError && showError(e.message);
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Calculate Birth Chart'; }
+      $('loading-overlay') && ($('loading-overlay').style.display = 'none');
+    }
+    renderChartsDrawer();
+  }
+
+  async function deleteSavedChart(chartId) {
+    if (!confirm('Delete this saved chart?')) return;
+    await fetch(`/api/charts/${chartId}`, { method: 'DELETE' });
+    if (_currentChartId === chartId) _currentChartId = null;
+    await loadSavedCharts();
+  }
+
+  function openChartsDrawer() {
+    loadSavedCharts();
+    $('charts-drawer').classList.add('open');
+    $('charts-drawer-overlay').classList.add('open');
+  }
+  function closeChartsDrawer() {
+    $('charts-drawer').classList.remove('open');
+    $('charts-drawer-overlay').classList.remove('open');
+  }
+
+  // ── AI Chart Chat ──────────────────────────────────────────────
+  let _chatOpen = false;
+
+  function updateAIChatUI() {
+    const lockedPanel = $('ai-chat-locked-panel');
+    const inputRow    = $('ai-chat-input-row');
+    const quota       = $('ai-chat-quota');
+    if (_tier === 'free') {
+      if (lockedPanel) lockedPanel.style.display = '';
+      if (inputRow)    inputRow.style.display    = 'none';
+      if (quota) quota.textContent = '';
+    } else {
+      if (lockedPanel) lockedPanel.style.display = 'none';
+      if (inputRow)    inputRow.style.display    = '';
+      if (quota) {
+        quota.textContent = _aiRemaining === -1
+          ? 'Unlimited questions'
+          : `${_aiRemaining} question${_aiRemaining !== 1 ? 's' : ''} remaining this month`;
+      }
+    }
+  }
+
+  function toggleChat() {
+    _chatOpen = !_chatOpen;
+    $('ai-chat-panel').classList.toggle('open', _chatOpen);
+    if (_chatOpen) {
+      const inp = $('ai-chat-input');
+      if (inp && _tier !== 'free') setTimeout(() => inp.focus(), 350);
+    }
+  }
+
+  async function sendChat() {
+    const inp  = $('ai-chat-input');
+    const send = $('ai-chat-send');
+    const question = inp.value.trim();
+    if (!question) return;
+    if (_tier === 'free') { openUpgrade('chat'); return; }
+
+    inp.value = ''; inp.style.height = 'auto';
+    appendChatMsg('user', question);
+    const typingEl = appendTyping();
+    send.disabled = true;
+
+    try {
+      const body = { question };
+      if (_currentChartId) body.chart_id = _currentChartId;
+      const r = await fetch('/api/chat', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(body)
+      });
+      const d = await r.json();
+      typingEl.remove();
+
+      if (d.error === 'upgrade' || d.error === 'quota') {
+        appendChatMsg('assistant', d.message || 'Please upgrade to continue.');
+        if (d.error === 'upgrade') openUpgrade('chat');
+      } else if (d.error) {
+        appendChatMsg('assistant', `⚠ ${d.error}`);
+      } else {
+        appendChatMsg('assistant', d.answer);
+        if (d.remaining !== undefined) {
+          _aiRemaining = d.remaining;
+          updateAIChatUI();
+        }
+      }
+    } catch(e) {
+      typingEl.remove();
+      appendChatMsg('assistant', '⚠ Could not reach the server. Please try again.');
+    } finally {
+      send.disabled = false;
+    }
+  }
+
+  function appendChatMsg(role, text) {
+    const msgs = $('ai-chat-messages');
+    const div  = document.createElement('div');
+    div.className = `ai-chat-msg ${role}`;
+    div.innerHTML = `<div class="ai-chat-bubble">${text.replace(/\n/g,'<br>')}</div>`;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+    return div;
+  }
+
+  function appendTyping() {
+    const msgs = $('ai-chat-messages');
+    const div  = document.createElement('div');
+    div.className = 'ai-chat-msg assistant';
+    div.innerHTML = `<div class="ai-chat-bubble"><div class="ai-chat-typing"><span></span><span></span><span></span></div></div>`;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+    return div;
+  }
+
+  // ── PDF button: shown after chart renders ──────────────────────
+  function showPdfButton(chartId) {
+    const pdfBtn = $('pdf-btn');
+    if (!pdfBtn) return;
+    if (!chartId) { pdfBtn.style.display = 'none'; return; }
+    if (_tier === 'free') { pdfBtn.style.display = 'none'; return; }
+    pdfBtn.href = `/chart/${chartId}/report`;
+    pdfBtn.style.display = '';
   }
 
   // ── Init ──────────────────────────────────────────────────────
