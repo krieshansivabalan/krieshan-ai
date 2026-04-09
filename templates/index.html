@@ -1609,8 +1609,7 @@
       .career-section, .romance-section, .transit-section { padding: 1.2rem; }
       .transit-grid { grid-template-columns: 1fr; }
 
-      /* Saved charts FAB — keep bottom-left, shrink padding slightly on mobile */
-      .charts-fab { bottom: 1.2rem; left: 1rem; font-size: .74rem; padding: .55rem .85rem; }
+      /* Charts FAB removed — no mobile override needed */
 
       /* Toast container */
       .toast-container { bottom: 5rem; right: .75rem; left: .75rem; }
@@ -1678,27 +1677,13 @@
     </div>
   </div>
 
-  <!-- ── Saved Charts FAB ───────────────────────────────────────── -->
-  <button class="charts-fab" id="charts-fab" onclick="openChartsDrawer()" title="My Charts">
-    📋 My Charts
-    <span class="charts-count" id="charts-count">0</span>
-  </button>
-
-  <!-- ── Saved Charts Drawer ───────────────────────────────────── -->
-  <div class="charts-drawer-overlay" id="charts-drawer-overlay" onclick="closeChartsDrawer()"></div>
-  <div class="charts-drawer" id="charts-drawer">
-    <div class="charts-drawer-header">
-      <div class="charts-drawer-title">📋 Saved Charts</div>
-      <button class="charts-drawer-close" onclick="closeChartsDrawer()">✕</button>
-    </div>
-    <div class="charts-drawer-list" id="charts-drawer-list">
-      <div style="text-align:center;color:var(--muted);font-size:.82rem;padding:1.5rem">Loading charts…</div>
-    </div>
-    <div class="charts-drawer-new">
-      <div class="charts-drawer-limit" id="charts-drawer-limit"></div>
-      <button class="btn-new-chart" onclick="closeChartsDrawer()">+ Calculate New Chart</button>
-    </div>
-  </div>
+  <!-- My Charts drawer removed — charts are saved silently for admin analytics only -->
+  <!-- Hidden elements kept so JS references don't throw errors -->
+  <div id="charts-count"        style="display:none"></div>
+  <div id="charts-drawer-list"  style="display:none"></div>
+  <div id="charts-drawer-limit" style="display:none"></div>
+  <div id="charts-drawer"       style="display:none"></div>
+  <div id="charts-drawer-overlay" style="display:none"></div>
 
   <!-- ── Upgrade Modal ─────────────────────────────────────────── -->
   <div class="upgrade-overlay" id="upgrade-overlay">
@@ -4218,80 +4203,17 @@
   // ── Saved Charts Drawer ────────────────────────────────────────
   let _savedCharts = [];
 
-  async function loadSavedCharts() {
-    try {
-      // cache:'no-store' ensures the browser never serves a cached response
-      // from a previous user's session on the same device
-      const r = await fetch('/api/charts', { cache: 'no-store', credentials: 'same-origin' });
-      if (!r.ok) { _savedCharts = []; renderChartsDrawer(); return; }
-      _savedCharts = await r.json();
-      _chartsUsed  = _savedCharts.length;
-      renderChartsDrawer();
-    } catch(e) { _savedCharts = []; renderChartsDrawer(); }
-  }
+  // My Charts drawer is removed — these are no-ops to avoid JS errors
+  async function loadSavedCharts()  { /* drawer removed — charts visible in admin only */ }
+  function  renderChartsDrawer()    { /* no-op */ }
 
-  function renderChartsDrawer() {
-    const list = $('charts-drawer-list');
-    $('charts-count').textContent = _savedCharts.length;
-    const limitText = _chartLimit === -1 ? 'Unlimited' : `${_chartsUsed} / ${_chartLimit}`;
-    $('charts-drawer-limit').textContent = `${limitText} charts saved`;
+  // loadSavedChart / deleteSavedChart no longer exposed in UI
+  async function loadSavedChart(chartId)   { /* no-op: drawer removed */ }
+  async function deleteSavedChart(chartId) { /* no-op: drawer removed */ }
 
-    if (_savedCharts.length === 0) {
-      list.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:.82rem;padding:2rem 1rem">No saved charts yet.<br>Calculate a chart to save it.</div>';
-      return;
-    }
-    list.innerHTML = _savedCharts.map(c => `
-      <div class="chart-item ${c.id === _currentChartId ? 'active' : ''}" data-id="${c.id}" onclick="loadSavedChart(${c.id})">
-        <button class="chart-item-del" onclick="event.stopPropagation();deleteSavedChart(${c.id})" title="Delete">✕</button>
-        <div class="chart-item-name">${c.label || 'Chart'}</div>
-        <div class="chart-item-meta">${c.date} · ${c.city}</div>
-        <div class="chart-item-meta" style="font-size:.68rem;margin-top:.15rem">${c.created_at}</div>
-      </div>`).join('');
-  }
-
-  async function loadSavedChart(chartId) {
-    closeChartsDrawer();
-    _currentChartId = chartId;
-    const btn = $('calc-btn');
-    if (btn) { btn.disabled = true; btn.textContent = 'Loading…'; }
-    $('loading-overlay') && ($('loading-overlay').style.display = 'flex');
-    try {
-      const r = await fetch(`/api/charts/${chartId}/load`, {
-        method: 'POST', headers: {'Content-Type':'application/json'},
-        cache: 'no-store', credentials: 'same-origin',
-        body: JSON.stringify({ ayanamsa: document.getElementById('ayanamsa')?.value || 'lahiri' })
-      });
-      const data = await r.json();
-      if (data.error) throw new Error(data.error);
-      renderReading(data);
-      // Update PDF button
-      const pdfBtn = $('pdf-btn');
-      if (pdfBtn) { pdfBtn.href = `/chart/${chartId}/report`; pdfBtn.style.display = ''; }
-    } catch(e) {
-      showError && showError(e.message);
-    } finally {
-      if (btn) { btn.disabled = false; btn.textContent = 'Calculate Birth Chart'; }
-      $('loading-overlay') && ($('loading-overlay').style.display = 'none');
-    }
-    renderChartsDrawer();
-  }
-
-  async function deleteSavedChart(chartId) {
-    if (!confirm('Delete this saved chart?')) return;
-    await fetch(`/api/charts/${chartId}`, { method: 'DELETE' });
-    if (_currentChartId === chartId) _currentChartId = null;
-    await loadSavedCharts();
-  }
-
-  function openChartsDrawer() {
-    loadSavedCharts();
-    $('charts-drawer').classList.add('open');
-    $('charts-drawer-overlay').classList.add('open');
-  }
-  function closeChartsDrawer() {
-    $('charts-drawer').classList.remove('open');
-    $('charts-drawer-overlay').classList.remove('open');
-  }
+  // Charts drawer removed from user UI — charts are admin-visible only
+  function openChartsDrawer()  { /* no-op: drawer removed */ }
+  function closeChartsDrawer() { /* no-op: drawer removed */ }
 
   // ── AI Chart Chat ──────────────────────────────────────────────
   let _chatOpen = false;

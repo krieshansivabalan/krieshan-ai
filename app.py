@@ -704,10 +704,20 @@ def _handle_subscription_event(stripe_sub, force_status=None):
 
 
 # ── Saved charts API ──────────────────────────────────────────────
+# The "My Charts" drawer has been removed from the user-facing UI.
+# Charts are saved silently for admin analytics; users only see the
+# chart they actively calculated in the current session.
+# This endpoint is kept so the PDF/load flow still works, but the
+# charts drawer FAB is no longer rendered for regular users.
 @app.route("/api/charts")
 @login_required
 def get_charts():
-    charts = current_user.charts.order_by(BirthChart.created_at.desc()).all()
+    # Explicit user_id filter — never use ORM relationship alone
+    charts = BirthChart.query.filter(
+        BirthChart.user_id == current_user.id
+    ).order_by(BirthChart.created_at.desc()).all()
+    # Belt-and-suspenders: strip any row that somehow has a different user_id
+    charts = [c for c in charts if c.user_id == current_user.id]
     return jsonify([{
         "id":           c.id,
         "label":        c.label,
