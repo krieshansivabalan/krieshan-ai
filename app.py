@@ -17,7 +17,7 @@ from characters import get_characters
 from interpretations import (
     get_daily_horoscope, get_nakshatra_ritual, get_dasha_interpretation,
     ANTAR_DASHA_NOTES, calculate_kuta_score, get_fixed_star_interpretation,
-    ARUDHA_INTERP, INDU_INTERP,
+    ARUDHA_INTERP, INDU_INTERP, get_soul_profile,
 )
 
 # ── App setup ─────────────────────────────────────────────────────
@@ -204,6 +204,9 @@ def chart():
         # D10 Dasamsa chart
         dasamsa = get_dasamsa_chart(result["placements"])
 
+        # Soul profile (light/shadow/feed/avoid)
+        soul = get_soul_profile(result["placements"])
+
         # Persist to database — upsert so re-calculating the same chart
         # never creates duplicate rows (same user + date + time + city)
         birth_chart = BirthChart.query.filter_by(
@@ -235,7 +238,7 @@ def chart():
             db.session.add(birth_chart)
         db.session.commit()
 
-        return jsonify({**result, "chart_id": birth_chart.id, "characters": characters, "navamsa": navamsa, "dasamsa": dasamsa})
+        return jsonify({**result, "chart_id": birth_chart.id, "characters": characters, "navamsa": navamsa, "dasamsa": dasamsa, "soul": soul})
 
     except ValueError as e:
         return jsonify({"error": str(e)}), 400

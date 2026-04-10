@@ -1635,6 +1635,86 @@
       h1 { font-size: 1.4rem; }
       .container { padding: 1.2rem .9rem 5rem; }
     }
+
+    /* ── Soul Profile Section ───────────────────────────────────── */
+    .soul-section { margin-top: 2.5rem; }
+    .soul-section-title {
+      font-family: 'Cinzel', serif; font-size: .7rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase; color: var(--muted);
+      margin-bottom: 1.2rem; padding-bottom: .65rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: .6rem;
+    }
+    .soul-section-title::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(to right, rgba(201,168,76,.2), transparent);
+    }
+    .soul-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .soul-card {
+      border-radius: 16px; padding: 1.5rem 1.6rem;
+      border: 1px solid transparent;
+      position: relative; overflow: hidden;
+    }
+    .soul-card::before {
+      content: ''; position: absolute; inset: 0; opacity: .06;
+      pointer-events: none;
+    }
+    /* Light — gold */
+    .soul-card.light {
+      background: linear-gradient(135deg, rgba(201,168,76,.09), rgba(232,201,106,.04));
+      border-color: rgba(201,168,76,.22);
+    }
+    .soul-card.light .soul-card-icon  { color: var(--gold-light); }
+    .soul-card.light .soul-card-title { color: var(--gold-light); }
+    .soul-card.light .soul-source-tag { background: rgba(201,168,76,.12); border-color: rgba(201,168,76,.25); color: var(--gold); }
+    /* Shadow — violet */
+    .soul-card.shadow {
+      background: linear-gradient(135deg, rgba(124,92,191,.09), rgba(168,132,232,.04));
+      border-color: rgba(124,92,191,.25);
+    }
+    .soul-card.shadow .soul-card-icon  { color: var(--violet-light); }
+    .soul-card.shadow .soul-card-title { color: var(--violet-light); }
+    .soul-card.shadow .soul-source-tag { background: rgba(124,92,191,.12); border-color: rgba(124,92,191,.25); color: var(--violet-light); }
+    /* Feed — teal */
+    .soul-card.feed {
+      background: linear-gradient(135deg, rgba(45,212,191,.08), rgba(45,212,191,.03));
+      border-color: rgba(45,212,191,.22);
+    }
+    .soul-card.feed .soul-card-icon  { color: #2dd4bf; }
+    .soul-card.feed .soul-card-title { color: #2dd4bf; }
+    .soul-card.feed .soul-source-tag { background: rgba(45,212,191,.1); border-color: rgba(45,212,191,.25); color: #2dd4bf; }
+    /* Avoid — rose */
+    .soul-card.avoid {
+      background: linear-gradient(135deg, rgba(201,106,138,.08), rgba(201,106,138,.03));
+      border-color: rgba(201,106,138,.22);
+    }
+    .soul-card.avoid .soul-card-icon  { color: var(--rose-light); }
+    .soul-card.avoid .soul-card-title { color: var(--rose-light); }
+    .soul-card.avoid .soul-source-tag { background: rgba(201,106,138,.1); border-color: rgba(201,106,138,.25); color: var(--rose-light); }
+
+    .soul-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: .6rem; margin-bottom: .9rem; }
+    .soul-card-left   { display: flex; align-items: center; gap: .65rem; }
+    .soul-card-icon   { font-size: 1.4rem; line-height: 1; flex-shrink: 0; }
+    .soul-card-title  {
+      font-family: 'Cinzel', serif; font-size: .78rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .1em; line-height: 1.3;
+    }
+    .soul-source-tag {
+      font-size: .62rem; font-weight: 600; font-family: 'Cinzel', serif;
+      border: 1px solid; border-radius: 20px; padding: .18rem .6rem;
+      white-space: nowrap; flex-shrink: 0; letter-spacing: .04em;
+    }
+    .soul-card-text {
+      font-size: .83rem; line-height: 1.75;
+      color: rgba(226,223,245,.85);
+    }
+    @media (max-width: 768px) {
+      .soul-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -2252,6 +2332,62 @@
       <div class="section-title" id="characters-section-title" style="display:none">🎭 Your Character Archetypes</div>
       <div class="characters-section" id="characters-section" style="display:none">
         <div class="char-grid" id="char-grid"></div>
+      </div>
+
+      <!-- Soul Profile -->
+      <div class="soul-section" id="soul-section" style="display:none">
+        <div class="soul-section-title">✦ Soul Profile</div>
+        <div class="soul-grid">
+
+          <!-- Light Side -->
+          <div class="soul-card light">
+            <div class="soul-card-header">
+              <div class="soul-card-left">
+                <div class="soul-card-icon">☀</div>
+                <div class="soul-card-title">Your Light Side</div>
+              </div>
+              <span class="soul-source-tag" id="soul-sun-tag">Sun</span>
+            </div>
+            <div class="soul-card-text" id="soul-light-text"></div>
+          </div>
+
+          <!-- Shadow Side -->
+          <div class="soul-card shadow">
+            <div class="soul-card-header">
+              <div class="soul-card-left">
+                <div class="soul-card-icon">☽</div>
+                <div class="soul-card-title">Your Shadow Side</div>
+              </div>
+              <span class="soul-source-tag" id="soul-moon-tag">Moon</span>
+            </div>
+            <div class="soul-card-text" id="soul-shadow-text"></div>
+          </div>
+
+          <!-- Feed This -->
+          <div class="soul-card feed">
+            <div class="soul-card-header">
+              <div class="soul-card-left">
+                <div class="soul-card-icon">✦</div>
+                <div class="soul-card-title">Feed This</div>
+              </div>
+              <span class="soul-source-tag" id="soul-rising-tag">Rising</span>
+            </div>
+            <div class="soul-card-text" id="soul-feed-text"></div>
+          </div>
+
+          <!-- Avoid This -->
+          <div class="soul-card avoid">
+            <div class="soul-card-header">
+              <div class="soul-card-left">
+                <div class="soul-card-icon">⚡</div>
+                <div class="soul-card-title">Avoid This</div>
+              </div>
+              <span class="soul-source-tag" id="soul-avoid-tag">Sun</span>
+            </div>
+            <div class="soul-card-text" id="soul-avoid-text"></div>
+          </div>
+
+        </div>
       </div>
 
       <!-- Actions -->
@@ -2912,6 +3048,9 @@
     // Character Archetypes
     renderCharacters(data.characters || {});
 
+    // Soul Profile — light/shadow/feed/avoid
+    renderSoulProfile(data.soul || null);
+
     // D9 Navamsa (auto-rendered alongside D1)
     renderD9(data.navamsa || null);
 
@@ -3545,6 +3684,18 @@
       </div>`).join('');
     $('characters-section-title').style.display = '';
     $('characters-section').style.display = '';
+  }
+
+  function renderSoulProfile(soul) {
+    if (!soul || !soul.light) return;
+    $('soul-light-text').textContent  = soul.light;
+    $('soul-shadow-text').textContent = soul.shadow;
+    $('soul-feed-text').textContent   = soul.feed;
+    $('soul-avoid-text').textContent  = soul.avoid;
+    if (soul.sun_sign)    { $('soul-sun-tag').textContent   = 'Sun · ' + soul.sun_sign; $('soul-avoid-tag').textContent = 'Sun · ' + soul.sun_sign; }
+    if (soul.moon_sign)   { $('soul-moon-tag').textContent  = 'Moon · ' + soul.moon_sign; }
+    if (soul.rising_sign) { $('soul-rising-tag').textContent = 'Rising · ' + soul.rising_sign; }
+    $('soul-section').style.display = '';
   }
 
   function renderArudhaLagna(al) {
