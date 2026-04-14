@@ -125,6 +125,8 @@
       font-size: .8rem; transition: color .2s;
     }
     .logout-link:hover { color: var(--violet-light); }
+    /* Bottom nav only visible on mobile */
+    .mobile-bottom-nav { display: none; }
     .nav-top-link {
       color: var(--muted); text-decoration: none; font-size: .8rem;
       transition: color .2s; letter-spacing: .03em;
@@ -1593,6 +1595,34 @@
       .nav-top-link { display: none; } /* hide text nav links on mobile */
       .notif-wrap   { display: none; } /* hide notification bell on mobile */
       .streak-pill  { display: none; } /* hide streak pill on mobile */
+      /* Hide top nav account links — moved to bottom bar on mobile */
+      .logout-link  { display: none; }
+      .user-pill    { display: none; }
+      #manage-sub-btn { display: none !important; }
+
+      /* ── Mobile bottom nav bar ── */
+      .mobile-bottom-nav {
+        display: flex;
+        position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+        background: rgba(7,8,15,.97);
+        backdrop-filter: blur(16px);
+        border-top: 1px solid rgba(255,255,255,.08);
+        padding: .6rem 0 max(.6rem, env(safe-area-inset-bottom));
+        justify-content: space-around; align-items: center;
+      }
+      .mobile-bottom-nav a, .mobile-bottom-nav button {
+        display: flex; flex-direction: column; align-items: center; gap: .2rem;
+        color: var(--muted); font-size: .65rem; font-weight: 600;
+        text-decoration: none; background: none; border: none; cursor: pointer;
+        min-width: 52px; padding: .3rem .5rem;
+        transition: color .2s;
+        letter-spacing: .03em; text-transform: uppercase;
+      }
+      .mobile-bottom-nav a:hover, .mobile-bottom-nav button:hover { color: var(--gold-light); }
+      .mobile-bottom-nav .mnav-icon { font-size: 1.2rem; }
+      .mobile-bottom-nav .mnav-admin { color: var(--gold); }
+      /* Add padding to page bottom so content isn't hidden behind bottom nav */
+      .container { padding-bottom: 80px; }
 
       /* ── 8. Header / welcome bar — reduce padding, stack vertically */
       header { padding: 1.5rem 0 1.2rem; }
@@ -1952,7 +1982,7 @@
     <!-- Welcome bar -->
     <div class="welcome-bar" id="welcome-bar">
       <div>
-        <div class="welcome-greeting" id="welcome-greeting">Welcome back, {{ user.name.split()[0] }}</div>
+        <div class="welcome-greeting" id="welcome-greeting">Welcome ✦</div>
         <div class="welcome-date" id="welcome-date"></div>
       </div>
       <div class="progress-wrap" title="Profile completeness">
@@ -3741,7 +3771,7 @@
   function initWelcomeBar() {
     const h = new Date().getHours();
     const greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
-    $('welcome-greeting').textContent = `${greet}, {{ user.name.split()[0] }} ✦`;
+    $('welcome-greeting').textContent = `${greet} ✦`;
     const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     $('welcome-date').textContent = new Date().toLocaleDateString('en-US', opts);
   }
@@ -4586,5 +4616,29 @@
   updateNotifBadge();
   checkPaidStatus();
   </script>
+
+  <!-- ── Mobile bottom nav (hidden on desktop via CSS) ── -->
+  <nav class="mobile-bottom-nav">
+    <a href="/">
+      <span class="mnav-icon">🏠</span>
+      Home
+    </a>
+    <a href="/synastry">
+      <span class="mnav-icon">♾</span>
+      Synastry
+    </a>
+    <a href="/journal">
+      <span class="mnav-icon">📓</span>
+      Journal
+    </a>
+    <a href="/admin" class="mnav-admin">
+      <span class="mnav-icon">⚙️</span>
+      Admin
+    </a>
+    <a href="/auth/logout">
+      <span class="mnav-icon">👋</span>
+      Sign out
+    </a>
+  </nav>
 </body>
 </html>
