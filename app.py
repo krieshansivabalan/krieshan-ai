@@ -120,17 +120,13 @@ with app.app_context():
 
 
 # ── Auth pages ────────────────────────────────────────────────────
-_ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "").lower()
-
 @app.route("/app")
 @login_required
 def index():
-    is_admin = bool(_ADMIN_EMAIL and current_user.email.lower() == _ADMIN_EMAIL)
     return render_template(
         "index.html",
         stripe_publishable_key=STRIPE_PUBLISHABLE_KEY,
         user=current_user,
-        is_admin=is_admin,
         ayanamsa_explainers=AYANAMSA_EXPLAINERS,
         arudha_interp=ARUDHA_INTERP,
         indu_interp=INDU_INTERP,
