@@ -1959,16 +1959,15 @@
       <!-- PDF download (shown after chart calculated) -->
       <a id="pdf-btn" class="btn-pdf" style="display:none" href="#" target="_blank">⬇ PDF Report</a>
 
-      <a href="/admin" class="user-pill">
+      <div class="user-pill">
         {% if user.picture_url %}
-          <img src="{{ user.picture_url }}" class="user-avatar" alt="{{ user.name }}" />
+          <img src="{{ user.picture_url }}" class="user-avatar" alt="" />
         {% else %}
-          <div class="user-avatar-placeholder">{{ user.name[0] | upper }}</div>
+          <div class="user-avatar-placeholder">✦</div>
         {% endif %}
-        <span>{{ user.name }}</span>
-      </a>
+      </div>
       <button id="manage-sub-btn" class="logout-link" style="display:none;background:none;border:none;cursor:pointer;" onclick="openBillingPortal()">Manage Plan</button>
-      <a href="/admin" class="logout-link" style="color:var(--gold);font-weight:600;">Admin</a>
+      {% if is_admin %}<a href="/admin" class="logout-link" style="color:var(--gold);font-weight:600;">Admin</a>{% endif %}
       <a href="/" class="logout-link">Home</a>
       <a href="/auth/logout" class="logout-link">Sign out</a>
     </div>
@@ -4631,10 +4630,12 @@
       <span class="mnav-icon">📓</span>
       Journal
     </a>
+    {% if is_admin %}
     <a href="/admin" class="mnav-admin">
       <span class="mnav-icon">⚙️</span>
       Admin
     </a>
+    {% endif %}
     <a href="/auth/logout">
       <span class="mnav-icon">👋</span>
       Sign out
