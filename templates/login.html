@@ -3,40 +3,64 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sign In — Krieshan AI</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <title>Krieshan AI — Vedic Sidereal Astrology, Powered by AI</title>
+  <meta name="description" content="Discover your true cosmic blueprint with precise sidereal Vedic astrology. Birth chart, D9 Navamsa, D10 Dasamsa, Soul Profile, and AI-powered chart guidance." />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Krieshan AI — Vedic Sidereal Astrology, Powered by AI" />
+  <meta property="og:description" content="Discover your true cosmic blueprint with precise sidereal Vedic astrology. Birth chart, D9 Navamsa, D10 Dasamsa, Soul Profile, and AI-powered chart guidance." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://krieshanaI.app" />
+  <meta property="og:image" content="/static/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Krieshan AI — Vedic Sidereal Astrology" />
+  <meta name="twitter:description" content="Precise sidereal birth charts, Navamsa, Dasamsa, Soul Profile, and AI chart guidance." />
+
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
   <style>
+    /* ──────────────────────────────────────────
+       TOKENS & RESET
+    ────────────────────────────────────────── */
     :root {
-      --bg:         #07080f;
-      --surface:    #0d0f1e;
-      --card:       rgba(255,255,255,0.04);
-      --border:     rgba(255,255,255,0.08);
-      --gold:       #c9a84c;
-      --gold-light: #e8c96a;
-      --violet:     #7c5cbf;
-      --violet-light:#a884e8;
-      --text:       #e2dff5;
-      --muted:      #7a789a;
+      --bg:           #07080f;
+      --surface:      #0d0f1e;
+      --card:         rgba(255,255,255,0.04);
+      --card-hover:   rgba(255,255,255,0.07);
+      --border:       rgba(255,255,255,0.08);
+      --border-gold:  rgba(201,168,76,0.25);
+      --gold:         #c9a84c;
+      --gold-light:   #e8c96a;
+      --violet:       #7c5cbf;
+      --violet-light: #a884e8;
+      --text:         #e2dff5;
+      --muted:        #7a789a;
+      --radius:       16px;
+      --radius-lg:    24px;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
+    html { scroll-behavior: smooth; }
 
     body {
       background: var(--bg);
       color: var(--text);
       font-family: 'Raleway', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
+      font-weight: 400;
+      line-height: 1.6;
+      overflow-x: hidden;
     }
 
-    /* Starfield */
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ──────────────────────────────────────────
+       STARFIELD BACKGROUND
+    ────────────────────────────────────────── */
     #stars {
-      position: fixed; inset: 0; z-index: 0;
+      position: fixed;
+      inset: 0;
+      z-index: 0;
       background:
         radial-gradient(ellipse at 20% 30%, rgba(124,92,191,.12) 0%, transparent 60%),
         radial-gradient(ellipse at 80% 70%, rgba(201,168,76,.06) 0%, transparent 50%),
@@ -45,17 +69,23 @@
     }
     #stars::before, #stars::after {
       content: '';
-      position: absolute; inset: 0;
+      position: absolute;
+      inset: 0;
       background-image:
-        radial-gradient(1px 1px at 10%  15%, rgba(255,255,255,.7) 0%, transparent 100%),
-        radial-gradient(1px 1px at 30%  40%, rgba(255,255,255,.5) 0%, transparent 100%),
-        radial-gradient(1px 1px at 50%   8%, rgba(255,255,255,.6) 0%, transparent 100%),
-        radial-gradient(1px 1px at 70%  55%, rgba(255,255,255,.4) 0%, transparent 100%),
-        radial-gradient(1px 1px at 90%  20%, rgba(255,255,255,.7) 0%, transparent 100%),
-        radial-gradient(1px 1px at 15%  75%, rgba(255,255,255,.4) 0%, transparent 100%),
-        radial-gradient(1px 1px at 45%  88%, rgba(255,255,255,.5) 0%, transparent 100%),
-        radial-gradient(1.5px 1.5px at 60% 30%, rgba(255,255,255,.8) 0%, transparent 100%),
-        radial-gradient(1.5px 1.5px at 25% 50%, rgba(200,180,255,.6) 0%, transparent 100%);
+        radial-gradient(1px 1px at  10%  15%, rgba(255,255,255,.75) 0%, transparent 100%),
+        radial-gradient(1px 1px at  30%  40%, rgba(255,255,255,.55) 0%, transparent 100%),
+        radial-gradient(1px 1px at  50%   8%, rgba(255,255,255,.65) 0%, transparent 100%),
+        radial-gradient(1px 1px at  70%  55%, rgba(255,255,255,.45) 0%, transparent 100%),
+        radial-gradient(1px 1px at  90%  20%, rgba(255,255,255,.70) 0%, transparent 100%),
+        radial-gradient(1px 1px at  15%  75%, rgba(255,255,255,.45) 0%, transparent 100%),
+        radial-gradient(1px 1px at  45%  88%, rgba(255,255,255,.55) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 60% 30%, rgba(255,255,255,.80) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 25% 50%, rgba(200,180,255,.65) 0%, transparent 100%),
+        radial-gradient(1px 1px at  82%  62%, rgba(255,255,255,.50) 0%, transparent 100%),
+        radial-gradient(1px 1px at   5%  44%, rgba(255,255,255,.40) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 38% 22%, rgba(232,201,106,.60) 0%, transparent 100%),
+        radial-gradient(1px 1px at  72%  88%, rgba(255,255,255,.45) 0%, transparent 100%),
+        radial-gradient(1px 1px at  95%  78%, rgba(200,180,255,.50) 0%, transparent 100%);
       background-size: 400px 300px;
       animation: twinkle 8s ease-in-out infinite alternate;
     }
@@ -63,123 +93,1362 @@
       background-size: 600px 500px;
       animation-duration: 12s;
       animation-direction: alternate-reverse;
-      opacity: .6;
+      opacity: .65;
     }
     @keyframes twinkle { 0% { opacity: .5; } 100% { opacity: 1; } }
 
-    /* Content */
-    .login-wrap {
-      position: relative; z-index: 1;
-      display: flex; flex-direction: column;
+    /* ──────────────────────────────────────────
+       LAYOUT WRAPPER
+    ────────────────────────────────────────── */
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      margin-inline: auto;
+      padding-inline: clamp(1.25rem, 5vw, 3rem);
+    }
+
+    /* ──────────────────────────────────────────
+       STICKY NAV
+    ────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7,8,15,0.82);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex;
       align-items: center;
-      padding: 2rem 1.5rem;
-      width: 100%;
+      justify-content: space-between;
+      padding-block: .9rem;
     }
-
-    .header-symbol {
-      font-size: 2.8rem; line-height: 1; margin-bottom: .6rem;
-      filter: drop-shadow(0 0 12px var(--gold));
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
     }
-    h1 {
+    .nav-logo img {
+      width: 36px;
+      height: 36px;
+      filter: drop-shadow(0 0 8px rgba(201,168,76,.55));
+    }
+    .nav-logo-text {
       font-family: 'Cinzel', serif;
-      font-size: clamp(1.6rem, 4vw, 2.4rem);
-      font-weight: 700; letter-spacing: .1em;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: .06em;
       background: linear-gradient(135deg, var(--gold-light), var(--violet-light));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text; margin-bottom: .4rem;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
-    .subtitle {
-      font-size: .9rem; color: var(--muted); letter-spacing: .05em;
-      margin-bottom: 2.5rem;
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .5rem 1.2rem;
+      border: 1px solid var(--border-gold);
+      border-radius: 8px;
+      font-family: 'Raleway', sans-serif;
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--gold-light);
+      transition: background .2s, border-color .2s;
+    }
+    .nav-cta:hover {
+      background: rgba(201,168,76,.1);
+      border-color: var(--gold);
     }
 
-    .login-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      backdrop-filter: blur(16px);
-      padding: 2.5rem 2rem;
-      width: 100%;
-      max-width: 400px;
+    /* ──────────────────────────────────────────
+       ERROR BANNER
+    ────────────────────────────────────────── */
+    .error-banner {
+      background: rgba(255, 80, 80, 0.12);
+      border: 1px solid rgba(255,80,80,.35);
+      border-radius: 10px;
+      padding: .85rem 1.25rem;
+      color: #ff9a9a;
+      font-size: .88rem;
+      text-align: center;
+      margin-block: 1.5rem;
+      display: {% if error %}flex{% else %}none{% endif %};
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+    }
+
+    /* ──────────────────────────────────────────
+       HERO
+    ────────────────────────────────────────── */
+    .hero {
+      padding-block: clamp(4rem, 10vw, 7rem) clamp(3rem, 8vw, 5rem);
       text-align: center;
     }
-
-    .login-card-title {
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid var(--border-gold);
+      border-radius: 99px;
+      padding: .3rem .9rem;
+      margin-bottom: 1.6rem;
+      background: rgba(201,168,76,.07);
+    }
+    .hero h1 {
       font-family: 'Cinzel', serif;
-      font-size: 1rem; font-weight: 600;
-      color: var(--gold); letter-spacing: .12em;
-      text-transform: uppercase; margin-bottom: .6rem;
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      font-weight: 900;
+      line-height: 1.12;
+      letter-spacing: .02em;
+      background: linear-gradient(135deg, var(--gold-light) 10%, var(--violet-light) 60%, #c9a0ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1.4rem;
+      max-width: 820px;
+      margin-inline: auto;
     }
-    .login-card-sub {
-      font-size: .85rem; color: var(--muted);
-      line-height: 1.7; margin-bottom: 2rem;
+    .hero-sub {
+      font-size: clamp(1rem, 2.2vw, 1.2rem);
+      font-weight: 400;
+      color: rgba(226,223,245,.7);
+      max-width: 600px;
+      margin-inline: auto;
+      margin-bottom: 2.4rem;
+      line-height: 1.75;
     }
-
-    .features-list {
-      list-style: none;
-      text-align: left;
-      margin-bottom: 2rem;
-      display: flex; flex-direction: column; gap: .55rem;
+    .hero-cta-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 3.5rem;
     }
-    .features-list li {
-      font-size: .82rem; color: rgba(226,223,245,.75);
-      display: flex; align-items: center; gap: .6rem;
-    }
-    .features-list li::before {
-      content: '✦'; font-size: .5rem; color: var(--gold); flex-shrink: 0;
-    }
-
-    .btn-google {
-      display: flex; align-items: center; justify-content: center; gap: .75rem;
-      width: 100%;
+    .btn-google-hero {
+      display: inline-flex;
+      align-items: center;
+      gap: .75rem;
       background: #fff;
-      border: none; border-radius: 10px;
-      color: #333;
-      font-family: 'Raleway', sans-serif; font-size: .95rem; font-weight: 600;
-      padding: .85rem 1.5rem;
-      text-decoration: none;
-      transition: transform .15s, box-shadow .15s;
-      cursor: pointer;
+      border-radius: 12px;
+      color: #1a1a2e;
+      font-family: 'Raleway', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: .9rem 2rem;
+      transition: transform .18s, box-shadow .18s;
     }
-    .btn-google:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(255,255,255,.15);
+    .btn-google-hero:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 36px rgba(255,255,255,.18);
     }
-    .btn-google img { width: 20px; height: 20px; flex-shrink: 0; }
+    .btn-google-hero img {
+      width: 22px;
+      height: 22px;
+    }
+    .hero-secondary {
+      font-size: .88rem;
+      color: var(--muted);
+      padding: .75rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      transition: border-color .2s, color .2s;
+    }
+    .hero-secondary:hover {
+      border-color: var(--border-gold);
+      color: var(--gold-light);
+    }
 
-    .login-fine {
-      font-size: .72rem; color: var(--muted);
-      margin-top: 1.2rem; line-height: 1.6;
+    /* ── App Mockup ── */
+    .mockup-wrapper {
+      position: relative;
+      max-width: 900px;
+      margin-inline: auto;
+    }
+    .mockup-glow {
+      position: absolute;
+      inset: -30px;
+      background: radial-gradient(ellipse at 50% 60%, rgba(124,92,191,.25) 0%, transparent 65%);
+      filter: blur(30px);
+      pointer-events: none;
+    }
+    .mockup-frame {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 40px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.05);
+    }
+    .mockup-bar {
+      background: rgba(255,255,255,.04);
+      border-bottom: 1px solid var(--border);
+      padding: .75rem 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+    }
+    .mockup-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .mockup-dot:nth-child(1) { background: #ff5f57; }
+    .mockup-dot:nth-child(2) { background: #febc2e; }
+    .mockup-dot:nth-child(3) { background: #28c840; }
+    .mockup-url {
+      flex: 1;
+      text-align: center;
+      background: rgba(255,255,255,.06);
+      border-radius: 6px;
+      padding: .25rem .75rem;
+      font-size: .7rem;
+      color: var(--muted);
+      font-family: 'Raleway', sans-serif;
+    }
+    .mockup-body {
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 600px) {
+      .mockup-body { grid-template-columns: 1fr 1fr; }
+    }
+    .mock-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+    .mock-card-label {
+      font-size: .62rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: .4rem;
+    }
+    .mock-card-value {
+      font-family: 'Cinzel', serif;
+      font-size: .95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: .25rem;
+    }
+    .mock-card-sub {
+      font-size: .68rem;
+      color: var(--muted);
+    }
+    .mock-badge {
+      display: inline-block;
+      font-size: .6rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: .15rem .45rem;
+      border-radius: 4px;
+      margin-top: .3rem;
+    }
+    .mock-badge-violet { background: rgba(124,92,191,.25); color: var(--violet-light); }
+    .mock-badge-gold   { background: rgba(201,168,76,.2);  color: var(--gold-light); }
+    .mock-card-wide {
+      grid-column: span 2;
+    }
+    .mock-planet-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .3rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: .72rem;
+    }
+    .mock-planet-row:last-child { border-bottom: none; }
+    .mock-planet-name { color: var(--muted); }
+    .mock-planet-sign { color: var(--gold-light); font-weight: 600; }
+    .mock-planet-deg  { color: rgba(226,223,245,.5); font-size: .65rem; }
+
+    /* ──────────────────────────────────────────
+       SECTION SHARED STYLES
+    ────────────────────────────────────────── */
+    section {
+      padding-block: clamp(4rem, 8vw, 6rem);
+    }
+    .section-label {
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: .75rem;
+    }
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--text) 40%, var(--violet-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .section-sub {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 540px;
+      line-height: 1.75;
+    }
+    .section-head {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+    .section-head .section-sub {
+      margin-inline: auto;
+    }
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin-block: 0;
+    }
+
+    /* ──────────────────────────────────────────
+       FEATURES
+    ────────────────────────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.25rem;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      transition: border-color .25s, background .25s, transform .25s;
+      cursor: default;
+    }
+    .feature-card:hover {
+      background: var(--card-hover);
+      border-color: var(--border-gold);
+      transform: translateY(-3px);
+    }
+    .feature-icon {
+      font-size: 1.6rem;
+      margin-bottom: .9rem;
+      line-height: 1;
+    }
+    .feature-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--gold-light);
+      margin-bottom: .5rem;
+      letter-spacing: .04em;
+    }
+    .feature-desc {
+      font-size: .88rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .feature-badge {
+      display: inline-block;
+      margin-top: .75rem;
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--violet-light);
+      border: 1px solid rgba(168,132,232,.3);
+      border-radius: 4px;
+      padding: .2rem .5rem;
+      background: rgba(124,92,191,.12);
+    }
+
+    /* ──────────────────────────────────────────
+       HOW IT WORKS
+    ────────────────────────────────────────── */
+    .how-section {
+      background: linear-gradient(135deg, rgba(124,92,191,.06) 0%, transparent 60%);
+    }
+    .steps-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+      position: relative;
+    }
+    .step-card {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: .9rem;
+    }
+    .step-number {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--violet), var(--gold));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 0 20px rgba(124,92,191,.4);
+    }
+    .step-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: .03em;
+    }
+    .step-desc {
+      font-size: .88rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ──────────────────────────────────────────
+       PRICING
+    ────────────────────────────────────────── */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.25rem;
+      align-items: start;
+    }
+    .pricing-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem 1.75rem;
+      position: relative;
+      transition: border-color .25s, transform .25s;
+    }
+    .pricing-card:hover {
+      transform: translateY(-4px);
+    }
+    .pricing-card.popular {
+      border-color: var(--gold);
+      background: linear-gradient(160deg, rgba(201,168,76,.08) 0%, rgba(124,92,191,.07) 100%);
+      box-shadow: 0 0 40px rgba(201,168,76,.12);
+    }
+    .popular-badge {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      color: #07080f;
+      font-size: .65rem;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      padding: .3rem .9rem;
+      border-radius: 99px;
+      white-space: nowrap;
+    }
+    .pricing-tier-name {
+      font-family: 'Cinzel', serif;
+      font-size: .85rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: .5rem;
+    }
+    .pricing-price {
+      font-family: 'Cinzel', serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: .25rem;
+    }
+    .pricing-price span {
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--muted);
+    }
+    .pricing-tagline {
+      font-size: .8rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .pricing-divider {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 1.25rem;
+    }
+    .pricing-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .6rem;
+      margin-bottom: 1.75rem;
+    }
+    .pricing-features li {
+      font-size: .83rem;
+      color: rgba(226,223,245,.75);
+      display: flex;
+      align-items: flex-start;
+      gap: .6rem;
+      line-height: 1.5;
+    }
+    .pricing-features li .check {
+      color: var(--gold);
+      font-size: .65rem;
+      margin-top: .25rem;
+      flex-shrink: 0;
+    }
+    .pricing-features li.dim {
+      color: var(--muted);
+      opacity: .6;
+    }
+    .btn-pricing {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: .8rem 1rem;
+      border-radius: 10px;
+      font-family: 'Raleway', sans-serif;
+      font-size: .9rem;
+      font-weight: 700;
+      transition: transform .18s, box-shadow .18s, background .18s;
+      letter-spacing: .03em;
+    }
+    .btn-pricing-outline {
+      border: 1px solid var(--border-gold);
+      color: var(--gold-light);
+      background: transparent;
+    }
+    .btn-pricing-outline:hover {
+      background: rgba(201,168,76,.1);
+      transform: translateY(-2px);
+    }
+    .btn-pricing-gold {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: #07080f;
+      border: none;
+    }
+    .btn-pricing-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(201,168,76,.35);
+    }
+    .btn-pricing-violet {
+      background: linear-gradient(135deg, var(--violet), var(--violet-light));
+      color: #fff;
+      border: none;
+    }
+    .btn-pricing-violet:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(124,92,191,.4);
+    }
+
+    /* ──────────────────────────────────────────
+       TESTIMONIALS
+    ────────────────────────────────────────── */
+    .testimonials-section {
+      background: linear-gradient(135deg, rgba(201,168,76,.04) 0%, transparent 50%);
+    }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 1.25rem;
+    }
+    .testimonial-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      transition: border-color .25s, transform .25s;
+    }
+    .testimonial-card:hover {
+      border-color: rgba(201,168,76,.2);
+      transform: translateY(-3px);
+    }
+    .stars-row {
+      display: flex;
+      gap: .2rem;
+      margin-bottom: 1rem;
+    }
+    .star { color: var(--gold); font-size: .85rem; }
+    .testimonial-text {
+      font-size: .9rem;
+      color: rgba(226,223,245,.82);
+      line-height: 1.75;
+      margin-bottom: 1.25rem;
+      font-style: italic;
+    }
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+    .author-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--violet), var(--gold));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: .9rem;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .author-name {
+      font-weight: 600;
+      font-size: .88rem;
+      color: var(--text);
+    }
+    .author-handle {
+      font-size: .75rem;
+      color: var(--muted);
+    }
+
+    /* ──────────────────────────────────────────
+       FAQ
+    ────────────────────────────────────────── */
+    .faq-list {
+      max-width: 760px;
+      margin-inline: auto;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+    }
+    .faq-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color .2s;
+    }
+    .faq-item:hover {
+      border-color: var(--border-gold);
+    }
+    .faq-question {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-family: 'Raleway', sans-serif;
+      font-size: .95rem;
+      font-weight: 600;
+      text-align: left;
+      padding: 1.25rem 1.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      line-height: 1.4;
+    }
+    .faq-question:hover { color: var(--gold-light); }
+    .faq-chevron {
+      color: var(--gold);
+      font-size: .8rem;
+      flex-shrink: 0;
+      transition: transform .3s;
+    }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .35s ease, padding .35s ease;
+    }
+    .faq-item.open .faq-answer {
+      max-height: 400px;
+    }
+    .faq-answer-inner {
+      padding: 0 1.5rem 1.25rem;
+      font-size: .88rem;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+    .faq-answer-inner strong {
+      color: var(--gold-light);
+      font-weight: 600;
+    }
+
+    /* ──────────────────────────────────────────
+       CTA BAND
+    ────────────────────────────────────────── */
+    .cta-band {
+      text-align: center;
+      padding-block: clamp(4rem, 8vw, 6rem);
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-band::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, rgba(124,92,191,.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .cta-band h2 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--gold-light), var(--violet-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+    }
+    .cta-band p {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 480px;
+      margin-inline: auto;
+      margin-bottom: 2.25rem;
+      line-height: 1.75;
+    }
+
+    /* ──────────────────────────────────────────
+       FOOTER
+    ────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding-block: 2.5rem;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+    }
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+    }
+    .footer-logo img {
+      width: 28px;
+      height: 28px;
+      filter: drop-shadow(0 0 6px rgba(201,168,76,.4));
+    }
+    .footer-logo-text {
+      font-family: 'Cinzel', serif;
+      font-size: .9rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--gold-light), var(--violet-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      font-size: .8rem;
+      color: var(--muted);
+      transition: color .2s;
+    }
+    .footer-links a:hover {
+      color: var(--gold-light);
+    }
+    .footer-copy {
+      font-size: .75rem;
+      color: var(--muted);
+      opacity: .6;
+      width: 100%;
+      text-align: center;
+      margin-top: .5rem;
+    }
+
+    /* ──────────────────────────────────────────
+       SCROLL ANIMATIONS
+    ────────────────────────────────────────── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .65s ease, transform .65s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* stagger children */
+    .stagger > * {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .55s ease, transform .55s ease;
+    }
+    .stagger.visible > *:nth-child(1) { opacity: 1; transform: none; transition-delay: 0s; }
+    .stagger.visible > *:nth-child(2) { opacity: 1; transform: none; transition-delay: .1s; }
+    .stagger.visible > *:nth-child(3) { opacity: 1; transform: none; transition-delay: .2s; }
+    .stagger.visible > *:nth-child(4) { opacity: 1; transform: none; transition-delay: .3s; }
+    .stagger.visible > *:nth-child(5) { opacity: 1; transform: none; transition-delay: .4s; }
+    .stagger.visible > *:nth-child(6) { opacity: 1; transform: none; transition-delay: .5s; }
+
+    /* ──────────────────────────────────────────
+       UTILITIES
+    ────────────────────────────────────────── */
+    .text-center { text-align: center; }
+    .mt-1 { margin-top: .5rem; }
+    .mt-2 { margin-top: 1rem; }
+
+    /* ──────────────────────────────────────────
+       RESPONSIVE
+    ────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .mockup-body { grid-template-columns: 1fr 1fr; }
+      .mock-card-wide { grid-column: span 2; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin-inline: auto; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .steps-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .mockup-body { grid-template-columns: 1fr; }
+      .mock-card-wide { grid-column: span 1; }
+      .hero-cta-group { flex-direction: column; align-items: stretch; }
+      .btn-google-hero { justify-content: center; }
+      .hero-secondary { text-align: center; }
+      .footer-inner { flex-direction: column; align-items: center; text-align: center; }
+      .footer-links { justify-content: center; }
     }
   </style>
 </head>
 <body>
+  <!-- Starfield -->
   <div id="stars"></div>
 
-  <div class="login-wrap">
-    <img src="/static/lion.svg?v=2" alt="Krieshan AI" style="width:72px;height:72px;margin-bottom:.6rem;filter:drop-shadow(0 0 14px rgba(201,168,76,.5))" />
-    <h1 style="font-family:'Cinzel',serif;font-size:2rem;background:linear-gradient(135deg,#e8c96a,#a884e8);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Krieshan AI</h1>
-    <p class="subtitle">Sidereal astrology · Vedic depth · AI-powered readings</p>
+  <div class="page-wrap">
 
-    <div class="login-card">
-      <div class="login-card-title">Welcome Back</div>
-      <p class="login-card-sub">Sign in to unlock your birth chart, cosmic transits, and daily guidance powered by sidereal astrology.</p>
+    <!-- ═══════════════════════════════════════
+         STICKY NAV
+    ═══════════════════════════════════════ -->
+    <nav>
+      <div class="container">
+        <div class="nav-inner">
+          <a href="/" class="nav-logo">
+            <img src="/static/lion.svg?v=2" alt="Krieshan AI logo" />
+            <span class="nav-logo-text">Krieshan AI</span>
+          </a>
+          <a href="/auth/google" class="nav-cta btn-google">Sign In</a>
+        </div>
+      </div>
+    </nav>
 
-      <ul class="features-list">
-        <li>✦ Sidereal birth chart with nakshatras &amp; fixed stars</li>
-        <li>✦ Career, romance &amp; Vimshottari Dasha readings</li>
-        <li>✦ Daily, monthly &amp; yearly transit forecasts</li>
-        <li>✦ Synastry compatibility · Astro Journal</li>
-        <li>✦ Learning library &amp; downloadable PDF</li>
-      </ul>
-
-      <a href="/auth/google" class="btn-google">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
-        Continue with Google
-      </a>
-
-      <p class="login-fine">By signing in you agree to store your birth details securely in our database. We never share your data.</p>
+    <!-- Error Banner -->
+    {% if error %}
+    <div class="container">
+      <div class="error-banner" style="display:flex;">
+        <span>⚠</span>
+        <span>{{ error }}</span>
+      </div>
     </div>
-  </div>
+    {% endif %}
+
+    <!-- ═══════════════════════════════════════
+         HERO
+    ═══════════════════════════════════════ -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-eyebrow fade-up">Vedic · Sidereal · AI-Powered</div>
+
+        <h1 class="fade-up">Your Stars Were Never<br/>Quite This Precise</h1>
+
+        <p class="hero-sub fade-up">
+          Krieshan AI uses the Lahiri ayanamsa to place every planet exactly where the sky says it is — not 23° away. Explore your birth chart, Navamsa, Dasamsa, Soul Profile, and archetypes with Vedic depth you won't find anywhere else.
+        </p>
+
+        <div class="hero-cta-group fade-up">
+          <a href="/auth/google" class="btn-google-hero">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
+            Sign in with Google — it's free
+          </a>
+          <a href="#pricing" class="hero-secondary">View pricing ↓</a>
+        </div>
+
+        <!-- App Mockup -->
+        <div class="mockup-wrapper fade-up">
+          <div class="mockup-glow"></div>
+          <div class="mockup-frame">
+            <div class="mockup-bar">
+              <div class="mockup-dot"></div>
+              <div class="mockup-dot"></div>
+              <div class="mockup-dot"></div>
+              <div class="mockup-url">krieshan.ai · Birth Chart</div>
+            </div>
+            <div class="mockup-body">
+              <div class="mock-card">
+                <div class="mock-card-label">Ascendant</div>
+                <div class="mock-card-value">Scorpio</div>
+                <div class="mock-card-sub">Anuradha Nakshatra</div>
+                <span class="mock-badge mock-badge-violet">Sidereal</span>
+              </div>
+              <div class="mock-card">
+                <div class="mock-card-label">Sun Sign</div>
+                <div class="mock-card-value">Libra</div>
+                <div class="mock-card-sub">Swati Nakshatra</div>
+                <span class="mock-badge mock-badge-gold">Lahiri</span>
+              </div>
+              <div class="mock-card">
+                <div class="mock-card-label">Moon Sign</div>
+                <div class="mock-card-value">Pisces</div>
+                <div class="mock-card-sub">Revati · Pada 2</div>
+                <span class="mock-badge mock-badge-violet">Atmakaraka</span>
+              </div>
+              <div class="mock-card mock-card-wide">
+                <div class="mock-card-label">Planetary Positions</div>
+                <div class="mock-planet-row">
+                  <span class="mock-planet-name">Mercury</span>
+                  <span class="mock-planet-sign">Virgo</span>
+                  <span class="mock-planet-deg">14° 33′ — Hasta</span>
+                </div>
+                <div class="mock-planet-row">
+                  <span class="mock-planet-name">Venus</span>
+                  <span class="mock-planet-sign">Scorpio</span>
+                  <span class="mock-planet-deg">02° 18′ — Vishakha</span>
+                </div>
+                <div class="mock-planet-row">
+                  <span class="mock-planet-name">Mars</span>
+                  <span class="mock-planet-sign">Aries</span>
+                  <span class="mock-planet-deg">28° 09′ — Ashwini</span>
+                </div>
+                <div class="mock-planet-row">
+                  <span class="mock-planet-name">Jupiter</span>
+                  <span class="mock-planet-sign">Sagittarius</span>
+                  <span class="mock-planet-deg">17° 51′ — Purva Ashadha</span>
+                </div>
+              </div>
+              <div class="mock-card">
+                <div class="mock-card-label">Soul Profile</div>
+                <div class="mock-card-value" style="font-size:.8rem;line-height:1.5">Light: The Visionary<br/>Shadow: The Isolator</div>
+                <span class="mock-badge mock-badge-gold">D1 Analysis</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══════════════════════════════════════
+         FEATURES
+    ═══════════════════════════════════════ -->
+    <section id="features">
+      <div class="container">
+        <div class="section-head fade-up">
+          <div class="section-label">What You Get</div>
+          <h2 class="section-title">Every Layer of Your Cosmos</h2>
+          <p class="section-sub">Six powerful tools drawn from classical Jyotish, delivered through a modern, AI-augmented interface.</p>
+        </div>
+
+        <div class="features-grid stagger">
+          <div class="feature-card">
+            <div class="feature-icon">✦</div>
+            <div class="feature-title">Sidereal Birth Chart</div>
+            <p class="feature-desc">Precise Vedic placements using the Lahiri ayanamsa — the same standard used by practicing Jyotish astrologers. Every planet, every nakshatra, every house cusp placed exactly.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">☽</div>
+            <div class="feature-title">D9 Navamsa Chart</div>
+            <p class="feature-desc">The soul and relationship chart. The Navamsa reveals who you are beneath the surface — your dharmic purpose, your approach to intimacy, and the deeper truth of your partnerships.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">◈</div>
+            <div class="feature-title">D10 Dasamsa Chart</div>
+            <p class="feature-desc">Career and worldly purpose. The Dasamsa shows the path your work is meant to take — your professional strengths, the fields where you'll rise, and the karma you're here to fulfill.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🌟</div>
+            <div class="feature-title">Soul Profile</div>
+            <p class="feature-desc">A four-part synthesis of your chart: your <em>light side</em>, your <em>shadow side</em>, what to feed in yourself, and what to consciously avoid. Surprisingly specific. Often uncomfortably accurate.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🎭</div>
+            <div class="feature-title">Character Archetypes</div>
+            <p class="feature-desc">Your chart mapped to MBTI, Naruto characters, One Piece archetypes, Mahabharata figures, and Ramayana roles. It's astrology as mythology — and mythology as self-knowledge.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">✦</div>
+            <div class="feature-title">AI Chart Guide</div>
+            <p class="feature-desc">Ask anything about your chart in plain language. The AI knows your exact placements and speaks in Vedic terms. Ask about your career, relationships, timing, or anything else.</p>
+            <span class="feature-badge">Coming Soon</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══════════════════════════════════════
+         HOW IT WORKS
+    ═══════════════════════════════════════ -->
+    <section class="how-section" id="how-it-works">
+      <div class="container">
+        <div class="section-head fade-up">
+          <div class="section-label">How It Works</div>
+          <h2 class="section-title">Your Chart in Three Steps</h2>
+          <p class="section-sub">No complicated forms. No waiting. Your full sidereal reading in under two minutes.</p>
+        </div>
+
+        <div class="steps-row stagger">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <div>
+              <div class="step-title">Sign In with Google</div>
+              <p class="step-desc">One click, no passwords. We use Google OAuth so your account is always secure. Your email is just for login — we don't send marketing emails.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <div>
+              <div class="step-title">Enter Your Birth Details</div>
+              <p class="step-desc">Date, time, and place of birth. We use a high-precision ephemeris with the Lahiri ayanamsa to calculate your exact sidereal positions — including nakshatras and padas.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <div>
+              <div class="step-title">Explore Your Reading</div>
+              <p class="step-desc">Your D1, D9, D10, Soul Profile, and Archetypes are ready instantly. Save multiple charts, share them, or dive deeper with our AI Chart Guide.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══════════════════════════════════════
+         PRICING
+    ═══════════════════════════════════════ -->
+    <section id="pricing">
+      <div class="container">
+        <div class="section-head fade-up">
+          <div class="section-label">Pricing</div>
+          <h2 class="section-title">Choose Your Path</h2>
+          <p class="section-sub">Start free. Upgrade when you're ready to go deeper. Cancel any time — no questions, no dark patterns.</p>
+        </div>
+
+        <div class="pricing-grid stagger">
+
+          <!-- Free -->
+          <div class="pricing-card">
+            <div class="pricing-tier-name">Free</div>
+            <div class="pricing-price">$0</div>
+            <div class="pricing-tagline">Always free. No credit card needed.</div>
+            <div class="pricing-divider"></div>
+            <ul class="pricing-features">
+              <li><span class="check">✦</span> 1 chart</li>
+              <li><span class="check">✦</span> Sidereal D1 birth chart</li>
+              <li><span class="check">✦</span> Planetary positions + nakshatras</li>
+              <li class="dim"><span class="check">—</span> D9 Navamsa chart</li>
+              <li class="dim"><span class="check">—</span> D10 Dasamsa chart</li>
+              <li class="dim"><span class="check">—</span> Soul Profile</li>
+              <li class="dim"><span class="check">—</span> Character Archetypes</li>
+            </ul>
+            <a href="/auth/google" class="btn-pricing btn-pricing-outline">Get Started Free</a>
+          </div>
+
+          <!-- Seeker -->
+          <div class="pricing-card">
+            <div class="pricing-tier-name">Seeker</div>
+            <div class="pricing-price">$14<span>/mo</span></div>
+            <div class="pricing-tagline">For the curious soul ready to look deeper.</div>
+            <div class="pricing-divider"></div>
+            <ul class="pricing-features">
+              <li><span class="check">✦</span> 5 charts</li>
+              <li><span class="check">✦</span> Sidereal D1 birth chart</li>
+              <li><span class="check">✦</span> D9 Navamsa chart</li>
+              <li><span class="check">✦</span> D10 Dasamsa chart</li>
+              <li><span class="check">✦</span> Soul Profile</li>
+              <li><span class="check">✦</span> Character Archetypes</li>
+              <li class="dim"><span class="check">—</span> Journal + Synastry</li>
+            </ul>
+            <a href="/auth/google" class="btn-pricing btn-pricing-outline">Start Seeker</a>
+          </div>
+
+          <!-- Scholar -->
+          <div class="pricing-card">
+            <div class="pricing-tier-name">Scholar</div>
+            <div class="pricing-price">$39<span>/mo</span></div>
+            <div class="pricing-tagline">For serious students of the cosmic self.</div>
+            <div class="pricing-divider"></div>
+            <ul class="pricing-features">
+              <li><span class="check">✦</span> 20 charts</li>
+              <li><span class="check">✦</span> Everything in Seeker</li>
+              <li><span class="check">✦</span> Astro Journal</li>
+              <li><span class="check">✦</span> Synastry (chart compatibility)</li>
+              <li class="dim"><span class="check">—</span> Unlimited charts</li>
+              <li class="dim"><span class="check">—</span> AI Chart Chat</li>
+            </ul>
+            <a href="/auth/google" class="btn-pricing btn-pricing-gold">Start Scholar</a>
+          </div>
+
+          <!-- Oracle — Popular -->
+          <div class="pricing-card popular">
+            <div class="popular-badge">Most Popular</div>
+            <div class="pricing-tier-name">Oracle</div>
+            <div class="pricing-price">$89<span>/mo</span></div>
+            <div class="pricing-tagline">Unlimited everything. Your personal AI astrologer.</div>
+            <div class="pricing-divider"></div>
+            <ul class="pricing-features">
+              <li><span class="check">✦</span> Unlimited charts</li>
+              <li><span class="check">✦</span> Everything in Scholar</li>
+              <li><span class="check">✦</span> AI Chart Chat — ask anything</li>
+              <li><span class="check">✦</span> Priority support</li>
+              <li><span class="check">✦</span> Early access to new features</li>
+            </ul>
+            <a href="/auth/google" class="btn-pricing btn-pricing-violet">Start Oracle</a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══════════════════════════════════════
+         TESTIMONIALS
+    ═══════════════════════════════════════ -->
+    <section class="testimonials-section" id="testimonials">
+      <div class="container">
+        <div class="section-head fade-up">
+          <div class="section-label">Testimonials</div>
+          <h2 class="section-title">What Seekers Are Saying</h2>
+          <p class="section-sub">Real people. Real charts. Real moments of recognition.</p>
+        </div>
+
+        <div class="testimonials-grid stagger">
+
+          <div class="testimonial-card">
+            <div class="stars-row">
+              <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+            </div>
+            <p class="testimonial-text">"The Soul Profile section is where I stopped scrolling and just sat there. It said my light side was 'the bridge-builder' and my shadow was 'the people-pleaser who quietly resents.' I have been in therapy for two years working through exactly that. I don't know how an astrology app got that specific, but it did."</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">R</div>
+              <div>
+                <div class="author-name">Riya M.</div>
+                <div class="author-handle">Scorpio Rising · Mumbai</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <div class="stars-row">
+              <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+            </div>
+            <p class="testimonial-text">"I'm a software engineer who stumbled into documentary filmmaking on the side, and then somehow that became my main career. The D10 Dasamsa said my 10th house Ketu meant I'd resist conventional career structures and find my calling through a pivot that looked accidental but wasn't. That's my entire work history, summarized in one sentence."</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">J</div>
+              <div>
+                <div class="author-name">James T.</div>
+                <div class="author-handle">Capricorn Sun · Austin, TX</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <div class="stars-row">
+              <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+            </div>
+            <p class="testimonial-text">"I ran my chart and my partner's chart and compared the Navamsas. The reading said our Navamsa Moons were in signs that would either create deep spiritual attunement or trigger each other's deepest wounds — and it listed which triggers to watch for. My partner read it, went quiet, and said 'this is our entire relationship.' We've been together seven years."</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">P</div>
+              <div>
+                <div class="author-name">Priya K.</div>
+                <div class="author-handle">Pisces Moon · London</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══════════════════════════════════════
+         FAQ
+    ═══════════════════════════════════════ -->
+    <section id="faq">
+      <div class="container">
+        <div class="section-head fade-up">
+          <div class="section-label">FAQ</div>
+          <h2 class="section-title">Questions &amp; Answers</h2>
+        </div>
+
+        <div class="faq-list">
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              What is sidereal astrology and how is it different from tropical?
+              <span class="faq-chevron">▼</span>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                <strong>Tropical astrology</strong> (used by most Western horoscope apps) fixes the zodiac to the seasons — 0° Aries always lands at the Spring Equinox, regardless of where the stars actually are. <strong>Sidereal astrology</strong> tracks the actual constellations. Because Earth's axis wobbles over time (a process called precession), the tropical and sidereal zodiacs have drifted about 23° apart. Krieshan AI uses the <strong>Lahiri ayanamsa</strong> — the official correction factor adopted by the Indian government — to place every planet where it actually sits in the sky at the moment of your birth. For most people born between 1970–2000, this shifts their Sun sign back by one full sign.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              How is Krieshan AI different from Co-Star, Sanctuary, or other apps?
+              <span class="faq-chevron">▼</span>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Most popular astrology apps use <strong>tropical Western astrology</strong> and AI-generated horoscopes. Krieshan AI is built from the ground up on <strong>Jyotish (Vedic astrology)</strong> using sidereal placements. We calculate divisional charts (D9, D10) that most apps don't offer at all. Our Soul Profile and archetype mapping are unique to this platform. And our upcoming <strong>AI Chart Guide</strong> will know your actual chart — not just generic sign descriptions. If you've ever felt that Western astrology didn't quite fit, the sidereal chart is often why.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              What is the D9 Navamsa chart?
+              <span class="faq-chevron">▼</span>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                The <strong>Navamsa</strong> (D9) is the most important divisional chart in Vedic astrology after the birth chart itself. Each sign is divided into nine equal parts of 3°20′, and the planets are redistributed into a new chart based on which navamsa they occupy. The D9 reveals the <strong>soul's deeper nature</strong>, the quality of your long-term relationships and marriage, and the way your chart will unfold in the second half of life. Many Jyotish astrologers check the Navamsa before making any predictions — a planet that is weak in the D1 but strong in the D9 is often considered a hidden strength, and vice versa.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              What is the D10 Dasamsa chart?
+              <span class="faq-chevron">▼</span>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                The <strong>Dasamsa</strong> (D10) divides each sign into ten equal parts of 3°00′ each. It is the divisional chart dedicated to <strong>career, profession, and public life</strong>. Where your D1 shows your personality and life path broadly, the D10 zooms in on the quality of your professional work — the sector you're drawn to, how authority figures perceive you, your relationship with hierarchy, and the karmic purpose embedded in your vocation. Planets placed strongly in the D10 tend to confer worldly success in their domains; weak or afflicted planets here can indicate obstacles or delays in career.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              Is my data private and secure?
+              <span class="faq-chevron">▼</span>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Yes. Your birth details are stored securely in our database and are <strong>never sold, shared, or used for advertising</strong>. We use Google OAuth for authentication, which means we never see your Google password. You can delete your account and all associated data at any time from your account settings. For full details, see our <a href="/privacy" style="color:var(--gold-light)">Privacy Policy</a>.
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══════════════════════════════════════
+         CTA BAND
+    ═══════════════════════════════════════ -->
+    <section class="cta-band">
+      <div class="container">
+        <h2 class="fade-up">Begin With Your True Chart</h2>
+        <p class="fade-up">Free to start. No credit card. Just your date, time, and place — and the sky does the rest.</p>
+        <a href="/auth/google" class="btn-google-hero fade-up" style="display:inline-flex;">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
+          Sign in with Google
+        </a>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         FOOTER
+    ═══════════════════════════════════════ -->
+    <footer>
+      <div class="container">
+        <div class="footer-inner">
+          <a href="/" class="footer-logo">
+            <img src="/static/lion.svg?v=2" alt="Krieshan AI" />
+            <span class="footer-logo-text">Krieshan AI</span>
+          </a>
+          <div class="footer-links">
+            <a href="/privacy">Privacy Policy</a>
+            <a href="/terms">Terms of Service</a>
+            <a href="mailto:krieshansivabalan@gmail.com">Contact</a>
+          </div>
+        </div>
+        <div class="footer-copy">&copy; 2026 Krieshan AI. All rights reserved. Vedic sidereal astrology powered by AI.</div>
+      </div>
+    </footer>
+
+  </div><!-- /page-wrap -->
+
+  <!-- ═══════════════════════════════════════
+       SCRIPTS
+  ═══════════════════════════════════════ -->
+  <script>
+    // ── Scroll-triggered animations (Intersection Observer) ──
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.fade-up, .stagger').forEach(el => observer.observe(el));
+
+    // ── FAQ accordion ──
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const isOpen = item.classList.contains('open');
+
+        // close all
+        document.querySelectorAll('.faq-item.open').forEach(i => {
+          i.classList.remove('open');
+          i.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+        });
+
+        // open clicked (if it was closed)
+        if (!isOpen) {
+          item.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+
+    // ── Trigger visible for elements already in viewport on load ──
+    window.addEventListener('load', () => {
+      document.querySelectorAll('.fade-up, .stagger').forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          el.classList.add('visible');
+        }
+      });
+    });
+  </script>
 </body>
 </html>

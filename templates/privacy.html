@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Krieshan AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #07080f;
+      --surface:     #0d0f1e;
+      --card:        rgba(255,255,255,0.04);
+      --border:      rgba(255,255,255,0.08);
+      --gold:        #c9a84c;
+      --gold-light:  #e8c96a;
+      --violet:      #7c5cbf;
+      --violet-light:#a884e8;
+      --text:        #e2dff5;
+      --muted:       #7a789a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Raleway', sans-serif;
+      font-weight: 400;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Starfield ─────────────────────────────────────────────── */
+    #stars {
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse at 20% 30%, rgba(124,92,191,.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 70%, rgba(201,168,76,.06) 0%, transparent 50%),
+        var(--bg);
+      pointer-events: none;
+    }
+    #stars::before, #stars::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 10%  15%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30%  40%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50%   8%, rgba(255,255,255,.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70%  55%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90%  20%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 15%  75%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 45%  88%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 80%  95%, rgba(255,255,255,.3) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 60% 30%, rgba(255,255,255,.8) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 25% 50%, rgba(200,180,255,.6) 0%, transparent 100%);
+      background-size: 400px 300px;
+      animation: twinkle 8s ease-in-out infinite alternate;
+    }
+    #stars::after {
+      background-size: 600px 500px;
+      animation-duration: 12s;
+      animation-direction: alternate-reverse;
+      opacity: .6;
+    }
+    @keyframes twinkle { 0% { opacity: .5; } 100% { opacity: 1; } }
+
+    /* ── Sticky Nav ───────────────────────────────────────────── */
+    .topnav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .9rem 1.5rem;
+      background: rgba(7,8,15,.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: .55rem;
+      text-decoration: none;
+    }
+    .nav-logo-icon { font-size: 1.45rem; line-height: 1; filter: drop-shadow(0 0 8px var(--gold)); }
+    .nav-logo-text {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem; font-weight: 600;
+      letter-spacing: .08em;
+      background: linear-gradient(135deg, var(--gold-light), var(--violet-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .back-link {
+      display: flex; align-items: center; gap: .4rem;
+      color: var(--muted); text-decoration: none;
+      font-size: .85rem; font-weight: 500;
+      transition: color .2s;
+    }
+    .back-link:hover { color: var(--gold); }
+
+    /* ── Page Layout ──────────────────────────────────────────── */
+    .page-wrap {
+      position: relative; z-index: 1;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 6rem;
+    }
+
+    /* ── Document Header ──────────────────────────────────────── */
+    .doc-header {
+      text-align: center;
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 3rem;
+    }
+    .doc-icon {
+      font-size: 2.4rem; line-height: 1;
+      margin-bottom: .75rem;
+      filter: drop-shadow(0 0 12px var(--violet));
+    }
+    .doc-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.5rem, 4vw, 2.1rem);
+      font-weight: 700; letter-spacing: .08em;
+      background: linear-gradient(135deg, var(--gold-light), var(--violet-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: .6rem;
+    }
+    .doc-meta {
+      font-size: .84rem; color: var(--muted); letter-spacing: .04em;
+    }
+
+    /* ── Section Styles ───────────────────────────────────────── */
+    .section {
+      margin-bottom: 2.8rem;
+    }
+    .section-heading {
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem; font-weight: 600;
+      letter-spacing: .06em;
+      color: var(--gold-light);
+      margin-bottom: 1rem;
+      padding-bottom: .5rem;
+      border-bottom: 1px solid rgba(201,168,76,.2);
+    }
+    .section-number {
+      display: inline-block;
+      width: 1.6em;
+      color: var(--violet-light);
+      font-weight: 700;
+    }
+    p {
+      font-size: .95rem; line-height: 1.8;
+      color: var(--text);
+      margin-bottom: .9rem;
+    }
+    p:last-child { margin-bottom: 0; }
+    ul, ol {
+      padding-left: 1.4rem;
+      margin-bottom: .9rem;
+    }
+    li {
+      font-size: .95rem; line-height: 1.75;
+      color: var(--text);
+      margin-bottom: .3rem;
+    }
+    strong { color: var(--gold-light); font-weight: 600; }
+    a { color: var(--violet-light); text-decoration: none; transition: color .2s; }
+    a:hover { color: var(--gold-light); text-decoration: underline; }
+
+    /* ── Highlight Box ────────────────────────────────────────── */
+    .highlight-box {
+      background: var(--card);
+      border: 1px solid rgba(124,92,191,.25);
+      border-left: 3px solid var(--violet);
+      border-radius: 8px;
+      padding: 1.1rem 1.3rem;
+      margin-bottom: 1rem;
+    }
+    .highlight-box p { margin-bottom: 0; font-size: .9rem; color: var(--muted); }
+
+    /* ── Table ────────────────────────────────────────────────── */
+    .data-table {
+      width: 100%; border-collapse: collapse;
+      margin-bottom: 1rem; font-size: .88rem;
+    }
+    .data-table th {
+      text-align: left; padding: .6rem .9rem;
+      font-family: 'Cinzel', serif; font-size: .78rem;
+      letter-spacing: .05em; color: var(--gold);
+      border-bottom: 1px solid rgba(201,168,76,.25);
+    }
+    .data-table td {
+      padding: .6rem .9rem; color: var(--text);
+      border-bottom: 1px solid var(--border); line-height: 1.6;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: rgba(255,255,255,.02); }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    .page-footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+    .footer-logo {
+      font-family: 'Cinzel', serif;
+      font-size: .9rem; font-weight: 600;
+      letter-spacing: .08em;
+      background: linear-gradient(135deg, var(--gold-light), var(--violet-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: .5rem;
+    }
+    .footer-links {
+      display: flex; align-items: center; justify-content: center;
+      gap: 1.2rem; flex-wrap: wrap; margin-bottom: .5rem;
+    }
+    .footer-links a {
+      font-size: .8rem; color: var(--muted); text-decoration: none; transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--gold); text-decoration: none; }
+    .footer-copy { font-size: .78rem; color: var(--muted); }
+
+    /* ── Responsive ───────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .page-wrap { padding: 2rem 1rem 5rem; }
+      .data-table { font-size: .8rem; }
+      .data-table th, .data-table td { padding: .5rem .6rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<!-- Sticky Navigation -->
+<nav class="topnav">
+  <a href="/" class="nav-logo">
+    <span class="nav-logo-icon">&#x1F981;</span>
+    <span class="nav-logo-text">Krieshan AI</span>
+  </a>
+  <a href="/" class="back-link">&#8592; Back</a>
+</nav>
+
+<!-- Main Content -->
+<main class="page-wrap">
+
+  <!-- Document Header -->
+  <div class="doc-header">
+    <div class="doc-icon">&#x1F512;</div>
+    <h1 class="doc-title">Privacy Policy</h1>
+    <p class="doc-meta">Last updated: April 2026 &nbsp;&middot;&nbsp; Effective: April 2026</p>
+  </div>
+
+  <div class="highlight-box">
+    <p>This Privacy Policy explains how <strong>Krieshan AI</strong> (&ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;) collects, uses, stores, and protects your personal information when you use our sidereal astrology service at <a href="https://krieshanai.up.railway.app">krieshanai.up.railway.app</a>. Please read this policy carefully before using our service.</p>
+  </div>
+
+  <!-- 1. Information We Collect -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">1.</span>Information We Collect</h2>
+    <p>We collect information you provide directly to us and information generated automatically through your use of the service.</p>
+
+    <p><strong>Account Information (via Google OAuth)</strong></p>
+    <ul>
+      <li><strong>Full name</strong> — provided by your Google account profile</li>
+      <li><strong>Email address</strong> — used to identify your account and communicate with you</li>
+      <li><strong>Google profile picture</strong> — displayed within your account dashboard</li>
+      <li><strong>Google user ID</strong> — used internally to link your account securely</li>
+    </ul>
+
+    <p><strong>Astrological &amp; Birth Data</strong></p>
+    <ul>
+      <li><strong>Date of birth</strong> — required to calculate your natal chart</li>
+      <li><strong>Time of birth</strong> — used for accurate house and rising sign calculations</li>
+      <li><strong>City and country of birth</strong> — used to determine geographic coordinates for chart calculation</li>
+    </ul>
+
+    <p><strong>Usage &amp; Technical Data</strong></p>
+    <ul>
+      <li>Pages visited and features used within the app</li>
+      <li>Timestamps of chart generation, journal entries, and other interactions</li>
+      <li>Device type, browser, and operating system (collected automatically)</li>
+      <li>IP address (used for security and abuse prevention; not stored long-term)</li>
+      <li>Session tokens for maintaining your logged-in state</li>
+    </ul>
+
+    <p><strong>Payment Information</strong></p>
+    <p>We do not store your credit card or banking details. All payment information is handled directly by <strong>Stripe</strong>, our payment processor. We receive only a non-sensitive transaction record (subscription status, plan type, and Stripe customer ID) from Stripe after a successful transaction.</p>
+  </div>
+
+  <!-- 2. How We Use Your Information -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">2.</span>How We Use Your Information</h2>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Purpose</th>
+          <th>Data Used</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Generate your Vedic (sidereal) natal chart and astrological readings</td>
+          <td>Birth date, time, city</td>
+        </tr>
+        <tr>
+          <td>Authenticate and maintain your account session</td>
+          <td>Google OAuth credentials, session token</td>
+        </tr>
+        <tr>
+          <td>Send important account or service updates</td>
+          <td>Email address</td>
+        </tr>
+        <tr>
+          <td>Process subscription payments and manage billing</td>
+          <td>Stripe customer ID, subscription status</td>
+        </tr>
+        <tr>
+          <td>Improve the accuracy and features of the service</td>
+          <td>Usage data (aggregated and anonymised)</td>
+        </tr>
+        <tr>
+          <td>Detect fraud, abuse, and security threats</td>
+          <td>IP address, device data, session data</td>
+        </tr>
+        <tr>
+          <td>Comply with legal obligations</td>
+          <td>As required by applicable law</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>We do <strong>not</strong> sell your personal data to third parties. We do not use your birth data or personal information for advertising purposes.</p>
+  </div>
+
+  <!-- 3. Data Storage & Security -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">3.</span>Data Storage &amp; Security</h2>
+    <p>Your data is stored on <strong>Railway</strong> cloud infrastructure, a managed platform-as-a-service provider. Our database is encrypted at rest using industry-standard AES-256 encryption. Connections to the service are protected by TLS/SSL encryption in transit.</p>
+    <p>We retain your account data for as long as your account remains active. If you delete your account, we will purge your personal information and astrological data from our systems within <strong>30 days</strong>, except where we are required to retain certain records for legal or financial compliance purposes (for example, Stripe transaction records, which are governed by Stripe&rsquo;s own retention policies).</p>
+    <p>While we implement reasonable technical and organisational safeguards, no system is completely secure. We cannot guarantee absolute security of data transmitted over the internet.</p>
+  </div>
+
+  <!-- 4. Third-Party Services -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">4.</span>Third-Party Services</h2>
+    <p>We use the following third-party services to operate Krieshan AI:</p>
+
+    <ul>
+      <li>
+        <strong>Google OAuth</strong> — We use Google Sign-In for account authentication. When you sign in, Google shares your name, email address, and profile picture with us in accordance with the permissions you grant. Your use of Google Sign-In is subject to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google&rsquo;s Privacy Policy</a>.
+      </li>
+      <li>
+        <strong>Stripe</strong> — We use Stripe to process subscription payments. Stripe collects and stores your payment card details directly; we never see or store full card numbers. Stripe&rsquo;s data handling is governed by the <a href="https://stripe.com/privacy" target="_blank" rel="noopener">Stripe Privacy Policy</a>.
+      </li>
+      <li>
+        <strong>Railway</strong> — Our application and database are hosted on Railway&rsquo;s cloud infrastructure. Railway acts as a data processor on our behalf. Your data is stored within Railway&rsquo;s managed environment, subject to their security and infrastructure controls.
+      </li>
+    </ul>
+
+    <p>We do not integrate with any advertising networks, analytics trackers (such as Google Analytics), or social media data-sharing tools beyond what is described above.</p>
+  </div>
+
+  <!-- 5. Cookies & Session Data -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">5.</span>Cookies &amp; Session Data</h2>
+    <p>Krieshan AI uses a minimal cookie policy. We set only the cookies strictly necessary to operate the service:</p>
+    <ul>
+      <li><strong>Session cookie</strong> — A single, server-side session cookie is set when you log in. This cookie keeps you authenticated during your browsing session and is deleted when you close your browser or log out. It does not track you across other websites.</li>
+    </ul>
+    <p>We do <strong>not</strong> use:</p>
+    <ul>
+      <li>Persistent tracking cookies</li>
+      <li>Third-party advertising or analytics cookies</li>
+      <li>Cross-site tracking pixels or fingerprinting scripts</li>
+    </ul>
+    <p>Because we only use strictly necessary session cookies, no cookie consent banner is required under current cookie regulations. If our cookie usage changes in the future, we will update this policy and notify users accordingly.</p>
+  </div>
+
+  <!-- 6. Your Rights & Choices -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">6.</span>Your Rights &amp; Choices</h2>
+    <p>Depending on your location, you may have the following rights regarding your personal data:</p>
+    <ul>
+      <li><strong>Access</strong> — Request a copy of the personal data we hold about you.</li>
+      <li><strong>Correction</strong> — Ask us to correct inaccurate or incomplete data.</li>
+      <li><strong>Deletion</strong> — Request that we delete your account and all associated personal data. You can do this by emailing us at <a href="mailto:krieshansivabalan@gmail.com">krieshansivabalan@gmail.com</a> with the subject line &ldquo;Delete My Account.&rdquo; We will process your request within 30 days.</li>
+      <li><strong>Data portability</strong> — Request an export of your data in a machine-readable format (JSON or CSV). Email us to make this request.</li>
+      <li><strong>Objection</strong> — Object to certain types of processing, such as direct marketing communications.</li>
+      <li><strong>Withdraw consent</strong> — Where processing is based on your consent, you may withdraw it at any time. This will not affect the lawfulness of processing carried out before withdrawal.</li>
+    </ul>
+    <p>To exercise any of these rights, contact us at <a href="mailto:krieshansivabalan@gmail.com">krieshansivabalan@gmail.com</a>. We do not charge for reasonable requests and will respond within 30 days.</p>
+  </div>
+
+  <!-- 7. Children's Privacy -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">7.</span>Children&rsquo;s Privacy</h2>
+    <p>Krieshan AI is not directed at children under the age of 13 (or under 16 in certain jurisdictions). We do not knowingly collect personal information from children. If you believe a child has provided us with personal data without parental consent, please contact us and we will delete the information promptly.</p>
+  </div>
+
+  <!-- 8. International Data Transfers -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">8.</span>International Data Transfers</h2>
+    <p>Our service is hosted on Railway&rsquo;s cloud infrastructure. Depending on your location, your data may be processed in a different country. By using Krieshan AI, you consent to the transfer of your information to our infrastructure providers and third-party services as described in this policy, which may be located outside your home country.</p>
+    <p>We take reasonable steps to ensure your data receives adequate protection regardless of where it is processed, consistent with the requirements of applicable data protection laws.</p>
+  </div>
+
+  <!-- 9. Changes to This Policy -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">9.</span>Changes to This Policy</h2>
+    <p>We may update this Privacy Policy from time to time. When we make material changes, we will update the &ldquo;Last updated&rdquo; date at the top of this page and, where appropriate, notify you by email. Your continued use of Krieshan AI after changes are posted constitutes your acceptance of the revised policy.</p>
+    <p>We encourage you to review this page periodically to stay informed about how we protect your information.</p>
+  </div>
+
+  <!-- 10. Contact -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">10.</span>Contact Us</h2>
+    <p>If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please reach out to us:</p>
+    <ul>
+      <li><strong>Email:</strong> <a href="mailto:krieshansivabalan@gmail.com">krieshansivabalan@gmail.com</a></li>
+      <li><strong>Website:</strong> <a href="https://krieshanai.up.railway.app" target="_blank" rel="noopener">krieshanai.up.railway.app</a></li>
+    </ul>
+    <p>We aim to respond to all privacy-related enquiries within <strong>5 business days</strong>.</p>
+  </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="page-footer">
+  <div class="footer-logo">&#x1F981; Krieshan AI</div>
+  <div class="footer-links">
+    <a href="/">Home</a>
+    <a href="/privacy">Privacy Policy</a>
+    <a href="/terms">Terms of Service</a>
+    <a href="mailto:krieshansivabalan@gmail.com">Contact</a>
+  </div>
+  <p class="footer-copy">&copy; 2026 Krieshan AI &mdash; All rights reserved.</p>
+</footer>
+
+</body>
+</html>

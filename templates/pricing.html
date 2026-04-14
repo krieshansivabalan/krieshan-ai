@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing — Krieshan AI</title>
+  <meta name="description" content="Choose a plan to unlock your full sidereal birth chart, D9 Navamsa, D10 Dasamsa, Soul Profile, and more." />
+  <meta property="og:title" content="Pricing — Krieshan AI" />
+  <meta property="og:description" content="Sidereal Vedic astrology plans starting at $14/month." />
+  <meta property="og:type" content="website" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:           #07080f;
+      --surface:      #0d0f1e;
+      --card:         rgba(255,255,255,0.04);
+      --card-hover:   rgba(255,255,255,0.07);
+      --border:       rgba(255,255,255,0.08);
+      --border-gold:  rgba(201,168,76,0.3);
+      --gold:         #c9a84c;
+      --gold-light:   #e8c96a;
+      --violet:       #7c5cbf;
+      --violet-light: #a884e8;
+      --text:         #e2dff5;
+      --muted:        #7a789a;
+      --radius:       16px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Raleway', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* Starfield */
+    #stars {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background: radial-gradient(ellipse at 50% 0%, #1a1040 0%, #07080f 70%);
+    }
+    #stars::before, #stars::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 15%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 85% 75%, rgba(255,255,255,.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50% 40%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 20% 80%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 60% 90%, rgba(255,255,255,.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 45%, rgba(255,255,255,.4) 0%, transparent 100%);
+      background-size: 300px 300px;
+      animation: twinkle 8s ease-in-out infinite alternate;
+    }
+    #stars::after { background-size: 200px 200px; animation-duration: 12s; animation-delay: -4s; }
+    @keyframes twinkle {
+      0%   { opacity: .4; }
+      100% { opacity: 1; }
+    }
+
+    /* Nav */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .9rem 2rem;
+      background: rgba(7,8,15,.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: .6rem;
+      font-family: 'Cinzel', serif; font-size: 1.1rem; font-weight: 700;
+      background: linear-gradient(135deg, var(--gold-light), var(--violet-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .nav-logo span { filter: drop-shadow(0 0 6px rgba(201,168,76,.5)); font-size: 1.4rem; }
+    .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+    .nav-links a {
+      color: var(--muted); font-size: .85rem; font-weight: 500;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--gold-light); }
+    .btn-nav {
+      background: linear-gradient(135deg, var(--gold), var(--violet));
+      color: #fff; padding: .45rem 1.1rem;
+      border-radius: 8px; font-size: .85rem; font-weight: 600;
+      transition: opacity .2s;
+    }
+    .btn-nav:hover { opacity: .85; }
+
+    /* Page */
+    .page { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 4rem 1.5rem 6rem; }
+
+    .page-title {
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--gold-light), var(--violet-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: .75rem;
+    }
+    .page-sub {
+      text-align: center; color: var(--muted); font-size: 1rem;
+      max-width: 520px; margin: 0 auto 3.5rem;
+    }
+
+    /* Free banner */
+    .free-banner {
+      text-align: center; margin-bottom: 2.5rem;
+      padding: .8rem 1.5rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--muted); font-size: .9rem;
+    }
+    .free-banner strong { color: var(--text); }
+
+    /* Pricing grid */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .plan-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem 1.75rem;
+      display: flex; flex-direction: column;
+      transition: transform .25s, border-color .25s, background .25s;
+      position: relative;
+    }
+    .plan-card:hover {
+      transform: translateY(-4px);
+      background: var(--card-hover);
+      border-color: rgba(201,168,76,.2);
+    }
+    .plan-card.recommended {
+      border-color: var(--border-gold);
+      background: rgba(201,168,76,.05);
+    }
+    .recommended-badge {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--gold), var(--violet));
+      color: #fff; font-size: .7rem; font-weight: 700;
+      padding: .3rem .9rem; border-radius: 20px; white-space: nowrap;
+      letter-spacing: .05em; text-transform: uppercase;
+    }
+
+    .plan-name {
+      font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 700;
+      color: var(--gold-light); margin-bottom: .3rem;
+    }
+    .plan-price {
+      font-size: 2.4rem; font-weight: 700; margin-bottom: .2rem;
+      background: linear-gradient(135deg, var(--gold-light), var(--violet-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .plan-price span { font-size: 1rem; font-weight: 400; color: var(--muted); }
+    .plan-desc { color: var(--muted); font-size: .85rem; margin-bottom: 1.5rem; }
+
+    .plan-features {
+      list-style: none; display: flex; flex-direction: column; gap: .55rem;
+      margin-bottom: 2rem; flex: 1;
+    }
+    .plan-features li {
+      font-size: .87rem; color: var(--text);
+      display: flex; align-items: flex-start; gap: .5rem;
+    }
+    .plan-features li::before {
+      content: '✦';
+      color: var(--gold); font-size: .7rem; margin-top: .2rem; flex-shrink: 0;
+    }
+    .plan-features li.muted { color: var(--muted); }
+    .plan-features li.muted::before { color: var(--muted); }
+
+    .btn-plan {
+      display: block; text-align: center; padding: .75rem 1rem;
+      border-radius: 12px; font-weight: 700; font-size: .9rem;
+      cursor: pointer; border: none;
+      transition: opacity .2s, transform .15s;
+      text-decoration: none;
+    }
+    .btn-plan:hover { opacity: .85; transform: scale(1.02); }
+    .btn-plan.gold {
+      background: linear-gradient(135deg, var(--gold), #b8892a);
+      color: #07080f;
+    }
+    .btn-plan.violet {
+      background: linear-gradient(135deg, var(--violet), #5a3f9a);
+      color: #fff;
+    }
+    .btn-plan.outline {
+      background: transparent;
+      border: 1px solid var(--border-gold);
+      color: var(--gold-light);
+    }
+    .btn-plan.dark {
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    /* FAQ */
+    .faq-section { margin-top: 5rem; }
+    .faq-title {
+      text-align: center; font-family: 'Cinzel', serif;
+      font-size: 1.6rem; font-weight: 700; color: var(--gold-light);
+      margin-bottom: 2rem;
+    }
+    .faq-item {
+      border: 1px solid var(--border); border-radius: 12px;
+      margin-bottom: .75rem; overflow: hidden;
+    }
+    .faq-q {
+      width: 100%; background: var(--card); border: none;
+      color: var(--text); text-align: left; padding: 1rem 1.25rem;
+      font-family: 'Raleway', sans-serif; font-size: .95rem; font-weight: 600;
+      cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+      transition: background .2s;
+    }
+    .faq-q:hover { background: var(--card-hover); }
+    .faq-q .arrow { transition: transform .3s; font-size: .8rem; color: var(--gold); }
+    .faq-q.open .arrow { transform: rotate(180deg); }
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      transition: max-height .35s ease, padding .25s;
+      color: var(--muted); font-size: .88rem; line-height: 1.7;
+      padding: 0 1.25rem;
+      background: rgba(255,255,255,.02);
+    }
+    .faq-a.open { max-height: 300px; padding: .9rem 1.25rem; }
+
+    /* Footer */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2rem 1.5rem;
+      text-align: center; color: var(--muted); font-size: .8rem;
+    }
+    footer a { color: var(--muted); margin: 0 .5rem; }
+    footer a:hover { color: var(--gold-light); }
+
+    @media (max-width: 600px) {
+      nav { padding: .7rem 1rem; }
+      .nav-links a:not(.btn-nav) { display: none; }
+      .pricing-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div id="stars"></div>
+
+<nav>
+  <a href="/" class="nav-logo"><span>♌</span> Krieshan AI</a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+    <a href="/auth/google" class="btn-nav">Get Started</a>
+  </div>
+</nav>
+
+<div class="page">
+  <h1 class="page-title">Simple, Transparent Pricing</h1>
+  <p class="page-sub">Start free — upgrade when you're ready to go deeper into your cosmic blueprint.</p>
+
+  <div class="free-banner">
+    <strong>Free plan included:</strong> Full D1 birth chart · All planet placements · Nakshatras · Vimshottari Dasha — no credit card needed.
+  </div>
+
+  <div class="pricing-grid">
+
+    <!-- Free -->
+    <div class="plan-card">
+      <div class="plan-name">Explorer</div>
+      <div class="plan-price">$0 <span>/ month</span></div>
+      <div class="plan-desc">Everything you need to get started.</div>
+      <ul class="plan-features">
+        <li>Full D1 Sidereal Birth Chart</li>
+        <li>All planet placements &amp; degrees</li>
+        <li>Nakshatra &amp; pada analysis</li>
+        <li>Vimshottari Dasha timeline</li>
+        <li>Fixed star interpretations</li>
+        <li class="muted">D9 Navamsa chart</li>
+        <li class="muted">D10 Dasamsa chart</li>
+        <li class="muted">Soul Profile</li>
+        <li class="muted">Transit readings</li>
+      </ul>
+      <a href="/auth/google" class="btn-plan dark">Start Free</a>
+    </div>
+
+    <!-- Seeker -->
+    <div class="plan-card">
+      <div class="plan-name">Seeker</div>
+      <div class="plan-price">$14 <span>/ month</span></div>
+      <div class="plan-desc">Go deeper into your soul's design.</div>
+      <ul class="plan-features">
+        <li>Everything in Explorer</li>
+        <li>D9 Navamsa chart</li>
+        <li>D10 Dasamsa chart</li>
+        <li>Soul Profile (light, shadow, feed, avoid)</li>
+        <li>Character Archetypes</li>
+        <li>PDF birth chart export</li>
+        <li class="muted">Synastry compatibility</li>
+        <li class="muted">AI Chart Chat</li>
+      </ul>
+      <a href="/auth/google" class="btn-plan outline">Get Seeker</a>
+    </div>
+
+    <!-- Scholar (recommended) -->
+    <div class="plan-card recommended">
+      <div class="recommended-badge">Most Popular</div>
+      <div class="plan-name">Scholar</div>
+      <div class="plan-price">$39 <span>/ month</span></div>
+      <div class="plan-desc">The complete Vedic astrology toolkit.</div>
+      <ul class="plan-features">
+        <li>Everything in Seeker</li>
+        <li>Synastry compatibility charts</li>
+        <li>Astrology journal</li>
+        <li>20 saved birth charts</li>
+        <li>Monthly forecast reports</li>
+        <li>Priority email support</li>
+        <li class="muted">AI Chart Chat</li>
+        <li class="muted">Unlimited charts</li>
+      </ul>
+      <a href="/auth/google" class="btn-plan gold">Get Scholar</a>
+    </div>
+
+    <!-- Oracle -->
+    <div class="plan-card">
+      <div class="plan-name">Oracle</div>
+      <div class="plan-price">$97 <span>/ month</span></div>
+      <div class="plan-desc">For practitioners and serious students.</div>
+      <ul class="plan-features">
+        <li>Everything in Scholar</li>
+        <li>Unlimited saved charts</li>
+        <li>AI Chart Chat (coming soon)</li>
+        <li>Early access to new features</li>
+        <li>Priority feature requests</li>
+        <li>White-glove onboarding call</li>
+      </ul>
+      <a href="/auth/google" class="btn-plan violet">Get Oracle</a>
+    </div>
+
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq-section">
+    <h2 class="faq-title">Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        What's the difference between sidereal and tropical astrology?
+        <span class="arrow">▼</span>
+      </button>
+      <div class="faq-a">
+        Sidereal astrology uses the actual positions of constellations in the sky, accounting for the
+        Earth's axial precession (the "wobble" that shifts signs ~23° over 2,000 years). Tropical
+        astrology is fixed to the seasons. Krieshan AI uses the Lahiri ayanamsa — the standard for
+        Vedic/Jyotish astrology.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Can I cancel anytime?
+        <span class="arrow">▼</span>
+      </button>
+      <div class="faq-a">
+        Yes. Cancel anytime through the Manage Plan link in your account — no questions asked.
+        You'll retain access until the end of your billing period.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Is my birth data secure?
+        <span class="arrow">▼</span>
+      </button>
+      <div class="faq-a">
+        Your data is stored securely on Railway with AES-256 encryption at rest. We never sell
+        your personal information. See our <a href="/privacy" style="color:var(--gold-light)">Privacy Policy</a> for details.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        What payment methods do you accept?
+        <span class="arrow">▼</span>
+      </button>
+      <div class="faq-a">
+        All major credit and debit cards via Stripe — Visa, Mastercard, Amex, and Discover.
+        Apple Pay and Google Pay are also supported in compatible browsers.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        When is AI Chart Chat launching?
+        <span class="arrow">▼</span>
+      </button>
+      <div class="faq-a">
+        AI Chart Chat is in development and will roll out first to Oracle plan members, followed
+        by Scholar. We'll notify you by email when it's ready.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div>© 2026 Krieshan AI. All rights reserved.</div>
+  <div style="margin-top:.5rem">
+    <a href="/privacy">Privacy Policy</a>
+    <a href="/terms">Terms of Service</a>
+    <a href="/">Home</a>
+  </div>
+</footer>
+
+<script>
+  function toggleFaq(btn) {
+    btn.classList.toggle('open');
+    const answer = btn.nextElementSibling;
+    answer.classList.toggle('open');
+  }
+</script>
+</body>
+</html>

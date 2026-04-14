@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service — Krieshan AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #07080f;
+      --surface:     #0d0f1e;
+      --card:        rgba(255,255,255,0.04);
+      --border:      rgba(255,255,255,0.08);
+      --gold:        #c9a84c;
+      --gold-light:  #e8c96a;
+      --violet:      #7c5cbf;
+      --violet-light:#a884e8;
+      --text:        #e2dff5;
+      --muted:       #7a789a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Raleway', sans-serif;
+      font-weight: 400;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Starfield ─────────────────────────────────────────────── */
+    #stars {
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse at 20% 30%, rgba(124,92,191,.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 70%, rgba(201,168,76,.06) 0%, transparent 50%),
+        var(--bg);
+      pointer-events: none;
+    }
+    #stars::before, #stars::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 10%  15%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30%  40%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50%   8%, rgba(255,255,255,.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70%  55%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90%  20%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 15%  75%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 45%  88%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 80%  95%, rgba(255,255,255,.3) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 60% 30%, rgba(255,255,255,.8) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 25% 50%, rgba(200,180,255,.6) 0%, transparent 100%);
+      background-size: 400px 300px;
+      animation: twinkle 8s ease-in-out infinite alternate;
+    }
+    #stars::after {
+      background-size: 600px 500px;
+      animation-duration: 12s;
+      animation-direction: alternate-reverse;
+      opacity: .6;
+    }
+    @keyframes twinkle { 0% { opacity: .5; } 100% { opacity: 1; } }
+
+    /* ── Sticky Nav ───────────────────────────────────────────── */
+    .topnav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .9rem 1.5rem;
+      background: rgba(7,8,15,.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: .55rem;
+      text-decoration: none;
+    }
+    .nav-logo-icon { font-size: 1.45rem; line-height: 1; filter: drop-shadow(0 0 8px var(--gold)); }
+    .nav-logo-text {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem; font-weight: 600;
+      letter-spacing: .08em;
+      background: linear-gradient(135deg, var(--gold-light), var(--violet-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .back-link {
+      display: flex; align-items: center; gap: .4rem;
+      color: var(--muted); text-decoration: none;
+      font-size: .85rem; font-weight: 500;
+      transition: color .2s;
+    }
+    .back-link:hover { color: var(--gold); }
+
+    /* ── Page Layout ──────────────────────────────────────────── */
+    .page-wrap {
+      position: relative; z-index: 1;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 6rem;
+    }
+
+    /* ── Document Header ──────────────────────────────────────── */
+    .doc-header {
+      text-align: center;
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 3rem;
+    }
+    .doc-icon {
+      font-size: 2.4rem; line-height: 1;
+      margin-bottom: .75rem;
+      filter: drop-shadow(0 0 12px var(--gold));
+    }
+    .doc-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.5rem, 4vw, 2.1rem);
+      font-weight: 700; letter-spacing: .08em;
+      background: linear-gradient(135deg, var(--gold-light), var(--violet-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: .6rem;
+    }
+    .doc-meta {
+      font-size: .84rem; color: var(--muted); letter-spacing: .04em;
+    }
+
+    /* ── Section Styles ───────────────────────────────────────── */
+    .section {
+      margin-bottom: 2.8rem;
+    }
+    .section-heading {
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem; font-weight: 600;
+      letter-spacing: .06em;
+      color: var(--gold-light);
+      margin-bottom: 1rem;
+      padding-bottom: .5rem;
+      border-bottom: 1px solid rgba(201,168,76,.2);
+    }
+    .section-number {
+      display: inline-block;
+      width: 1.6em;
+      color: var(--violet-light);
+      font-weight: 700;
+    }
+    p {
+      font-size: .95rem; line-height: 1.8;
+      color: var(--text);
+      margin-bottom: .9rem;
+    }
+    p:last-child { margin-bottom: 0; }
+    ul, ol {
+      padding-left: 1.4rem;
+      margin-bottom: .9rem;
+    }
+    li {
+      font-size: .95rem; line-height: 1.75;
+      color: var(--text);
+      margin-bottom: .35rem;
+    }
+    strong { color: var(--gold-light); font-weight: 600; }
+    a { color: var(--violet-light); text-decoration: none; transition: color .2s; }
+    a:hover { color: var(--gold-light); text-decoration: underline; }
+
+    /* ── Warning Box ──────────────────────────────────────────── */
+    .warning-box {
+      background: rgba(201,168,76,.06);
+      border: 1px solid rgba(201,168,76,.3);
+      border-left: 3px solid var(--gold);
+      border-radius: 8px;
+      padding: 1.1rem 1.3rem;
+      margin-bottom: 1.2rem;
+    }
+    .warning-box p { margin-bottom: 0; font-size: .9rem; }
+
+    /* ── Highlight Box ────────────────────────────────────────── */
+    .highlight-box {
+      background: var(--card);
+      border: 1px solid rgba(124,92,191,.25);
+      border-left: 3px solid var(--violet);
+      border-radius: 8px;
+      padding: 1.1rem 1.3rem;
+      margin-bottom: 1rem;
+    }
+    .highlight-box p { margin-bottom: 0; font-size: .9rem; color: var(--muted); }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    .page-footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+    .footer-logo {
+      font-family: 'Cinzel', serif;
+      font-size: .9rem; font-weight: 600;
+      letter-spacing: .08em;
+      background: linear-gradient(135deg, var(--gold-light), var(--violet-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: .5rem;
+    }
+    .footer-links {
+      display: flex; align-items: center; justify-content: center;
+      gap: 1.2rem; flex-wrap: wrap; margin-bottom: .5rem;
+    }
+    .footer-links a {
+      font-size: .8rem; color: var(--muted); text-decoration: none; transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--gold); text-decoration: none; }
+    .footer-copy { font-size: .78rem; color: var(--muted); }
+
+    /* ── Responsive ───────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .page-wrap { padding: 2rem 1rem 5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<!-- Sticky Navigation -->
+<nav class="topnav">
+  <a href="/" class="nav-logo">
+    <span class="nav-logo-icon">&#x1F981;</span>
+    <span class="nav-logo-text">Krieshan AI</span>
+  </a>
+  <a href="/" class="back-link">&#8592; Back</a>
+</nav>
+
+<!-- Main Content -->
+<main class="page-wrap">
+
+  <!-- Document Header -->
+  <div class="doc-header">
+    <div class="doc-icon">&#x1F4DC;</div>
+    <h1 class="doc-title">Terms of Service</h1>
+    <p class="doc-meta">Last updated: April 2026 &nbsp;&middot;&nbsp; Effective: April 2026</p>
+  </div>
+
+  <div class="highlight-box">
+    <p>Please read these Terms of Service carefully before using <strong>Krieshan AI</strong>. By accessing or using our service, you agree to be bound by these terms. If you do not agree, please do not use the service.</p>
+  </div>
+
+  <!-- 1. Acceptance of Terms -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">1.</span>Acceptance of Terms</h2>
+    <p>These Terms of Service (&ldquo;Terms&rdquo;) constitute a legally binding agreement between you (&ldquo;User,&rdquo; &ldquo;you,&rdquo; or &ldquo;your&rdquo;) and the operator of Krieshan AI (&ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;), governing your access to and use of the website and service available at <a href="https://krieshanai.up.railway.app" target="_blank" rel="noopener">krieshanai.up.railway.app</a> (the &ldquo;Service&rdquo;).</p>
+    <p>By creating an account, clicking &ldquo;Sign in with Google,&rdquo; subscribing to a paid plan, or otherwise accessing the Service, you confirm that:</p>
+    <ul>
+      <li>You are at least 18 years of age (or the age of majority in your jurisdiction, if higher).</li>
+      <li>You have read, understood, and agree to be bound by these Terms and our <a href="/privacy">Privacy Policy</a>.</li>
+      <li>If you are using the Service on behalf of an organisation, you have the authority to bind that organisation to these Terms.</li>
+    </ul>
+  </div>
+
+  <!-- 2. Description of Service -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">2.</span>Description of Service</h2>
+    <p>Krieshan AI is a digital platform that provides <strong>Vedic (sidereal) astrology readings, natal chart calculations, and related astrological content</strong> based on information you provide, including your birth date, time, and location.</p>
+    <p>The Service may include, depending on your subscription plan:</p>
+    <ul>
+      <li>Natal chart generation using the sidereal zodiac system</li>
+      <li>AI-assisted planetary interpretations and house analyses</li>
+      <li>Divisional charts (including Navamsa, Dashamsha, and others)</li>
+      <li>Dasha (planetary period) timelines and forecasts</li>
+      <li>Synastry and compatibility reports</li>
+      <li>Astrological journaling features</li>
+      <li>Educational content about Vedic astrology traditions</li>
+    </ul>
+
+    <div class="warning-box">
+      <p><strong>Important:</strong> All content provided by Krieshan AI is intended solely for <strong>entertainment and personal insight purposes</strong>. Astrological readings are not a substitute for professional medical, psychological, financial, legal, or any other professional advice. See Section 8 (Disclaimer) for full details.</p>
+    </div>
+  </div>
+
+  <!-- 3. User Accounts & Responsibilities -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">3.</span>User Accounts &amp; Responsibilities</h2>
+    <p><strong>Account Creation</strong></p>
+    <p>Access to the Service requires creating an account via Google OAuth. You agree to provide accurate, current, and complete information during the sign-in process and to keep your account information up to date.</p>
+
+    <p><strong>Account Security</strong></p>
+    <p>You are responsible for maintaining the security of your Google account credentials. Any activity occurring under your Krieshan AI account is your responsibility. Notify us immediately at <a href="mailto:krieshansivabalan@gmail.com">krieshansivabalan@gmail.com</a> if you suspect unauthorised access to your account.</p>
+
+    <p><strong>Prohibited Conduct</strong></p>
+    <p>You agree not to:</p>
+    <ul>
+      <li>Use the Service for any unlawful purpose or in violation of any applicable laws or regulations.</li>
+      <li>Attempt to gain unauthorised access to any part of the Service, its servers, or any connected systems.</li>
+      <li>Scrape, crawl, or systematically extract data from the Service without our prior written consent.</li>
+      <li>Reverse-engineer, decompile, or otherwise attempt to extract the source code of the Service.</li>
+      <li>Use the Service to harass, abuse, or harm any other person.</li>
+      <li>Introduce malware, viruses, or any harmful code into the Service.</li>
+      <li>Misrepresent your identity or impersonate any person or entity.</li>
+      <li>Use the Service in a way that disrupts or damages its operation or availability to others.</li>
+    </ul>
+
+    <p>We reserve the right to suspend or permanently terminate any account that violates these Terms, at our sole discretion, with or without prior notice.</p>
+  </div>
+
+  <!-- 4. Subscription & Billing -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">4.</span>Subscription &amp; Billing</h2>
+    <p><strong>Subscription Plans</strong></p>
+    <p>Krieshan AI offers both free and paid subscription tiers. Paid plans unlock additional features and content as described on the Service at the time of purchase. We reserve the right to modify plan features and pricing with reasonable notice to subscribers.</p>
+
+    <p><strong>Payment Processing</strong></p>
+    <p>All payments are processed by <strong>Stripe</strong>, a third-party payment processor. By subscribing to a paid plan, you authorise us (via Stripe) to charge your designated payment method for the applicable subscription fee. Your payment information is stored and managed securely by Stripe; Krieshan AI does not store your full card details.</p>
+
+    <p><strong>Automatic Renewal</strong></p>
+    <p>Paid subscriptions renew automatically at the end of each billing period (monthly or annually, as applicable) unless you cancel before the renewal date. The renewal charge will be the same as the prior billing period&rsquo;s rate, unless we have notified you of a price change at least 14 days in advance.</p>
+
+    <p><strong>Cancellation</strong></p>
+    <p>You may cancel your subscription at any time. Upon cancellation:</p>
+    <ul>
+      <li>Your paid access will continue until the end of the current billing period.</li>
+      <li>No partial refunds are issued for unused time within a billing period, unless required by applicable consumer protection law.</li>
+      <li>Your account will revert to the free tier (if available) at the end of the paid period.</li>
+    </ul>
+    <p>To cancel, manage your subscription through your account settings or contact us at <a href="mailto:krieshansivabalan@gmail.com">krieshansivabalan@gmail.com</a>.</p>
+
+    <p><strong>Refunds</strong></p>
+    <p>Refund requests are handled on a case-by-case basis. If you believe you have been charged in error, please contact us within 14 days of the charge at <a href="mailto:krieshansivabalan@gmail.com">krieshansivabalan@gmail.com</a>. Nothing in this section limits any rights you may have under applicable consumer protection laws in your jurisdiction.</p>
+
+    <p><strong>Taxes</strong></p>
+    <p>Subscription prices shown are exclusive of any applicable taxes (such as VAT or GST) unless otherwise stated. You are responsible for any taxes applicable to your purchase.</p>
+  </div>
+
+  <!-- 5. Intellectual Property -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">5.</span>Intellectual Property</h2>
+    <p><strong>Our Content</strong></p>
+    <p>All content, software, design, text, graphics, algorithms, interpretive frameworks, and other materials that form part of the Krieshan AI Service (collectively, &ldquo;Our Content&rdquo;) are owned by or licensed to us and are protected by copyright, trademark, and other applicable intellectual property laws. You may not reproduce, distribute, modify, create derivative works from, publicly display, or exploit Our Content without our express prior written permission.</p>
+
+    <p><strong>Your Data</strong></p>
+    <p>You retain ownership of the personal data and content you provide to the Service (such as your birth data and journal entries). By using the Service, you grant us a limited, non-exclusive, royalty-free licence to use, store, and process your data solely to provide and improve the Service as described in our <a href="/privacy">Privacy Policy</a>.</p>
+
+    <p><strong>Your Reports</strong></p>
+    <p>Astrological reports and readings generated for you by the Service are provided for your personal, non-commercial use. You may save or print them for personal reference. You may not resell, redistribute, or sublicense these reports.</p>
+
+    <p><strong>Feedback</strong></p>
+    <p>If you submit suggestions, ideas, or feedback about the Service, you grant us a perpetual, irrevocable, royalty-free licence to use that feedback without any obligation to you.</p>
+  </div>
+
+  <!-- 6. Third-Party Services & Links -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">6.</span>Third-Party Services &amp; Links</h2>
+    <p>The Service integrates with or may contain links to third-party services including Google OAuth and Stripe. These third parties have their own terms of service and privacy policies, which govern your use of their services. We are not responsible for the content, practices, or policies of any third-party service.</p>
+    <p>Any links to external websites are provided for your convenience only. Their inclusion does not imply our endorsement or approval.</p>
+  </div>
+
+  <!-- 7. Availability & Modifications -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">7.</span>Availability &amp; Modifications</h2>
+    <p>We strive to keep the Service available at all times, but we do not guarantee uninterrupted or error-free operation. The Service may be temporarily unavailable due to maintenance, updates, or factors outside our control.</p>
+    <p>We reserve the right to modify, suspend, or discontinue any feature or aspect of the Service at any time. If we make changes that materially affect your paid subscription, we will provide reasonable advance notice and a pro-rated refund if appropriate.</p>
+  </div>
+
+  <!-- 8. Disclaimer -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">8.</span>Disclaimer</h2>
+
+    <div class="warning-box">
+      <p><strong>Astrology is for entertainment and personal growth only.</strong> The readings, interpretations, and content provided by Krieshan AI are based on traditional Vedic astrological systems and are intended as a tool for self-reflection and personal exploration. They are not predictions, guarantees, or professional advice of any kind.</p>
+    </div>
+
+    <p><strong>No Professional Advice</strong></p>
+    <p>Nothing on Krieshan AI constitutes or should be interpreted as:</p>
+    <ul>
+      <li><strong>Medical or health advice</strong> — Do not use astrological readings to make decisions about your physical or mental health, diagnose conditions, or replace treatment from a qualified healthcare professional.</li>
+      <li><strong>Financial or investment advice</strong> — Do not use readings to make investment, financial planning, or business decisions. Consult a licensed financial adviser.</li>
+      <li><strong>Legal advice</strong> — Do not rely on astrological content for legal decisions. Consult a qualified attorney in your jurisdiction.</li>
+      <li><strong>Psychological or therapeutic counsel</strong> — If you are experiencing mental health difficulties, please seek support from a qualified professional.</li>
+    </ul>
+
+    <p><strong>No Warranties</strong></p>
+    <p>The Service is provided &ldquo;as is&rdquo; and &ldquo;as available&rdquo; without warranties of any kind, either express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement. We do not warrant that the Service will be error-free, uninterrupted, secure, or that astrological interpretations will be accurate, complete, or suitable for your purposes.</p>
+  </div>
+
+  <!-- 9. Limitation of Liability -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">9.</span>Limitation of Liability</h2>
+    <p>To the fullest extent permitted by applicable law, Krieshan AI and its operators, employees, and affiliates shall not be liable for:</p>
+    <ul>
+      <li>Any indirect, incidental, special, consequential, or punitive damages arising out of or related to your use of the Service.</li>
+      <li>Any loss of profits, revenue, data, goodwill, or other intangible losses.</li>
+      <li>Any damages resulting from decisions made in reliance on astrological content provided by the Service.</li>
+      <li>Any unauthorised access to or alteration of your data resulting from events outside our reasonable control.</li>
+      <li>Any interruption or cessation of the Service.</li>
+    </ul>
+    <p>In jurisdictions that do not allow the exclusion or limitation of certain damages, our liability is limited to the maximum extent permitted by law. In no event shall our total aggregate liability to you exceed the greater of (a) the amount you paid to us in the 12 months preceding the claim or (b) one hundred dollars (USD $100).</p>
+    <p>Some jurisdictions provide statutory consumer rights that cannot be excluded or limited by contract. Nothing in these Terms is intended to limit those rights.</p>
+  </div>
+
+  <!-- 10. Indemnification -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">10.</span>Indemnification</h2>
+    <p>You agree to indemnify, defend, and hold harmless Krieshan AI and its operators from and against any claims, liabilities, damages, losses, and expenses (including reasonable legal fees) arising out of or in any way connected with your use of the Service, your violation of these Terms, or your infringement of any third-party rights.</p>
+  </div>
+
+  <!-- 11. Governing Law -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">11.</span>Governing Law &amp; Dispute Resolution</h2>
+    <p>These Terms shall be governed by and construed in accordance with generally applicable principles of contract law, without regard to any specific jurisdiction&rsquo;s conflict of law rules.</p>
+    <p>In the event of any dispute arising from or relating to these Terms or your use of the Service, the parties agree to first attempt to resolve the dispute through good-faith negotiation. If the dispute cannot be resolved informally within 30 days, either party may seek resolution through binding arbitration or, where arbitration is not available or enforceable, through the courts of competent jurisdiction.</p>
+    <p>Nothing in this section prevents either party from seeking urgent injunctive or equitable relief in a court of competent jurisdiction to prevent irreparable harm.</p>
+  </div>
+
+  <!-- 12. Changes to Terms -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">12.</span>Changes to These Terms</h2>
+    <p>We may update these Terms of Service from time to time to reflect changes in the Service, applicable laws, or our practices. When we make material changes, we will:</p>
+    <ul>
+      <li>Update the &ldquo;Last updated&rdquo; date at the top of this page.</li>
+      <li>Where reasonably practicable, notify registered users by email at least <strong>14 days</strong> before the changes take effect.</li>
+    </ul>
+    <p>Your continued use of the Service after the effective date of revised Terms constitutes your acceptance of the changes. If you do not agree to the revised Terms, please stop using the Service and cancel any paid subscription before the effective date.</p>
+  </div>
+
+  <!-- 13. Miscellaneous -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">13.</span>Miscellaneous</h2>
+    <p><strong>Entire Agreement</strong> &mdash; These Terms, together with our Privacy Policy, constitute the entire agreement between you and Krieshan AI regarding the Service and supersede all prior agreements or understandings.</p>
+    <p><strong>Severability</strong> &mdash; If any provision of these Terms is found to be unenforceable, the remaining provisions will remain in full force and effect.</p>
+    <p><strong>Waiver</strong> &mdash; Our failure to enforce any right or provision of these Terms shall not constitute a waiver of that right or provision.</p>
+    <p><strong>Assignment</strong> &mdash; You may not assign or transfer your rights or obligations under these Terms without our prior written consent. We may assign our rights without restriction.</p>
+  </div>
+
+  <!-- 14. Contact -->
+  <div class="section">
+    <h2 class="section-heading"><span class="section-number">14.</span>Contact Us</h2>
+    <p>If you have any questions or concerns about these Terms of Service, please contact us:</p>
+    <ul>
+      <li><strong>Email:</strong> <a href="mailto:krieshansivabalan@gmail.com">krieshansivabalan@gmail.com</a></li>
+      <li><strong>Website:</strong> <a href="https://krieshanai.up.railway.app" target="_blank" rel="noopener">krieshanai.up.railway.app</a></li>
+    </ul>
+    <p>We aim to respond to all queries within <strong>5 business days</strong>.</p>
+  </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="page-footer">
+  <div class="footer-logo">&#x1F981; Krieshan AI</div>
+  <div class="footer-links">
+    <a href="/">Home</a>
+    <a href="/privacy">Privacy Policy</a>
+    <a href="/terms">Terms of Service</a>
+    <a href="mailto:krieshansivabalan@gmail.com">Contact</a>
+  </div>
+  <p class="footer-copy">&copy; 2026 Krieshan AI &mdash; All rights reserved.</p>
+</footer>
+
+</body>
+</html>

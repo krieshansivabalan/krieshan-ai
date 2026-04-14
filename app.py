@@ -44,9 +44,18 @@ app.register_blueprint(auth_bp)
 
 # Stripe
 stripe.api_key = os.environ.get("STRIPE_SECRET_KEY", "")
-STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY", "")
-STRIPE_PRICE_ID = os.environ.get("STRIPE_PRICE_ID", "")
-STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+STRIPE_PUBLISHABLE_KEY  = os.environ.get("STRIPE_PUBLISHABLE_KEY", "")
+STRIPE_WEBHOOK_SECRET   = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+# One Price ID per tier — fall back to legacy STRIPE_PRICE_ID for Seeker if specific ones not set
+STRIPE_PRICE_ID = os.environ.get("STRIPE_PRICE_ID", "")   # legacy / default
+STRIPE_PRICE_SEEKER  = os.environ.get("STRIPE_PRICE_SEEKER",  STRIPE_PRICE_ID)
+STRIPE_PRICE_SCHOLAR = os.environ.get("STRIPE_PRICE_SCHOLAR", STRIPE_PRICE_ID)
+STRIPE_PRICE_ORACLE  = os.environ.get("STRIPE_PRICE_ORACLE",  STRIPE_PRICE_ID)
+STRIPE_PRICE_MAP = {
+    "seeker":  STRIPE_PRICE_SEEKER,
+    "scholar": STRIPE_PRICE_SCHOLAR,
+    "oracle":  STRIPE_PRICE_ORACLE,
+}
 
 # Create all DB tables on first run (safe to call repeatedly)
 with app.app_context():
@@ -581,17 +590,20 @@ def check_paid():
 @app.route("/create-checkout-session", methods=["POST"])
 @login_required
 def create_checkout_session():
-    if not stripe.api_key or not STRIPE_PRICE_ID:
+    data      = request.get_json() or {}
+    tier      = data.get("tier", "seeker").lower()
+    if tier not in ("seeker", "scholar", "oracle"):
+        tier = "seeker"
+    price_id  = STRIPE_PRICE_MAP.get(tier, STRIPE_PRICE_SEEKER)
+
+    if not stripe.api_key or not price_id:
+        # Dev / no-Stripe mode — activate immediately
         _upsert_subscription(
-            user=current_user,
-            customer_id=None,
-            subscription_id=None,
-            status="active",
-            period_end=None,
-            dev_mode=True,
+            user=current_user, customer_id=None, subscription_id=None,
+            status="active", period_end=None, dev_mode=True, plan_tier=tier,
         )
         session["paid"] = True
-        return jsonify({"dev_mode": True, "paid": True})
+        return jsonify({"dev_mode": True, "paid": True, "tier": tier})
 
     try:
         customer_id = None
@@ -607,9 +619,10 @@ def create_checkout_session():
         checkout_session = stripe.checkout.Session.create(
             customer=customer_id,
             payment_method_types=["card"],
-            line_items=[{"price": STRIPE_PRICE_ID, "quantity": 1}],
+            line_items=[{"price": price_id, "quantity": 1}],
             mode="subscription",
-            success_url=request.host_url + "payment-success?session_id={CHECKOUT_SESSION_ID}",
+            subscription_data={"metadata": {"plan_tier": tier}},
+            success_url=request.host_url + f"payment-success?session_id={{CHECKOUT_SESSION_ID}}&tier={tier}",
             cancel_url=request.host_url + "payment-cancel",
         )
         return jsonify({"checkout_url": checkout_session.url})
@@ -622,6 +635,10 @@ def create_checkout_session():
 @login_required
 def payment_success():
     session_id = request.args.get("session_id")
+    tier       = request.args.get("tier", "seeker")
+    if tier not in ("seeker", "scholar", "oracle"):
+        tier = "seeker"
+
     if session_id and stripe.api_key:
         try:
             checkout_session = stripe.checkout.Session.retrieve(
@@ -629,12 +646,16 @@ def payment_success():
             )
             if checkout_session.payment_status in ("paid", "no_payment_required"):
                 stripe_sub = checkout_session.subscription
+                # Prefer tier from subscription metadata, fall back to URL param
+                if stripe_sub and stripe_sub.get("metadata", {}).get("plan_tier"):
+                    tier = stripe_sub["metadata"]["plan_tier"]
                 _upsert_subscription(
                     user=current_user,
                     customer_id=checkout_session.customer,
                     subscription_id=stripe_sub.id if stripe_sub else None,
                     status="active",
                     period_end=stripe_sub.current_period_end if stripe_sub else None,
+                    plan_tier=tier,
                 )
                 session["paid"] = True
         except Exception:
@@ -648,6 +669,42 @@ def payment_success():
 @app.route("/payment-cancel")
 def payment_cancel():
     return redirect(url_for("index") + "?cancelled=true")
+
+
+@app.route("/api/billing-portal", methods=["POST"])
+@login_required
+def billing_portal():
+    """Open Stripe Customer Portal so users can manage/cancel their subscription."""
+    if not stripe.api_key:
+        return jsonify({"error": "Billing not configured"}), 503
+    try:
+        cid = current_user.subscription.stripe_customer_id if current_user.subscription else None
+        if not cid:
+            return jsonify({"error": "No billing account found. Please subscribe first."}), 400
+        portal = stripe.billing_portal.Session.create(
+            customer=cid,
+            return_url=request.host_url,
+        )
+        return jsonify({"url": portal.url})
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/pricing")
+def pricing():
+    """Standalone pricing page — accessible without login."""
+    return render_template("pricing.html")
+
+
+@app.route("/privacy")
+def privacy():
+    return render_template("privacy.html")
+
+
+@app.route("/terms")
+def terms():
+    return render_template("terms.html")
 
 
 @app.route("/stripe-webhook", methods=["POST"])

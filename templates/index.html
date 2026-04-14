@@ -1773,24 +1773,24 @@
       <div class="upgrade-title" id="upgrade-title">Unlock Premium Features</div>
       <div class="upgrade-sub" id="upgrade-sub">Choose a plan to access this feature.</div>
       <div class="upgrade-tiers">
-        <div class="upgrade-tier" onclick="triggerCheckout()">
+        <div class="upgrade-tier" onclick="triggerCheckout('seeker')">
           <div class="upgrade-tier-left">
             <div class="upgrade-tier-name">Seeker</div>
-            <div class="upgrade-tier-desc">D9 &amp; D10 charts · 10 AI questions/mo · 5 saved charts · PDF export</div>
+            <div class="upgrade-tier-desc">D9 &amp; D10 charts · Soul Profile · Character Archetypes · PDF export</div>
           </div>
           <div class="upgrade-tier-price">$14/mo</div>
         </div>
-        <div class="upgrade-tier recommended" onclick="triggerCheckout()">
+        <div class="upgrade-tier recommended" onclick="triggerCheckout('scholar')">
           <div class="upgrade-tier-left">
             <div class="upgrade-tier-name">Scholar</div>
-            <div class="upgrade-tier-desc">All charts · 50 AI questions/mo · 20 saved charts · Muhurta · Year Ahead</div>
+            <div class="upgrade-tier-desc">Everything in Seeker · Synastry · Journal · 20 saved charts</div>
           </div>
           <div class="upgrade-tier-price">$39/mo</div>
         </div>
-        <div class="upgrade-tier" onclick="triggerCheckout()">
+        <div class="upgrade-tier" onclick="triggerCheckout('oracle')">
           <div class="upgrade-tier-left">
             <div class="upgrade-tier-name">Oracle</div>
-            <div class="upgrade-tier-desc">Everything · Unlimited AI · Unlimited charts · Priority features</div>
+            <div class="upgrade-tier-desc">Unlimited everything · AI Chart Chat (coming soon) · Priority features</div>
           </div>
           <div class="upgrade-tier-price">$89/mo</div>
         </div>
@@ -1864,6 +1864,7 @@
         {% endif %}
         <span>{{ user.name }}</span>
       </a>
+      <button id="manage-sub-btn" class="logout-link" style="display:none;background:none;border:none;cursor:pointer;" onclick="openBillingPortal()">Manage Plan</button>
       <a href="/auth/logout" class="logout-link">Sign out</a>
     </div>
 
@@ -2684,17 +2685,36 @@
 
   function updatePaymentUI() {
     const banner = $('payment-banner');
+    const manageBtn = $('manage-sub-btn');
     if (isPaid) {
       banner.classList.add('paid');
       banner.innerHTML = `<div class="payment-banner-text"><strong>✦ Full Access Unlocked</strong><br>All transit readings are available to you.</div>`;
       $('transit-lock') && $('transit-lock').classList.add('hidden');
+      if (manageBtn) manageBtn.style.display = 'inline';
     } else {
       banner.classList.remove('paid');
+      if (manageBtn) manageBtn.style.display = 'none';
+    }
+  }
+
+  async function openBillingPortal() {
+    try {
+      const r = await fetch('/api/billing-portal', { method: 'POST', credentials: 'same-origin' });
+      const d = await r.json();
+      if (d.url) window.location.href = d.url;
+      else alert('Could not open billing portal.');
+    } catch (e) {
+      alert('Could not connect to billing portal.');
     }
   }
 
   // ── Payment Modal ─────────────────────────────────────────────
-  function openModal() { $('payment-modal').classList.add('open'); }
+  const TIER_LABELS = { seeker: 'Seeker — $14/mo', scholar: 'Scholar — $39/mo', oracle: 'Oracle — $97/mo' };
+  function openModal() {
+    const label = TIER_LABELS[_selectedTier] || 'Subscribe Now';
+    $('modal-pay-btn').textContent = '✦  ' + label;
+    $('payment-modal').classList.add('open');
+  }
   function closeModal() { $('payment-modal').classList.remove('open'); }
 
   $('open-modal-btn') && $('open-modal-btn').addEventListener('click', openModal);
@@ -2706,7 +2726,11 @@
     $('modal-pay-btn').disabled = true;
     $('modal-pay-btn').textContent = 'Processing…';
     try {
-      const r = await fetch('/create-checkout-session', { method: 'POST' });
+      const r = await fetch('/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tier: _selectedTier })
+      });
       const d = await r.json();
       if (d.dev_mode) {
         // Dev mode — no Stripe keys, grant access immediately
@@ -4345,9 +4369,11 @@
     $('upgrade-overlay').classList.add('open');
   }
   function closeUpgrade() { $('upgrade-overlay').classList.remove('open'); }
-  function triggerCheckout() {
+  let _selectedTier = 'seeker';
+  function triggerCheckout(tier) {
+    _selectedTier = tier || 'seeker';
     closeUpgrade();
-    openModal();  // existing payment modal
+    openModal();
   }
   $('upgrade-overlay').addEventListener('click', e => { if(e.target === $('upgrade-overlay')) closeUpgrade(); });
 
