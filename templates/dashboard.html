@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Profile — Krieshan AI</title>
@@ -303,7 +304,7 @@
   <script>
     async function deleteChart(chartId) {
       if (!confirm('Delete this chart? This cannot be undone.')) return;
-      const r = await fetch(`/api/charts/${chartId}`, { method: 'DELETE' });
+      const r = await fetch(`/api/charts/${chartId}`, { method: 'DELETE', headers: {'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content} });
       if (r.ok) {
         const el = document.getElementById(`chart-${chartId}`);
         if (el) el.remove();
@@ -315,7 +316,7 @@
     async function deleteAccount() {
       const confirmed = prompt('Type DELETE to permanently remove your account and all data:');
       if (confirmed !== 'DELETE') return;
-      const r = await fetch('/api/account', { method: 'DELETE' });
+      const r = await fetch('/api/account', { method: 'DELETE', headers: {'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content} });
       if (r.ok) {
         window.location.href = '/login';
       } else {
