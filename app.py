@@ -136,15 +136,11 @@ def index():
 # ── Landing page ──────────────────────────────────────────────────
 @app.route("/")
 def landing():
-    if current_user.is_authenticated:
-        return redirect(url_for("index"))
     return render_template("login.html")
 
 
 @app.route("/login")
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for("index"))
     return render_template("login.html")
 
 
