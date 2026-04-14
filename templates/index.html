@@ -1558,6 +1558,33 @@
 
     /* ── Mobile overrides ───────────────────────────────────────── */
     @media (max-width: 768px) {
+      /* ── 1. Prevent iOS auto-zoom on all inputs ─────────────────── */
+      input, select, textarea, .ayanamsa-select, .ai-chat-input {
+        font-size: 16px !important;
+      }
+
+      /* ── 2. Birth chart form — single column, full-width inputs ── */
+      .form-card { padding: 1.2rem; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-group input, .form-group select { width: 100%; }
+      /* Calculate button full-width */
+      .btn { width: 100%; }
+
+      /* ── 3. Tap targets — min 44px on all buttons ───────────────── */
+      .btn, .tab-btn, .chart-tab, .btn-subscribe, .btn-pay,
+      .btn-unlock, .btn-new-chart, .btn-pdf, .reset-btn,
+      .yoga-expand-btn, .aspect-filter-btn, .ayanamsa-modal-close,
+      .deep-modal-close, .notif-clear-btn {
+        min-height: 44px;
+      }
+      /* Chart tab buttons specifically */
+      .chart-tab {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
       /* Header nav — stack cleanly */
       .header-meta {
         justify-content: space-between;
@@ -1566,6 +1593,14 @@
       .nav-top-link { display: none; } /* hide text nav links on mobile */
       .notif-wrap   { display: none; } /* hide notification bell on mobile */
       .streak-pill  { display: none; } /* hide streak pill on mobile */
+
+      /* ── 8. Header / welcome bar — reduce padding, stack vertically */
+      header { padding: 1.5rem 0 1.2rem; }
+      .welcome-bar { flex-direction: column; align-items: flex-start; gap: .4rem; }
+      /* ── 11. Tier badge, PDF button — prevent nav row overflow ──── */
+      .tier-badge { font-size: .6rem; padding: .18rem .45rem; }
+      .btn-pdf { font-size: .68rem; padding: .35rem .65rem; }
+      .header-meta { flex-wrap: wrap; }
 
       /* Chart tabs — scroll horizontally instead of hiding */
       .chart-tabs {
@@ -1580,15 +1615,11 @@
         font-size: .68rem;
       }
 
-      /* Planet table — horizontal scroll so columns don't squish */
+      /* ── 6. Planet placement table — overflow-x scroll wrapper ─── */
       .planet-table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
       .planet-table > .planet-table-row { min-width: 480px; }
       .d9-planet-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
       .d9-planet-table { min-width: 460px; }
-
-      /* Form card padding */
-      .form-card { padding: 1.2rem; }
-      .form-grid { grid-template-columns: 1fr; }
 
       /* Big four — 2×2 on mobile */
       .big-four { grid-template-columns: 1fr 1fr; gap: .6rem; }
@@ -1606,18 +1637,30 @@
       /* D9 partner card */
       .d9-partner-card { padding: 1.2rem; }
 
-      /* Careers / Romance sections */
+      /* ── 7. Transit readings — readable on mobile ───────────────── */
       .career-section, .romance-section, .transit-section { padding: 1.2rem; }
       .transit-grid { grid-template-columns: 1fr; }
+      .transit-header { flex-direction: column; align-items: flex-start; gap: .6rem; }
+      .transit-tabs { gap: .35rem; }
+      .tab-btn { padding: .5rem .85rem; font-size: .75rem; }
+
+      /* ── 9. Upgrade modal — scrollable on mobile ────────────────── */
+      .upgrade-card {
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 1.5rem 1.2rem;
+      }
+      .modal-card {
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 1.8rem 1.4rem;
+      }
 
       /* Charts FAB removed — no mobile override needed */
 
       /* Toast container */
       .toast-container { bottom: 5rem; right: .75rem; left: .75rem; }
       .toast { max-width: 100%; }
-
-      /* Welcome bar */
-      .welcome-bar { flex-direction: column; align-items: flex-start; gap: .4rem; }
 
       /* Payment banner */
       .payment-banner { padding: .85rem 1rem; }
@@ -1628,6 +1671,24 @@
 
       /* D10 section */
       .d9-partner-rows { gap: .75rem; }
+
+      /* ── 12. General spacing — tighter on mobile ────────────────── */
+      .planet-card { padding: .9rem 1rem; margin-bottom: .75rem; }
+      .dasha-section, .fixed-stars-section, .yoga-section,
+      .aspects-section, .spouse-section, .arudha-section,
+      .indu-section { padding: 1.2rem; }
+      .section-title { margin: 1.8rem 0 .9rem; }
+      .reading-header { padding: 1.5rem 0 1rem; }
+    }
+
+    @media (max-width: 600px) {
+      /* ── 4. Soul profile cards — 1 column ──────────────────────── */
+      .soul-grid { grid-template-columns: 1fr; }
+      .soul-card { padding: 1.1rem 1.2rem; }
+
+      /* ── 5. Character archetype cards — 1 column ────────────────── */
+      .char-grid { grid-template-columns: 1fr; }
+      .char-card { padding: .9rem; }
     }
 
     @media (max-width: 420px) {
@@ -1635,6 +1696,17 @@
       .chart-tab { padding: .35rem .65rem; font-size: .64rem; }
       h1 { font-size: 1.4rem; }
       .container { padding: 1.2rem .9rem 5rem; }
+
+      /* ── 10. Nav links — smaller font on very small screens ─────── */
+      .logout-link { font-size: .7rem; }
+      .user-pill   { font-size: .72rem; }
+      .user-pill span { display: none; } /* hide name text, keep avatar */
+      .tier-badge  { font-size: .58rem; padding: .15rem .4rem; }
+      .btn-pdf     { font-size: .62rem; padding: .3rem .55rem; }
+
+      /* Extra spacing tightening */
+      .form-card { padding: 1rem; }
+      .upgrade-card { padding: 1.2rem .9rem; }
     }
 
     /* ── Soul Profile Section ───────────────────────────────────── */

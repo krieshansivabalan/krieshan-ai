@@ -248,9 +248,70 @@
     footer a:hover { color: var(--gold-light); }
 
     @media (max-width: 600px) {
+      /* Nav — hide links, keep logo + CTA */
       nav { padding: .7rem 1rem; }
       .nav-links a:not(.btn-nav) { display: none; }
+      .btn-nav {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        padding: .5rem 1rem;
+      }
+
+      /* Page padding reduction */
+      .page { padding: 2.5rem 1rem 3rem; }
+
+      /* Page title — clamp for responsive size */
+      .page-title { font-size: clamp(1.5rem, 7vw, 2.2rem); }
+      .page-sub { font-size: .9rem; margin-bottom: 2rem; }
+
+      /* FAQ section spacing */
+      .faq-section { margin-top: 3rem; }
+      .faq-title { font-size: clamp(1.2rem, 5vw, 1.6rem); }
+
+      /* FAQ buttons — min 44px */
+      .faq-q {
+        min-height: 44px;
+        padding: .85rem 1.25rem;
+        font-size: .9rem;
+      }
+
+      /* Pricing grid — force 1 column */
       .pricing-grid { grid-template-columns: 1fr; }
+
+      /* Plan card padding reduction */
+      .plan-card {
+        padding: 1.5rem 1.25rem;
+      }
+
+      /* Recommended card — space for badge, prevent overlap */
+      .plan-card.recommended {
+        margin-top: 1rem;
+        padding-top: 2.25rem;
+      }
+      .recommended-badge {
+        top: -13px;
+        font-size: .65rem;
+        white-space: nowrap;
+        padding: .3rem .8rem;
+      }
+
+      /* Plan buttons — min 44px */
+      .btn-plan {
+        min-height: 44px;
+        padding: .85rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Input font-size >= 16px to prevent iOS zoom */
+      input, select, textarea { font-size: 16px !important; }
+    }
+
+    @media (max-width: 480px) {
+      /* Extra small — force single column explicitly */
+      .pricing-grid { grid-template-columns: 1fr !important; }
     }
   </style>
 </head>

@@ -933,6 +933,118 @@
       .footer-inner { flex-direction: column; align-items: center; text-align: center; }
       .footer-links { justify-content: center; }
     }
+
+    /* ──────────────────────────────────────────
+       MOBILE — < 600px
+    ────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      /* Section padding reduction */
+      section {
+        padding-block: 2.5rem;
+      }
+
+      /* Nav — hide all links except CTA */
+      .nav-inner .nav-links-list { display: none; }
+
+      /* Hero — centered, full-width */
+      .hero { text-align: center; padding-block: 2.5rem 2rem; }
+      .hero h1 { font-size: clamp(1.9rem, 8vw, 2.6rem); }
+      .hero-sub { font-size: 1rem; }
+      .hero-cta-group {
+        flex-direction: column;
+        align-items: stretch;
+        gap: .75rem;
+      }
+      .btn-google-hero {
+        width: 100%;
+        justify-content: center;
+        min-height: 52px;
+        font-size: .95rem;
+        padding: .85rem 1rem;
+      }
+      .hero-secondary {
+        text-align: center;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: .6rem 1rem;
+      }
+
+      /* Hide app mockup on mobile */
+      .mockup-wrapper { display: none; }
+
+      /* Features grid — 1 column */
+      .features-grid { grid-template-columns: 1fr; }
+
+      /* How it works steps — 1 column */
+      .steps-row { grid-template-columns: 1fr; }
+
+      /* Pricing cards — 1 column, badge clearance */
+      .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+      }
+      .pricing-card {
+        padding: 1.5rem 1.25rem;
+      }
+      .pricing-card.popular {
+        margin-top: 1rem; /* extra space for the badge */
+        padding-top: 2rem;
+      }
+      .popular-badge {
+        top: -14px;
+        font-size: .6rem;
+        white-space: nowrap;
+      }
+
+      /* Testimonials — 1 column */
+      .testimonials-grid { grid-template-columns: 1fr; }
+
+      /* FAQ buttons — min 44px tall */
+      .faq-question {
+        min-height: 44px;
+        padding: .85rem 1.25rem;
+        font-size: .9rem;
+      }
+
+      /* All buttons — min 44px */
+      .btn-pricing, .btn-google-hero, .nav-cta {
+        min-height: 44px;
+      }
+      .btn-pricing {
+        padding: .85rem 1rem;
+        font-size: .9rem;
+      }
+      .nav-cta {
+        min-height: 44px;
+        padding: .55rem 1.1rem;
+        display: inline-flex;
+        align-items: center;
+      }
+
+      /* Footer — stack vertically */
+      .footer-inner {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1rem;
+      }
+      .footer-links {
+        flex-direction: column;
+        align-items: center;
+        gap: .6rem;
+      }
+
+      /* Input font-size >= 16px to prevent iOS zoom */
+      input, select, textarea {
+        font-size: 16px !important;
+      }
+
+      /* Section heading adjustments */
+      .section-head { margin-bottom: 2rem; }
+      .section-sub { font-size: .9rem; }
+    }
   </style>
 </head>
 <body>
