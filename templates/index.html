@@ -2710,6 +2710,14 @@
 
   // ── Payment Modal ─────────────────────────────────────────────
   const TIER_LABELS = { seeker: 'Seeker — $15/mo', scholar: 'Scholar — $40/mo', oracle: 'Sage — $99.98/mo' };
+  const STRIPE_LINKS = {
+    seeker:  'https://buy.stripe.com/3cI7sN50W00G5UGg1l2Ji1v',
+    scholar: 'https://buy.stripe.com/6oU00lalg14K82OdTd2Ji1w',
+    oracle:  'https://buy.stripe.com/bJe14p50W14K6YK6qL2Ji1x'
+  };
+  const _userEmail = '{{ user.email if user.email else "" }}';
+  const _userId    = '{{ user.id }}';
+
   function openModal() {
     const label = TIER_LABELS[_selectedTier] || 'Subscribe Now';
     $('modal-pay-btn').textContent = '✦  ' + label;
@@ -2722,33 +2730,11 @@
   $('transit-unlock-btn').addEventListener('click', openModal);
   $('payment-modal').addEventListener('click', e => { if (e.target === $('payment-modal')) closeModal(); });
 
-  $('modal-pay-btn').addEventListener('click', async () => {
-    $('modal-pay-btn').disabled = true;
-    $('modal-pay-btn').textContent = 'Processing…';
-    try {
-      const r = await fetch('/create-checkout-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tier: _selectedTier })
-      });
-      const d = await r.json();
-      if (d.dev_mode) {
-        // Dev mode — no Stripe keys, grant access immediately
-        isPaid = true;
-        updatePaymentUI();
-        closeModal();
-        if (chartData) loadTransits();
-      } else if (d.checkout_url) {
-        window.location.href = d.checkout_url;
-      } else {
-        alert('Payment error: ' + (d.error || 'Unknown error'));
-      }
-    } catch (e) {
-      alert('Could not connect to payment server.');
-    } finally {
-      $('modal-pay-btn').disabled = false;
-      $('modal-pay-btn').textContent = '✦  Subscribe Now — $8/month';
-    }
+  $('modal-pay-btn').addEventListener('click', () => {
+    const baseUrl = STRIPE_LINKS[_selectedTier] || STRIPE_LINKS.seeker;
+    const params = new URLSearchParams({ client_reference_id: _userId });
+    if (_userEmail) params.set('prefilled_email', _userEmail);
+    window.location.href = baseUrl + '?' + params.toString();
   });
 
   // Handle redirect back from Stripe
