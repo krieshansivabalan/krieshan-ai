@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Krieshan AI — Sidereal Astrology</title>
@@ -3611,7 +3612,7 @@
     try {
       const res = await fetch('/chart', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content },
         body: JSON.stringify(payload),
       });
       const data = await res.json();
@@ -4425,7 +4426,7 @@
       const body = { question };
       if (_currentChartId) body.chart_id = _currentChartId;
       const r = await fetch('/api/chat', {
-        method: 'POST', headers: {'Content-Type':'application/json'},
+        method: 'POST', headers: {'Content-Type':'application/json', 'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content},
         body: JSON.stringify(body)
       });
 

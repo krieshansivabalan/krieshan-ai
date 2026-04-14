@@ -4,10 +4,14 @@ import traceback
 import datetime as dt
 from datetime import datetime, timedelta
 
+import bcrypt
 import stripe
 import anthropic
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, Response
 from flask_login import LoginManager, login_required, current_user
+from flask_wtf.csrf import CSRFProtect
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from authlib.integrations.flask_client import OAuth
 
 from models import db, User, BirthChart, Subscription, JournalEntry, ChatMessage, TIER_LIMITS
@@ -22,7 +26,26 @@ from interpretations import (
 
 # ── App setup ─────────────────────────────────────────────────────
 app = Flask(__name__)
-app.secret_key = os.environ.get("FLASK_SECRET_KEY", "sidereal-dev-secret-key-change-in-prod")
+
+# SECRET_KEY: hard-fail in production if not set
+if os.environ.get("FLASK_ENV") == "development":
+    app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-only-insecure-key")
+else:
+    _sk = os.environ.get("FLASK_SECRET_KEY")
+    if not _sk:
+        raise RuntimeError("FLASK_SECRET_KEY must be set in production.")
+    app.secret_key = _sk
+
+# CSRF protection
+csrf = CSRFProtect(app)
+
+# Rate limiting (Redis-backed if REDIS_URL set, else in-memory)
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["200 per hour"],
+    storage_uri=os.environ.get("REDIS_URL", "memory://"),
+)
 
 # Database
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
@@ -66,6 +89,15 @@ with app.app_context():
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+
+@app.after_request
+def set_security_headers(response):
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+    return response
 
 @app.after_request
 def no_cache_private_responses(response):
@@ -152,6 +184,7 @@ def d10():
 
 # ── Chart calculation ─────────────────────────────────────────────
 @app.route("/chart", methods=["POST"])
+@limiter.limit("20 per hour")
 @login_required
 def chart():
     try:
@@ -708,6 +741,7 @@ def terms():
 
 
 @app.route("/stripe-webhook", methods=["POST"])
+@csrf.exempt
 def stripe_webhook():
     payload = request.get_data(as_text=True)
     sig_header = request.headers.get("Stripe-Signature")
@@ -892,6 +926,7 @@ def _build_chart_context(chart_id, user):
 
 
 @app.route("/api/chat", methods=["POST"])
+@limiter.limit("10 per minute")
 @login_required
 def chart_chat():
     data     = request.get_json() or {}
@@ -1037,7 +1072,8 @@ def delete_account():
 
 
 # ── Admin Panel ───────────────────────────────────────────────────
-_ADMIN_PASSWORD  = "Witstypeai2026!"
+# Generate hash: python3 -c "import bcrypt; print(bcrypt.hashpw(b'yourpassword', bcrypt.gensalt()).decode())"
+_ADMIN_PASSWORD_HASH = os.environ.get("ADMIN_PASSWORD_HASH", "")
 _ADMIN_SESSION_HOURS = 8   # session expires after 8 hours
 
 def _admin_session_valid():
@@ -1065,13 +1101,15 @@ def admin_required(f):
     return decorated
 
 @app.route("/admin/login", methods=["GET", "POST"])
+@limiter.limit("5 per minute")
 def admin_login():
     # If already authenticated with a valid session, skip straight to dashboard
     if _admin_session_valid():
         return redirect(url_for("admin_dashboard"))
     error = None
     if request.method == "POST":
-        if request.form.get("password") == _ADMIN_PASSWORD:
+        pw = (request.form.get("password") or "").encode("utf-8")
+        if _ADMIN_PASSWORD_HASH and bcrypt.checkpw(pw, _ADMIN_PASSWORD_HASH.encode("utf-8")):
             session["admin_auth"]    = True
             session["admin_auth_ts"] = datetime.utcnow().isoformat()
             session.permanent        = True
