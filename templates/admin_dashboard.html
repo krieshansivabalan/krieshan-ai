@@ -325,7 +325,7 @@
               Never logged in
             {% endif %}
           </span>
-          <span class="user-joined">Joined {{ u.created_at.strftime('%b %d, %Y') }}</span>
+          <span class="user-joined">Joined {{ u.created_at.strftime('%b %d, %Y') if u.created_at else 'N/A' }}</span>
           <span class="tier-badge-sm {{ tier }}">{{ tier }}</span>
           <span class="chart-count-pill">{{ charts | length }} chart{{ 's' if charts | length != 1 }}</span>
         </div>
@@ -346,7 +346,7 @@
           {% if c.gender %}
             <span class="badge-{{ c.gender | lower }}">{{ '♂ M' if c.gender == 'M' else '♀ F' }}</span>
           {% endif %}
-          <span class="chart-ts">{{ c.created_at.strftime('%b %d, %Y · %H:%M') }}</span>
+          <span class="chart-ts">{{ c.created_at.strftime('%b %d, %Y · %H:%M') if c.created_at else 'N/A' }}</span>
         </div>
         {% endfor %}
       </div>

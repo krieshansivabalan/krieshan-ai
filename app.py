@@ -1139,7 +1139,7 @@ def admin_dashboard():
 
     user_data = []
     for u in users:
-        charts = u.charts.order_by(BirthChart.created_at.desc()).all()
+        charts = BirthChart.query.filter_by(user_id=u.id).order_by(BirthChart.created_at.desc()).all()
         user_data.append({
             "user":   u,
             "charts": charts,
