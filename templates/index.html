@@ -1776,23 +1776,23 @@
         <div class="upgrade-tier" onclick="triggerCheckout('seeker')">
           <div class="upgrade-tier-left">
             <div class="upgrade-tier-name">Seeker</div>
-            <div class="upgrade-tier-desc">D9 &amp; D10 charts · Soul Profile · Character Archetypes · PDF export</div>
+            <div class="upgrade-tier-desc">Unlock D9 &amp; D10 charts, Soul Profile, Character Archetypes, and PDF export — go beyond the birth chart into your soul's deeper design.</div>
           </div>
           <div class="upgrade-tier-price">$14/mo</div>
         </div>
         <div class="upgrade-tier recommended" onclick="triggerCheckout('scholar')">
           <div class="upgrade-tier-left">
             <div class="upgrade-tier-name">Scholar</div>
-            <div class="upgrade-tier-desc">Everything in Seeker · Synastry · Journal · 20 saved charts</div>
+            <div class="upgrade-tier-desc">The complete Vedic toolkit. Everything in Seeker plus synastry compatibility, an astrology journal, and up to 20 saved charts.</div>
           </div>
           <div class="upgrade-tier-price">$39/mo</div>
         </div>
         <div class="upgrade-tier" onclick="triggerCheckout('oracle')">
           <div class="upgrade-tier-left">
-            <div class="upgrade-tier-name">Oracle</div>
-            <div class="upgrade-tier-desc">Unlimited everything · AI Chart Chat (coming soon) · Priority features</div>
+            <div class="upgrade-tier-name">Sage</div>
+            <div class="upgrade-tier-desc">For serious students and practitioners. Unlimited charts, early access to every new feature, and first access to AI Chart Chat when it launches.</div>
           </div>
-          <div class="upgrade-tier-price">$89/mo</div>
+          <div class="upgrade-tier-price">$97/mo</div>
         </div>
       </div>
       <div class="modal-fine">Cancel anytime. Secure payment via Stripe.</div>
@@ -2709,7 +2709,7 @@
   }
 
   // ── Payment Modal ─────────────────────────────────────────────
-  const TIER_LABELS = { seeker: 'Seeker — $14/mo', scholar: 'Scholar — $39/mo', oracle: 'Oracle — $97/mo' };
+  const TIER_LABELS = { seeker: 'Seeker — $14/mo', scholar: 'Scholar — $39/mo', oracle: 'Sage — $97/mo' };
   function openModal() {
     const label = TIER_LABELS[_selectedTier] || 'Subscribe Now';
     $('modal-pay-btn').textContent = '✦  ' + label;
@@ -4346,7 +4346,7 @@
   function updateTierUI() {
     const badge = $('tier-badge');
     if (badge) {
-      const labels = { free:'Free', seeker:'Seeker ✦', scholar:'Scholar ◈', oracle:'Oracle ★' };
+      const labels = { free:'Free', seeker:'Seeker ✦', scholar:'Scholar ◈', oracle:'Sage ★' };
       badge.textContent = labels[_tier] || _tier;
       badge.className = `tier-badge ${_tier}`;
     }
