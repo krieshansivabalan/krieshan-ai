@@ -1866,6 +1866,7 @@
         <span>{{ user.name }}</span>
       </a>
       <button id="manage-sub-btn" class="logout-link" style="display:none;background:none;border:none;cursor:pointer;" onclick="openBillingPortal()">Manage Plan</button>
+      <a href="/admin" class="logout-link" style="color:var(--gold);font-weight:600;">Admin</a>
       <a href="/" class="logout-link">Home</a>
       <a href="/auth/logout" class="logout-link">Sign out</a>
     </div>
@@ -2905,6 +2906,13 @@
     }
 
     $('out-name').textContent = data.name === 'The Seeker' ? 'Your Birth Chart' : `${data.name}'s Birth Chart`;
+
+    // Update greeting to reflect the chart person's name
+    if (data.name && data.name !== 'The Seeker') {
+      const h = new Date().getHours();
+      const greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+      $('welcome-greeting').textContent = `${greet}, ${data.name.split(' ')[0]} ✦`;
+    }
     $('out-info').innerHTML = `${data.local_datetime}<br>${data.full_address}`;
 
     $('sun-symbol').textContent  = p['Sun'].sign_symbol;
