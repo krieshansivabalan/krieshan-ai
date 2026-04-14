@@ -57,7 +57,7 @@ db.init_app(app)
 
 # Flask-Login
 login_manager = LoginManager(app)
-login_manager.login_view = "login"
+login_manager.login_view = "landing"
 login_manager.login_message = ""
 
 # OAuth
@@ -120,15 +120,7 @@ with app.app_context():
 
 
 # ── Auth pages ────────────────────────────────────────────────────
-@app.route("/login")
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for("index"))
-    return render_template("login.html")
-
-
-# ── Main app ──────────────────────────────────────────────────────
-@app.route("/")
+@app.route("/app")
 @login_required
 def index():
     return render_template(
@@ -139,6 +131,21 @@ def index():
         arudha_interp=ARUDHA_INTERP,
         indu_interp=INDU_INTERP,
     )
+
+
+# ── Landing page ──────────────────────────────────────────────────
+@app.route("/")
+def landing():
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
+    return render_template("login.html")
+
+
+@app.route("/login")
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
+    return render_template("login.html")
 
 
 @app.route("/dashboard")

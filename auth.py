@@ -39,7 +39,7 @@ def login_google():
         dev_user.last_login_at = datetime.utcnow()
         db.session.commit()
         login_user(dev_user, remember=True)
-        return redirect(url_for("index"))
+        return redirect(url_for("index"))  # /app
 
     redirect_uri = url_for("auth.callback", _external=True)
     return _oauth.google.authorize_redirect(redirect_uri)
@@ -77,7 +77,7 @@ def callback():
     session["paid"] = user.is_paid
 
     next_url = session.pop("next", None)
-    return redirect(next_url or url_for("index"))
+    return redirect(next_url or url_for("index"))  # /app
 
 
 @auth_bp.route("/logout")
@@ -85,4 +85,4 @@ def callback():
 def logout():
     logout_user()
     session.clear()
-    return redirect(url_for("login"))
+    return redirect(url_for("landing"))
