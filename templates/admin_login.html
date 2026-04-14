@@ -102,6 +102,7 @@
     <h1>✦ Admin Access</h1>
     {% if error %}<div class="error">{{ error }}</div>{% endif %}
     <form method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
       <label for="password">Password</label>
       <input type="password" id="password" name="password" placeholder="Enter admin password" autofocus/>
       <button type="submit">Enter Dashboard</button>
