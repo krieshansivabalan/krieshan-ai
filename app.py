@@ -27,6 +27,10 @@ from interpretations import (
 # ── App setup ─────────────────────────────────────────────────────
 app = Flask(__name__)
 
+# Fix HTTPS URL generation behind Railway/reverse-proxy
+from werkzeug.middleware.proxy_fix import ProxyFix
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+
 # SECRET_KEY: hard-fail in production if not set
 if os.environ.get("FLASK_ENV") == "development":
     app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-only-insecure-key")
