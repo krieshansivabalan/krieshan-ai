@@ -1135,15 +1135,30 @@ def admin_dashboard():
     week_ago  = now - timedelta(days=7)
     month_ago = now - timedelta(days=30)
 
-    users = User.query.order_by(User.created_at.desc()).all()
+    from sqlalchemy.orm import joinedload
+    users = (
+        User.query
+        .options(joinedload(User.subscription))
+        .order_by(User.created_at.desc())
+        .all()
+    )
 
     user_data = []
     for u in users:
-        charts = BirthChart.query.filter_by(user_id=u.id).order_by(BirthChart.created_at.desc()).all()
+        charts = (
+            BirthChart.query
+            .filter_by(user_id=u.id)
+            .order_by(BirthChart.created_at.desc())
+            .all()
+        )
+        try:
+            tier = u.plan_tier
+        except Exception:
+            tier = "free"
         user_data.append({
             "user":   u,
             "charts": charts,
-            "tier":   u.plan_tier,
+            "tier":   tier,
         })
 
     # ── Aggregate stats ───────────────────────────────────────────
@@ -1158,9 +1173,10 @@ def admin_dashboard():
     new_this_week  = sum(1 for u in users if u.created_at and u.created_at >= week_ago)
     new_this_month = sum(1 for u in users if u.created_at and u.created_at >= month_ago)
 
-    tier_counts = {"free": 0, "seeker": 0, "scholar": 0, "oracle": 0}
+    tier_counts = {"free": 0, "seeker": 0, "scholar": 0, "oracle": 0, "sage": 0}
     for d in user_data:
-        tier_counts[d["tier"]] = tier_counts.get(d["tier"], 0) + 1
+        key = d["tier"] if d["tier"] in tier_counts else "free"
+        tier_counts[key] += 1
 
     stats = {
         "total_users":       total_users,
@@ -1174,7 +1190,7 @@ def admin_dashboard():
         "tier_free":    tier_counts.get("free", 0),
         "tier_seeker":  tier_counts.get("seeker", 0),
         "tier_scholar": tier_counts.get("scholar", 0),
-        "tier_oracle":  tier_counts.get("oracle", 0),
+        "tier_oracle":  tier_counts.get("oracle", 0) + tier_counts.get("sage", 0),
     }
 
     return render_template("admin_dashboard.html", user_data=user_data, stats=stats)
