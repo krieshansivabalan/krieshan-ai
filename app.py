@@ -672,7 +672,7 @@ def create_checkout_session():
 def payment_success():
     session_id = request.args.get("session_id")
     tier       = request.args.get("tier", "seeker")
-    if tier not in ("seeker", "scholar", "oracle"):
+    if tier not in ("seeker", "scholar", "oracle", "sage"):
         tier = "seeker"
 
     if session_id and stripe.api_key:
@@ -758,7 +758,44 @@ def stripe_webhook():
         return jsonify({"error": "Invalid signature"}), 400
 
     event_type = event["type"]
-    if event_type in ("customer.subscription.updated", "customer.subscription.deleted"):
+
+    if event_type == "checkout.session.completed":
+        sess = event["data"]["object"]
+        user_id   = sess.get("client_reference_id")
+        customer_id  = sess.get("customer")
+        sub_id    = sess.get("subscription")
+        amount    = sess.get("amount_total", 0)  # cents
+
+        # Map purchase amount → tier
+        AMOUNT_TIER = {1500: "seeker", 4000: "scholar", 9998: "sage"}
+        tier = AMOUNT_TIER.get(amount, "seeker")
+
+        # Try to get tier from subscription metadata (more reliable if set in Stripe)
+        if sub_id and stripe.api_key:
+            try:
+                stripe_sub = stripe.Subscription.retrieve(sub_id)
+                meta_tier = stripe_sub.get("metadata", {}).get("plan_tier")
+                if meta_tier:
+                    tier = meta_tier
+                period_end = stripe_sub.get("current_period_end")
+            except Exception:
+                period_end = None
+        else:
+            period_end = None
+
+        if user_id:
+            user = User.query.get(int(user_id))
+            if user:
+                _upsert_subscription(
+                    user=user,
+                    customer_id=customer_id,
+                    subscription_id=sub_id,
+                    status="active",
+                    period_end=period_end,
+                    plan_tier=tier,
+                )
+
+    elif event_type in ("customer.subscription.updated", "customer.subscription.deleted"):
         sub_obj = event["data"]["object"]
         force_status = "cancelled" if event_type == "customer.subscription.deleted" else None
         _handle_subscription_event(sub_obj, force_status=force_status)
