@@ -32,7 +32,7 @@ class User(UserMixin, db.Model):
 
     charts = db.relationship(
         "BirthChart", back_populates="user",
-        cascade="all, delete-orphan", lazy="dynamic"
+        cascade="all, delete-orphan", lazy="select"
     )
     subscription = db.relationship(
         "Subscription", back_populates="user",
@@ -119,8 +119,8 @@ class ChatMessage(db.Model):
     content    = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    user  = db.relationship("User",       backref=db.backref("chat_messages", lazy="dynamic"))
-    chart = db.relationship("BirthChart", backref=db.backref("chat_messages", lazy="dynamic"))
+    user  = db.relationship("User",       backref=db.backref("chat_messages", lazy="select"))
+    chart = db.relationship("BirthChart", backref=db.backref("chat_messages", lazy="select"))
 
 
 class JournalEntry(db.Model):
@@ -136,4 +136,4 @@ class JournalEntry(db.Model):
     is_retrograde_period = db.Column(db.Boolean, default=False)
     created_at           = db.Column(db.DateTime, default=datetime.utcnow)
 
-    user = db.relationship("User", backref=db.backref("journal_entries", cascade="all, delete-orphan", lazy="dynamic"))
+    user = db.relationship("User", backref=db.backref("journal_entries", cascade="all, delete-orphan", lazy="select"))
