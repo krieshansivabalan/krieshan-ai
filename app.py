@@ -56,7 +56,10 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
     "DATABASE_URL", "sqlite:///sidereal.db"
 )
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=8)
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
+app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=30)
+app.config["SESSION_COOKIE_SECURE"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 db.init_app(app)
 
 # Flask-Login
@@ -87,6 +90,27 @@ STRIPE_PRICE_MAP = {
 # Create all DB tables on first run (safe to call repeatedly)
 with app.app_context():
     db.create_all()
+    # Add new columns that may be missing from older Railway DB schemas
+    _migrations = [
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMP",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS ai_questions_used INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS ai_questions_reset TIMESTAMP",
+        "ALTER TABLE birth_charts ADD COLUMN IF NOT EXISTS for_person VARCHAR(256)",
+        "ALTER TABLE birth_charts ADD COLUMN IF NOT EXISTS gender VARCHAR(1)",
+        "ALTER TABLE birth_charts ADD COLUMN IF NOT EXISTS full_address VARCHAR(512)",
+        "ALTER TABLE birth_charts ADD COLUMN IF NOT EXISTS career_json TEXT",
+        "ALTER TABLE birth_charts ADD COLUMN IF NOT EXISTS romance_json TEXT",
+        "ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS plan_tier VARCHAR(16) DEFAULT 'seeker'",
+    ]
+    for sql in _migrations:
+        try:
+            db.session.execute(db.text(sql))
+        except Exception:
+            pass
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
 
 
 @login_manager.user_loader

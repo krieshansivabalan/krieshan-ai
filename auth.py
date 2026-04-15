@@ -72,6 +72,7 @@ def callback():
     user.last_login_at = datetime.utcnow()
     db.session.commit()
 
+    session.permanent = True
     login_user(user, remember=True)
     # Keep session["paid"] in sync so transit route works without extra DB hit
     session["paid"] = user.is_paid
