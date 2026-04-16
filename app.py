@@ -1139,12 +1139,11 @@ def delete_account():
 
 
 # ── Admin Panel ───────────────────────────────────────────────────
-# Generate hash: python3 -c "import bcrypt; print(bcrypt.hashpw(b'yourpassword', bcrypt.gensalt()).decode())"
-_ADMIN_PASSWORD_HASH = os.environ.get("ADMIN_PASSWORD_HASH", "")
-_ADMIN_SESSION_HOURS = 8   # session expires after 8 hours
+# Set ADMIN_PASSWORD in Railway env vars — plain text, no hashing needed
+_ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin123")
+_ADMIN_SESSION_HOURS = 8
 
 def _admin_session_valid():
-    """Return True only if admin_auth is set AND was granted within the last 8 hours."""
     if not session.get("admin_auth"):
         return False
     granted_at = session.get("admin_auth_ts")
@@ -1170,17 +1169,12 @@ def admin_required(f):
 @app.route("/admin/login", methods=["GET", "POST"])
 @limiter.limit("5 per minute")
 def admin_login():
-    # If already authenticated with a valid session, skip straight to dashboard
     if _admin_session_valid():
         return redirect(url_for("admin_dashboard"))
     error = None
     if request.method == "POST":
-        pw = (request.form.get("password") or "").encode("utf-8")
-        try:
-            pw_ok = _ADMIN_PASSWORD_HASH and bcrypt.checkpw(pw, _ADMIN_PASSWORD_HASH.encode("utf-8"))
-        except Exception:
-            pw_ok = False
-        if pw_ok:
+        pw = request.form.get("password") or ""
+        if pw == _ADMIN_PASSWORD:
             session["admin_auth"]    = True
             session["admin_auth_ts"] = datetime.utcnow().isoformat()
             session.permanent        = True
