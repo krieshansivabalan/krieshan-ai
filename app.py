@@ -1190,14 +1190,27 @@ def admin_logout():
     session.pop("admin_auth_ts", None)
     return redirect(url_for("admin_login"))
 
-@app.route("/admin")
-@admin_required
-def admin_dashboard():
+@app.errorhandler(500)
+def internal_error(e):
+    db.session.rollback()
+    tb = traceback.format_exc()
+    return f"<pre style='background:#111;color:#f88;padding:2rem;font-size:13px'>500 Error:\n{tb}</pre>", 500
+
+
+@app.route("/admin/debug")
+def admin_debug():
+    """Temporary debug route — no auth, shows exact error."""
     try:
         return _admin_dashboard_inner()
     except Exception as e:
-        traceback.print_exc()
-        return f"<pre style='color:red;padding:2rem'>Admin error: {e}\n\n{traceback.format_exc()}</pre>", 500
+        tb = traceback.format_exc()
+        return f"<pre style='background:#111;color:#f88;padding:2rem;font-size:13px'>{tb}</pre>", 500
+
+
+@app.route("/admin")
+@admin_required
+def admin_dashboard():
+    return _admin_dashboard_inner()
 
 
 def _admin_dashboard_inner():
