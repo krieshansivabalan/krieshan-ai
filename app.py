@@ -90,7 +90,9 @@ STRIPE_PRICE_MAP = {
 # Create all DB tables on first run (safe to call repeatedly)
 with app.app_context():
     db.create_all()
-    # Add new columns that may be missing from older Railway DB schemas
+    # Add new columns that may be missing from older Railway DB schemas.
+    # Each migration gets its own transaction — PostgreSQL aborts the entire
+    # transaction on failure, so we must rollback before the next statement.
     _migrations = [
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMP",
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS ai_questions_used INTEGER DEFAULT 0",
@@ -105,17 +107,14 @@ with app.app_context():
     for sql in _migrations:
         try:
             db.session.execute(db.text(sql))
+            db.session.commit()
         except Exception:
-            pass
-    try:
-        db.session.commit()
-    except Exception:
-        db.session.rollback()
+            db.session.rollback()
 
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 
 @app.after_request
@@ -1194,6 +1193,14 @@ def admin_logout():
 @app.route("/admin")
 @admin_required
 def admin_dashboard():
+    try:
+        return _admin_dashboard_inner()
+    except Exception as e:
+        traceback.print_exc()
+        return f"<pre style='color:red;padding:2rem'>Admin error: {e}\n\n{traceback.format_exc()}</pre>", 500
+
+
+def _admin_dashboard_inner():
     from datetime import timedelta
     now   = datetime.utcnow()
     today = now.replace(hour=0, minute=0, second=0, microsecond=0)

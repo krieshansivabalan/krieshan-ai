@@ -312,7 +312,7 @@
     {% set tier = entry.tier %}
     <div class="user-card" data-name="{{ u.name | lower }}" data-email="{{ u.email | lower }}" data-tier="{{ tier }}">
       <div class="user-header">
-        <div class="user-avatar">{{ u.name[0] | upper }}</div>
+        <div class="user-avatar">{{ (u.name[0] | upper) if u.name else '?' }}</div>
         <div class="user-info">
           <div class="user-name">{{ u.name }}</div>
           <div class="user-email">{{ u.email }}</div>
