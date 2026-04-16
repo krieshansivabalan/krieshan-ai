@@ -1265,30 +1265,94 @@
     /* Lock overlay */
     .transit-lock {
       position: absolute; inset: 0;
-      background: rgba(7,8,15,.75);
-      backdrop-filter: blur(6px);
+      background: linear-gradient(to bottom, rgba(7,8,15,0) 0%, rgba(7,8,15,.92) 35%);
+      backdrop-filter: blur(3px);
       border-radius: 18px;
       display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 1rem; text-align: center;
+      align-items: center; justify-content: flex-end;
+      padding-bottom: 2.5rem;
+      gap: 0; text-align: center;
       z-index: 10;
     }
     .transit-lock.hidden { display: none; }
-    .lock-icon { font-size: 2.5rem; }
-    .lock-title {
-      font-family: 'Cinzel', serif; font-size: 1rem;
-      font-weight: 700; color: var(--gold-light);
+    .transit-lock-teaser {
+      position: absolute; top: 1.5rem; left: 1.5rem; right: 1.5rem;
+      display: flex; flex-direction: column; gap: .6rem; pointer-events: none;
     }
-    .lock-sub { font-size: .82rem; color: var(--muted); max-width: 280px; line-height: 1.6; }
+    .teaser-line {
+      height: 10px; border-radius: 6px;
+      background: linear-gradient(90deg, rgba(201,168,76,.18), rgba(201,168,76,.04));
+      animation: tease-pulse 2.5s ease-in-out infinite alternate;
+    }
+    .teaser-line.short { width: 60%; }
+    @keyframes tease-pulse { 0%{opacity:.4} 100%{opacity:.9} }
+    .transit-lock-inner {
+      display: flex; flex-direction: column;
+      align-items: center; gap: .75rem;
+      padding: 0 1.5rem;
+    }
+    .lock-icon { font-size: 2rem; }
+    .lock-title {
+      font-family: 'Cinzel', serif; font-size: 1.05rem;
+      font-weight: 700; color: var(--gold-light); margin: 0;
+    }
+    .lock-sub { font-size: .82rem; color: var(--muted); max-width: 300px; line-height: 1.65; }
+    .lock-fine { font-size: .72rem; color: rgba(122,120,154,.6); }
     .btn-unlock {
       background: linear-gradient(135deg, var(--gold), #a07828);
       border: none; border-radius: 8px;
       color: #07080f; cursor: pointer;
       font-family: 'Cinzel', serif; font-size: .85rem; font-weight: 700;
-      letter-spacing: .06em; padding: .65rem 1.6rem;
+      letter-spacing: .06em; padding: .75rem 1.8rem;
       transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 4px 20px rgba(201,168,76,.25);
     }
-    .btn-unlock:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(201,168,76,.3); }
+    .btn-unlock:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(201,168,76,.4); }
+
+    /* Dasha teaser (free users) */
+    .dasha-teaser {
+      background: linear-gradient(135deg, rgba(201,168,76,.07), rgba(124,92,191,.07));
+      border: 1px solid rgba(201,168,76,.2);
+      border-radius: 16px; padding: 1.4rem 1.6rem;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1.2rem; margin-bottom: 1rem;
+    }
+    .dasha-teaser-left { display: flex; align-items: flex-start; gap: 1rem; flex: 1; }
+    .dasha-teaser-icon { font-size: 2rem; flex-shrink: 0; }
+    .dasha-teaser-title {
+      font-family: 'Cinzel', serif; font-size: .95rem; font-weight: 700;
+      color: var(--gold-light); margin-bottom: .35rem;
+    }
+    .dasha-teaser-title span { color: var(--violet-light); }
+    .dasha-teaser-sub { font-size: .8rem; color: var(--muted); line-height: 1.6; }
+    .dasha-teaser-btn {
+      background: linear-gradient(135deg, var(--gold), #a07828);
+      border: none; border-radius: 8px; cursor: pointer;
+      color: #07080f; font-family: 'Cinzel', serif;
+      font-size: .82rem; font-weight: 700; letter-spacing: .05em;
+      padding: .65rem 1.3rem; white-space: nowrap;
+      transition: transform .15s, box-shadow .15s;
+      flex-shrink: 0;
+    }
+    .dasha-teaser-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(201,168,76,.35); }
+
+    /* Upgrade modal extras */
+    .upgrade-tier-badge {
+      font-size: .65rem; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--gold);
+      background: rgba(201,168,76,.12); border: 1px solid rgba(201,168,76,.25);
+      border-radius: 20px; padding: .15rem .6rem;
+      display: inline-block; margin-bottom: .4rem;
+    }
+    .upgrade-social-proof {
+      font-size: .78rem; color: var(--muted); text-align: center;
+      padding: .5rem 0 .25rem; letter-spacing: .03em;
+    }
+
+    /* AI chat locked fine text */
+    .ai-chat-locked-fine {
+      font-size: .72rem; color: rgba(122,120,154,.6); margin-top: .25rem;
+    }
 
     /* Transit tabs */
     .transit-tabs {
@@ -1861,9 +1925,10 @@
     </div>
     <div id="ai-chat-locked-panel" class="ai-chat-locked" style="display:none">
       <div class="ai-chat-locked-icon">🔮</div>
-      <div class="ai-chat-locked-title">AI Chart Chat</div>
-      <div class="ai-chat-locked-sub">Ask unlimited questions about your chart — career, love, timing, purpose. Available on Seeker plan and above.</div>
-      <button class="ai-chat-locked-btn" onclick="openUpgrade('chat')">Unlock AI Chat ✦</button>
+      <div class="ai-chat-locked-title">Your chart has answers.</div>
+      <div class="ai-chat-locked-sub">Why is this year feeling so heavy? When does your luck shift? What career path fits your dharma? Ask anything — your chart knows.</div>
+      <button class="ai-chat-locked-btn" onclick="openUpgrade('chat')">✦ Unlock AI Chart Chat</button>
+      <div class="ai-chat-locked-fine">Available on Seeker ($15/mo) and above</div>
     </div>
     <div class="ai-chat-input-row" id="ai-chat-input-row">
       <textarea class="ai-chat-input" id="ai-chat-input" rows="1"
@@ -1887,32 +1952,34 @@
     <div class="upgrade-card">
       <button class="upgrade-close" onclick="closeUpgrade()">✕</button>
       <div class="upgrade-icon" id="upgrade-icon">✦</div>
-      <div class="upgrade-title" id="upgrade-title">Unlock Premium Features</div>
-      <div class="upgrade-sub" id="upgrade-sub">Choose a plan to access this feature.</div>
+      <div class="upgrade-title" id="upgrade-title">Go Deeper Into Your Chart</div>
+      <div class="upgrade-sub" id="upgrade-sub">Your birth chart is just the beginning. Choose how far you want to go.</div>
       <div class="upgrade-tiers">
         <div class="upgrade-tier" onclick="triggerCheckout('seeker')">
           <div class="upgrade-tier-left">
             <div class="upgrade-tier-name">Seeker</div>
-            <div class="upgrade-tier-desc">Unlock D9 &amp; D10 charts, Soul Profile, Character Archetypes, and PDF export — go beyond the birth chart into your soul's deeper design.</div>
+            <div class="upgrade-tier-desc">Daily transits, Dasha timing, Soul Profile, D9 &amp; D10 charts. Turn your chart into a daily practice.</div>
           </div>
-          <div class="upgrade-tier-price">$15/mo</div>
+          <div class="upgrade-tier-price">$15<span style="font-size:.7em;opacity:.7">/mo</span></div>
         </div>
         <div class="upgrade-tier recommended" onclick="triggerCheckout('scholar')">
+          <div class="upgrade-tier-badge">Most Popular</div>
           <div class="upgrade-tier-left">
             <div class="upgrade-tier-name">Scholar</div>
-            <div class="upgrade-tier-desc">The complete Vedic toolkit. Everything in Seeker plus synastry compatibility, an astrology journal, and up to 20 saved charts.</div>
+            <div class="upgrade-tier-desc">Everything in Seeker plus compatibility synastry, astrology journal, fixed stars, and AI chart guidance.</div>
           </div>
-          <div class="upgrade-tier-price">$40/mo</div>
+          <div class="upgrade-tier-price">$40<span style="font-size:.7em;opacity:.7">/mo</span></div>
         </div>
         <div class="upgrade-tier" onclick="triggerCheckout('oracle')">
           <div class="upgrade-tier-left">
             <div class="upgrade-tier-name">Sage</div>
-            <div class="upgrade-tier-desc">For serious students and practitioners. Unlimited charts, early access to every new feature, and first access to AI Chart Chat when it launches.</div>
+            <div class="upgrade-tier-desc">For serious students. Unlimited everything, early features, and direct AI chart conversations.</div>
           </div>
-          <div class="upgrade-tier-price">$99.98/mo</div>
+          <div class="upgrade-tier-price">$99.98<span style="font-size:.7em;opacity:.7">/mo</span></div>
         </div>
       </div>
-      <div class="modal-fine">Cancel anytime. Secure payment via Stripe.</div>
+      <div class="upgrade-social-proof">✦ Join hundreds already reading their charts daily</div>
+      <div class="modal-fine">Cancel anytime · No contracts · Instant access</div>
     </div>
   </div>
 
@@ -1920,19 +1987,19 @@
   <div class="modal-overlay" id="payment-modal">
     <div class="modal-card">
       <button class="modal-close" id="modal-close">✕</button>
-      <div class="modal-icon">✦</div>
-      <div class="modal-title">Unlock Full Readings</div>
-      <div class="modal-sub">Access daily, monthly &amp; yearly transit forecasts personalised to your natal chart.</div>
+      <div class="modal-icon">🪐</div>
+      <div class="modal-title">The planets don't stop moving.</div>
+      <div class="modal-sub">Right now, planets are transiting your chart. Some are opening doors. Others are testing you. Subscribe to know which is which — every single day.</div>
       <div class="modal-price">$15 <span>/ month</span></div>
       <ul class="modal-features">
-        <li>Daily transit readings (Sun &amp; Moon)</li>
-        <li>Monthly forecast (Mercury, Venus, Mars)</li>
-        <li>Yearly outlook (Jupiter, Saturn, Rahu, Ketu)</li>
-        <li>All placements, nakshatras &amp; in-depth interpretations</li>
-        <li>Downloadable PDF birth chart</li>
+        <li>✦ Daily transits — what the Sun &amp; Moon mean for you today</li>
+        <li>✦ Monthly forecast — Mercury, Venus &amp; Mars in your houses</li>
+        <li>✦ Yearly outlook — Jupiter, Saturn, Rahu &amp; Ketu cycles</li>
+        <li>✦ Vimshottari Dasha — your 10-year planetary period</li>
+        <li>✦ Soul Profile, D9 &amp; D10 charts, PDF export</li>
       </ul>
-      <button class="btn-pay" id="modal-pay-btn">✦ &nbsp;Subscribe Now — $15/month</button>
-      <div class="modal-fine">Cancel anytime. Secure payment via Stripe.</div>
+      <button class="btn-pay" id="modal-pay-btn">✦ &nbsp;Start My Practice — $15/month</button>
+      <div class="modal-fine">Cancel anytime · Instant access · Secure via Stripe</div>
     </div>
   </div>
 
@@ -2204,6 +2271,17 @@
 
       <!-- Dasha Section -->
       <div class="section-title" id="dasha-section-title" style="display:none">Vimshottari Dasha — Life Timing</div>
+      <!-- Dasha teaser for free users (shown after chart calc, hidden for paid) -->
+      <div class="dasha-teaser" id="dasha-teaser" style="display:none">
+        <div class="dasha-teaser-left">
+          <div class="dasha-teaser-icon">⏳</div>
+          <div>
+            <div class="dasha-teaser-title">Your current Maha Dasha is <span id="dasha-teaser-planet">—</span></div>
+            <div class="dasha-teaser-sub">This planetary period shapes the next several years of your life — career, relationships, and inner growth. Unlock to read your full interpretation and timeline.</div>
+          </div>
+        </div>
+        <button class="dasha-teaser-btn" onclick="openUpgrade('dasha')">✦ Read My Dasha</button>
+      </div>
       <div class="dasha-section" id="dasha-section" style="display:none">
         <div class="dasha-header">
           <div class="dasha-icon">⏳</div>
@@ -2400,10 +2478,19 @@
 
         <!-- Lock overlay (shown when not paid) -->
         <div class="transit-lock" id="transit-lock">
-          <div class="lock-icon">🔒</div>
-          <div class="lock-title">Paid Feature</div>
-          <div class="lock-sub">Subscribe to unlock daily, monthly &amp; yearly transit readings personalised to your chart.</div>
-          <button class="btn-unlock" id="transit-unlock-btn">✦ Subscribe — $15/month</button>
+          <div class="transit-lock-teaser" id="transit-lock-teaser">
+            <div class="teaser-line"></div>
+            <div class="teaser-line short"></div>
+            <div class="teaser-line"></div>
+            <div class="teaser-line short"></div>
+          </div>
+          <div class="transit-lock-inner">
+            <div class="lock-icon">🪐</div>
+            <div class="lock-title" id="transit-lock-title">Your sky is active right now</div>
+            <div class="lock-sub" id="transit-lock-sub">Planets are moving through your chart as you read this. Subscribe to see exactly what's shifting — and what it means for you.</div>
+            <button class="btn-unlock" id="transit-unlock-btn" onclick="openPaymentModal()">✦ Start Reading My Transits — $15/mo</button>
+            <div class="lock-fine">Cancel anytime · Secure via Stripe · Instant access</div>
+          </div>
         </div>
 
         <div class="transit-header">
@@ -3456,6 +3543,20 @@
     const maha  = dasha.current_maha;
     const antar = dasha.current_antar;
 
+    // Always show the section title
+    $('dasha-section-title').style.display = '';
+
+    if (!isPaid) {
+      // Free users: show teaser with planet name, hide full section
+      $('dasha-teaser-planet').textContent = maha.lord;
+      $('dasha-teaser').style.display = '';
+      $('dasha-section').style.display = 'none';
+      return;
+    }
+
+    // Paid users: hide teaser, show full section
+    $('dasha-teaser').style.display = 'none';
+
     $('maha-lord').textContent  = maha.lord + ' Maha Dasha';
     $('maha-dates').textContent = `${maha.start_date} → ${maha.end_date}`;
     $('maha-interp').textContent = (maha.interpretation || '').slice(0, 200) + (maha.interpretation?.length > 200 ? '…' : '');
@@ -3477,7 +3578,6 @@
       </div>`
     ).join('');
 
-    $('dasha-section-title').style.display = '';
     $('dasha-section').style.display = '';
   }
 
