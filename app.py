@@ -1176,7 +1176,11 @@ def admin_login():
     error = None
     if request.method == "POST":
         pw = (request.form.get("password") or "").encode("utf-8")
-        if _ADMIN_PASSWORD_HASH and bcrypt.checkpw(pw, _ADMIN_PASSWORD_HASH.encode("utf-8")):
+        try:
+            pw_ok = _ADMIN_PASSWORD_HASH and bcrypt.checkpw(pw, _ADMIN_PASSWORD_HASH.encode("utf-8"))
+        except Exception:
+            pw_ok = False
+        if pw_ok:
             session["admin_auth"]    = True
             session["admin_auth_ts"] = datetime.utcnow().isoformat()
             session.permanent        = True
