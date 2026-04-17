@@ -3839,6 +3839,10 @@
         body: JSON.stringify(payload),
       });
       const data = await res.json();
+      if (res.status === 401 || data.error === 'session_expired') {
+        window.location.href = '/auth/google';
+        return;
+      }
       if (!res.ok || data.error) {
         errBox.textContent = data.error || 'An unexpected error occurred.';
         errBox.style.display = 'block';

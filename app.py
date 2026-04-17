@@ -67,6 +67,14 @@ login_manager = LoginManager(app)
 login_manager.login_view = "landing"
 login_manager.login_message = ""
 
+@login_manager.unauthorized_handler
+def unauthorized():
+    # Return JSON for API/fetch requests so the client gets a clean error
+    # instead of an HTML redirect that breaks JSON.parse()
+    if request.is_json or request.path.startswith('/api') or request.path == '/chart':
+        return jsonify({"error": "session_expired", "message": "Your session has expired. Please sign in again."}), 401
+    return redirect(url_for("landing"))
+
 # OAuth
 oauth = OAuth(app)
 init_oauth(oauth)
