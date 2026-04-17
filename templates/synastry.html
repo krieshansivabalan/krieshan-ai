@@ -123,6 +123,29 @@
     .loader-ring { width: 40px; height: 40px; border: 3px solid rgba(124,92,191,.2);
       border-top-color: var(--violet); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Mobile ─────────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .container { padding: 1.2rem 1rem 5rem; }
+      .topnav { flex-direction: column; align-items: flex-start; gap: .75rem; margin-bottom: 1.5rem; }
+      .nav-links { gap: .85rem; flex-wrap: wrap; }
+      .nav-link { font-size: .78rem; }
+      h1 { font-size: 1.6rem; }
+      .chart-form-card { padding: 1.2rem; }
+      .form-row { grid-template-columns: 1fr; gap: .6rem; }
+      input { font-size: 16px !important; }
+      .btn-calculate { min-height: 48px; font-size: .88rem; }
+      .score-section { padding: 1.4rem 1rem; }
+      .score-number { font-size: 2.8rem; }
+      .kuta-grid { grid-template-columns: repeat(2, 1fr); gap: .6rem; }
+      .kuta-card { padding: .75rem; }
+      .charts-compare { grid-template-columns: 1fr; gap: 1rem; }
+      .mini-chart-card { padding: 1.1rem; }
+    }
+    @media (max-width: 480px) {
+      .nav-links { display: none; }
+      .charts-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -132,11 +155,7 @@
     <div class="topnav">
       <a href="/" class="back-link">← Chart Calculator</a>
       <div class="nav-links">
-        <a href="/navamsa" class="nav-link">D9 Navamsa</a>
-        <a href="/d10" class="nav-link">D10 Career</a>
         <a href="/synastry" class="nav-link active">Synastry</a>
-        <a href="/journal" class="nav-link">Journal</a>
-        <a href="/learn" class="nav-link">Learn</a>
         <a href="/journal" class="nav-link">Journal</a>
         <a href="/learn" class="nav-link">Learn</a>
         <a href="/dashboard" class="nav-link">Profile</a>

@@ -212,10 +212,25 @@
     }
     .user-count-note { font-size: .76rem; color: var(--muted); }
 
-    @media (max-width: 640px) {
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .user-meta { margin-left: 0; }
+    @media (max-width: 768px) {
+      .container { padding: 1.2rem 1rem 4rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: .75rem; }
+      .stat-num { font-size: 1.6rem; }
+      .user-meta { margin-left: 0; width: 100%; justify-content: flex-start; }
       .chart-ts { margin-left: 0; }
+      .user-card { padding: 1.1rem 1.2rem; }
+      .user-header { gap: .7rem; }
+      .filter-row { flex-direction: column; align-items: stretch; }
+      .search-box { min-width: unset; font-size: 16px !important; }
+      .filter-select { font-size: 16px !important; }
+      .page-title { font-size: 1.2rem; }
+      .feedback-header { flex-direction: column; align-items: flex-start; gap: .5rem; }
+      .tier-row { gap: .5rem; }
+      .tier-pill { font-size: .72rem; padding: .35rem .75rem; }
+    }
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .chart-entry { flex-direction: column; align-items: flex-start; gap: .35rem; }
     }
   </style>
 </head>
