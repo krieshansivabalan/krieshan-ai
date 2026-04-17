@@ -2946,7 +2946,15 @@
   if (urlParams.get('paid') === 'true') {
     isPaid = true;
     updatePaymentUI();
-    window.history.replaceState({}, '', '/');
+    window.history.replaceState({}, '', '/app');
+    // Show a brief welcome banner
+    const banner = $('payment-banner');
+    if (banner) {
+      banner.style.display = '';
+      banner.classList.add('paid');
+      banner.innerHTML = `<div class="payment-banner-text"><strong>✦ Welcome to your full practice.</strong> Your subscription is active — all features are now unlocked. Calculate your chart to begin.</div>`;
+      setTimeout(() => { banner.style.transition='opacity .6s'; banner.style.opacity='0'; setTimeout(()=>{ banner.style.display='none'; banner.style.opacity=''; banner.style.transition=''; }, 700); }, 6000);
+    }
   }
 
   // ── Chart Wheel ───────────────────────────────────────────────

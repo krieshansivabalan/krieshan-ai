@@ -705,34 +705,30 @@ def create_checkout_session():
 @app.route("/payment-success")
 @login_required
 def payment_success():
-    session_id = request.args.get("session_id")
-    tier       = request.args.get("tier", "seeker")
+    tier = request.args.get("tier", "seeker")
     if tier not in ("seeker", "scholar", "oracle", "sage"):
         tier = "seeker"
 
-    if session_id and stripe.api_key:
-        try:
-            checkout_session = stripe.checkout.Session.retrieve(
-                session_id, expand=["subscription"]
+    # Direct payment links don't send a session_id — the webhook handles
+    # DB activation. Here we just mark the session as paid optimistically
+    # so the user sees unlocked features immediately without waiting for
+    # the webhook to fire.
+    session["paid"] = True
+
+    # If the user's subscription isn't active yet (webhook may be delayed),
+    # set it now so the UI unlocks instantly.
+    try:
+        if not current_user.subscription or current_user.subscription.status != "active":
+            _upsert_subscription(
+                user=current_user,
+                customer_id=None,
+                subscription_id=None,
+                status="active",
+                period_end=None,
+                plan_tier=tier,
             )
-            if checkout_session.payment_status in ("paid", "no_payment_required"):
-                stripe_sub = checkout_session.subscription
-                # Prefer tier from subscription metadata, fall back to URL param
-                if stripe_sub and stripe_sub.get("metadata", {}).get("plan_tier"):
-                    tier = stripe_sub["metadata"]["plan_tier"]
-                _upsert_subscription(
-                    user=current_user,
-                    customer_id=checkout_session.customer,
-                    subscription_id=stripe_sub.id if stripe_sub else None,
-                    status="active",
-                    period_end=stripe_sub.current_period_end if stripe_sub else None,
-                    plan_tier=tier,
-                )
-                session["paid"] = True
-        except Exception:
-            traceback.print_exc()
-    else:
-        session["paid"] = True
+    except Exception:
+        traceback.print_exc()
 
     return redirect(url_for("index") + "?paid=true")
 
