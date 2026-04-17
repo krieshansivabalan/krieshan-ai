@@ -183,6 +183,17 @@
     .chart-ts { font-size: .66rem; color: var(--muted); margin-left: auto; white-space: nowrap; }
     .no-charts { font-size: .78rem; color: var(--muted); font-style: italic; padding: .4rem 0; }
 
+    /* ── Feedback ── */
+    .feedback-list { display: flex; flex-direction: column; gap: .9rem; margin-bottom: 2rem; }
+    .feedback-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.2rem; }
+    .feedback-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: .65rem; flex-wrap: wrap; }
+    .feedback-user { display: flex; align-items: center; gap: .6rem; }
+    .feedback-meta { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+    .feedback-stars { color: var(--gold); font-size: .85rem; letter-spacing: .05em; }
+    .feedback-category { font-size: .68rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; background: rgba(124,92,191,.15); color: var(--violet-light); border-radius: 20px; padding: .15rem .55rem; }
+    .feedback-date { font-size: .7rem; color: var(--muted); }
+    .feedback-message { font-size: .84rem; color: rgba(226,223,245,.85); line-height: 1.65; }
+
     /* ── Search / filter ── */
     .filter-row { display: flex; gap: .75rem; margin-bottom: 1.2rem; flex-wrap: wrap; align-items: center; }
     .search-box {
@@ -356,6 +367,37 @@
     </div>
     {% endfor %}
   </div>
+
+  <!-- ── Feedback Section ── -->
+  <div class="section-title" style="margin-top:2.5rem">User Feedback <span style="font-size:.8rem;color:var(--muted);font-family:'Raleway',sans-serif;font-weight:400">({{ feedbacks | length }} recent)</span></div>
+
+  {% if feedbacks %}
+  <div class="feedback-list">
+    {% for fb, u in feedbacks %}
+    <div class="feedback-card">
+      <div class="feedback-header">
+        <div class="feedback-user">
+          <div class="user-avatar" style="width:28px;height:28px;font-size:.75rem">{{ (u.name[0] | upper) if u.name else '?' }}</div>
+          <div>
+            <div style="font-size:.85rem;font-weight:600;color:var(--text)">{{ u.name }}</div>
+            <div style="font-size:.72rem;color:var(--muted)">{{ u.email }}</div>
+          </div>
+        </div>
+        <div class="feedback-meta">
+          {% if fb.rating %}
+          <span class="feedback-stars">{{ '★' * fb.rating }}{{ '☆' * (5 - fb.rating) }}</span>
+          {% endif %}
+          <span class="feedback-category">{{ fb.category }}</span>
+          <span class="feedback-date">{{ fb.created_at.strftime('%b %d, %Y') if fb.created_at else '' }}</span>
+        </div>
+      </div>
+      <div class="feedback-message">{{ fb.message }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div style="color:var(--muted);font-size:.85rem;padding:1rem 0">No feedback submitted yet.</div>
+  {% endif %}
 
 </div>
 

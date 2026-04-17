@@ -14,7 +14,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from authlib.integrations.flask_client import OAuth
 
-from models import db, User, BirthChart, Subscription, JournalEntry, ChatMessage, TIER_LIMITS
+from models import db, User, BirthChart, Subscription, JournalEntry, ChatMessage, Feedback, TIER_LIMITS
 from auth import auth_bp, init_oauth
 from astrology import get_chart, get_transits, get_today_moon_nakshatra, AYANAMSA_EXPLAINERS, get_navamsa_chart, get_dasamsa_chart
 from characters import get_characters
@@ -111,6 +111,7 @@ with app.app_context():
         "ALTER TABLE birth_charts ADD COLUMN IF NOT EXISTS career_json TEXT",
         "ALTER TABLE birth_charts ADD COLUMN IF NOT EXISTS romance_json TEXT",
         "ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS plan_tier VARCHAR(16) DEFAULT 'seeker'",
+        "CREATE TABLE IF NOT EXISTS feedback (id SERIAL PRIMARY KEY, user_id INTEGER NOT NULL REFERENCES users(id), rating INTEGER, category VARCHAR(64), message TEXT NOT NULL, created_at TIMESTAMP DEFAULT NOW())",
     ]
     for sql in _migrations:
         try:
@@ -1130,6 +1131,33 @@ def chart_report(chart_id):
                            user=current_user)
 
 
+@app.route("/api/feedback", methods=["POST"])
+@login_required
+def submit_feedback():
+    data     = request.get_json() or {}
+    message  = (data.get("message") or "").strip()
+    rating   = data.get("rating")
+    category = (data.get("category") or "general").strip()
+    if not message:
+        return jsonify({"error": "Please enter a message."}), 400
+    if rating is not None:
+        try:
+            rating = int(rating)
+            if rating not in range(1, 6):
+                rating = None
+        except (ValueError, TypeError):
+            rating = None
+    fb = Feedback(
+        user_id=current_user.id,
+        rating=rating,
+        category=category,
+        message=message,
+    )
+    db.session.add(fb)
+    db.session.commit()
+    return jsonify({"ok": True})
+
+
 @app.route("/api/account", methods=["DELETE"])
 @login_required
 def delete_account():
@@ -1275,7 +1303,16 @@ def _admin_dashboard_inner():
         "tier_oracle":  tier_counts.get("oracle", 0) + tier_counts.get("sage", 0),
     }
 
-    return render_template("admin_dashboard.html", user_data=user_data, stats=stats)
+    # Feedback — most recent 50, with user info
+    feedbacks = (
+        db.session.query(Feedback, User)
+        .join(User, Feedback.user_id == User.id)
+        .order_by(Feedback.created_at.desc())
+        .limit(50)
+        .all()
+    )
+
+    return render_template("admin_dashboard.html", user_data=user_data, stats=stats, feedbacks=feedbacks)
 
 
 if __name__ == "__main__":

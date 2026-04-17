@@ -137,3 +137,16 @@ class JournalEntry(db.Model):
     created_at           = db.Column(db.DateTime, default=datetime.utcnow)
 
     user = db.relationship("User", backref=db.backref("journal_entries", cascade="all, delete-orphan", lazy="select"))
+
+
+class Feedback(db.Model):
+    __tablename__ = "feedback"
+
+    id         = db.Column(db.Integer, primary_key=True)
+    user_id    = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
+    rating     = db.Column(db.Integer)           # 1–5
+    category   = db.Column(db.String(64))        # "general" | "bug" | "feature" | "chart" | "other"
+    message    = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship("User", backref=db.backref("feedback", lazy="select"))

@@ -141,6 +141,58 @@
     .app-footer a { color: var(--muted); text-decoration: none; transition: color .2s; }
     .app-footer a:hover { color: var(--gold-light); }
     .app-footer-admin { color: var(--gold) !important; font-weight: 600; }
+
+    /* ── Feedback Modal ── */
+    .feedback-overlay {
+      position: fixed; inset: 0; z-index: 1100;
+      background: rgba(0,0,0,.7); backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .feedback-overlay.open { display: flex; }
+    .feedback-modal {
+      background: #0d0f1e; border: 1px solid rgba(255,255,255,.1);
+      border-radius: 20px; padding: 2rem; width: 100%; max-width: 440px;
+      position: relative;
+    }
+    .feedback-close {
+      position: absolute; top: 1rem; right: 1rem;
+      background: none; border: none; color: var(--muted);
+      font-size: 1.1rem; cursor: pointer; padding: .25rem;
+    }
+    .feedback-title {
+      font-family: 'Cinzel', serif; font-size: 1.15rem; font-weight: 700;
+      color: var(--gold-light); margin-bottom: .4rem;
+    }
+    .feedback-sub { font-size: .82rem; color: var(--muted); margin-bottom: 1.2rem; line-height: 1.6; }
+    .feedback-stars-row { display: flex; gap: .4rem; margin-bottom: 1rem; }
+    .feedback-star {
+      font-size: 1.6rem; color: rgba(201,168,76,.25); cursor: pointer;
+      transition: color .15s;
+    }
+    .feedback-star.active { color: var(--gold); }
+    .feedback-select {
+      width: 100%; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px; color: var(--text); font-family: 'Raleway', sans-serif;
+      font-size: .85rem; padding: .6rem .9rem; margin-bottom: .75rem; outline: none;
+    }
+    .feedback-textarea {
+      width: 100%; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px; color: var(--text); font-family: 'Raleway', sans-serif;
+      font-size: .85rem; padding: .75rem .9rem; resize: vertical;
+      outline: none; line-height: 1.6; margin-bottom: .75rem;
+    }
+    .feedback-textarea:focus { border-color: rgba(201,168,76,.4); }
+    .feedback-error { font-size: .78rem; color: #f87171; min-height: 1.2em; margin-bottom: .5rem; }
+    .feedback-submit {
+      width: 100%; background: linear-gradient(135deg, var(--gold), #a07828);
+      border: none; border-radius: 8px; color: #07080f;
+      font-family: 'Cinzel', serif; font-size: .88rem; font-weight: 700;
+      letter-spacing: .06em; padding: .75rem; cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .feedback-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(201,168,76,.3); }
+    .feedback-submit:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    .feedback-thanks { text-align: center; color: #6de8a8; font-size: .88rem; padding: .75rem 0; }
     .nav-top-link {
       color: var(--muted); text-decoration: none; font-size: .8rem;
       transition: color .2s; letter-spacing: .03em;
@@ -3545,6 +3597,54 @@
     if (e.target === $('ayanamsa-modal-overlay')) closeAyanamsaModal();
   });
 
+  // ── Feedback Modal ────────────────────────────────────────────
+  let _feedbackRating = null;
+
+  function openFeedback() {
+    document.getElementById('feedback-overlay').classList.add('open');
+    document.getElementById('feedback-message').focus();
+  }
+  function closeFeedback() {
+    document.getElementById('feedback-overlay').classList.remove('open');
+  }
+  function setRating(val) {
+    _feedbackRating = val;
+    document.querySelectorAll('.feedback-star').forEach(s => {
+      s.classList.toggle('active', parseInt(s.dataset.val) <= val);
+    });
+  }
+  async function submitFeedback() {
+    const msg     = document.getElementById('feedback-message').value.trim();
+    const cat     = document.getElementById('feedback-category').value;
+    const errEl   = document.getElementById('feedback-error');
+    const btn     = document.getElementById('feedback-submit');
+    const thanks  = document.getElementById('feedback-thanks');
+    errEl.textContent = '';
+    if (!msg) { errEl.textContent = 'Please enter a message.'; return; }
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try {
+      const r = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content },
+        body: JSON.stringify({ message: msg, category: cat, rating: _feedbackRating }),
+        credentials: 'same-origin',
+      });
+      const d = await r.json();
+      if (!r.ok || d.error) { errEl.textContent = d.error || 'Could not send. Please try again.'; btn.disabled = false; btn.textContent = 'Send Feedback ✦'; return; }
+      btn.style.display = 'none';
+      thanks.style.display = '';
+      document.getElementById('feedback-message').value = '';
+      setRating(0);
+      _feedbackRating = null;
+      setTimeout(() => { closeFeedback(); btn.style.display = ''; btn.textContent = 'Send Feedback ✦'; thanks.style.display = 'none'; }, 2500);
+    } catch(e) {
+      errEl.textContent = 'Could not send. Please try again.';
+      btn.disabled = false;
+      btn.textContent = 'Send Feedback ✦';
+    }
+  }
+
   // ── Dasha Rendering ───────────────────────────────────────────
   function renderDasha(dasha) {
     if (!dasha || !dasha.current_maha) return;
@@ -4747,8 +4847,39 @@
     <a href="/privacy">Privacy</a>
     <a href="/terms">Terms</a>
     <a href="/pricing">Pricing</a>
+    <a href="#" onclick="openFeedback();return false;">💬 Feedback</a>
     <a href="/admin" class="app-footer-admin">⚙ Admin</a>
   </footer>
+
+  <!-- ── Feedback Modal ── -->
+  <div class="feedback-overlay" id="feedback-overlay" onclick="if(event.target===this)closeFeedback()">
+    <div class="feedback-modal">
+      <button class="feedback-close" onclick="closeFeedback()">✕</button>
+      <div class="feedback-title">Share Your Feedback</div>
+      <div class="feedback-sub">Help us make Krieshan AI better. Every message is read personally.</div>
+
+      <div class="feedback-stars-row" id="feedback-stars-row">
+        <span class="feedback-star" data-val="1" onclick="setRating(1)">★</span>
+        <span class="feedback-star" data-val="2" onclick="setRating(2)">★</span>
+        <span class="feedback-star" data-val="3" onclick="setRating(3)">★</span>
+        <span class="feedback-star" data-val="4" onclick="setRating(4)">★</span>
+        <span class="feedback-star" data-val="5" onclick="setRating(5)">★</span>
+      </div>
+
+      <select class="feedback-select" id="feedback-category">
+        <option value="general">General feedback</option>
+        <option value="bug">Something is broken</option>
+        <option value="feature">Feature request</option>
+        <option value="chart">Chart accuracy</option>
+        <option value="other">Other</option>
+      </select>
+
+      <textarea class="feedback-textarea" id="feedback-message" placeholder="What's on your mind? What would make this app 10x better for you?" rows="4"></textarea>
+      <div class="feedback-error" id="feedback-error"></div>
+      <button class="feedback-submit" id="feedback-submit" onclick="submitFeedback()">Send Feedback ✦</button>
+      <div class="feedback-thanks" id="feedback-thanks" style="display:none">✦ Thank you — your feedback has been received.</div>
+    </div>
+  </div>
 
   <!-- ── Mobile bottom nav (hidden on desktop via CSS) ── -->
   <nav class="mobile-bottom-nav">
