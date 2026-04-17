@@ -1199,18 +1199,13 @@ def admin_logout():
 @app.errorhandler(500)
 def internal_error(e):
     db.session.rollback()
-    tb = traceback.format_exc()
-    return f"<pre style='background:#111;color:#f88;padding:2rem;font-size:13px'>500 Error:\n{tb}</pre>", 500
+    traceback.print_exc()  # still logs to Railway console
+    return render_template("error.html", code=500, message="Something went wrong on our end. Please try again in a moment."), 500
 
 
-@app.route("/admin/debug")
-def admin_debug():
-    """Temporary debug route — no auth, shows exact error."""
-    try:
-        return _admin_dashboard_inner()
-    except Exception as e:
-        tb = traceback.format_exc()
-        return f"<pre style='background:#111;color:#f88;padding:2rem;font-size:13px'>{tb}</pre>", 500
+@app.errorhandler(404)
+def not_found(e):
+    return render_template("error.html", code=404, message="This page doesn't exist."), 404
 
 
 @app.route("/admin")
