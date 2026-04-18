@@ -58,19 +58,25 @@ def callback():
     picture = userinfo.get("picture", "")
 
     # Upsert: find by google_id, fall back to email
-    user = User.query.filter_by(google_id=google_id).first()
-    if not user:
-        user = User.query.filter_by(email=email).first()
-        if user:
-            user.google_id = google_id
-        else:
-            user = User(google_id=google_id, email=email, name=name)
-            db.session.add(user)
+    try:
+        user = User.query.filter_by(google_id=google_id).first()
+        if not user:
+            user = User.query.filter_by(email=email).first()
+            if user:
+                user.google_id = google_id
+            else:
+                user = User(google_id=google_id, email=email, name=name)
+                db.session.add(user)
 
-    user.name = name
-    user.picture_url = picture
-    user.last_login_at = datetime.utcnow()
-    db.session.commit()
+        user.name = name
+        user.picture_url = picture
+        user.last_login_at = datetime.utcnow()
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        import traceback
+        traceback.print_exc()
+        raise
 
     session.permanent = True
     login_user(user, remember=True)

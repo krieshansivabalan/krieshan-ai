@@ -254,6 +254,13 @@
   <div class="page-title">✦ Admin Dashboard</div>
   <div class="page-sub">User accounts, chart submissions, and engagement metrics — visible to admin only</div>
 
+  <!-- DB Status -->
+  <div style="display:inline-flex;align-items:center;gap:.5rem;font-size:.72rem;margin-bottom:1.5rem;padding:.3rem .8rem;border-radius:20px;
+    {% if 'PostgreSQL' in db_type %}background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);color:#4ade80;
+    {% else %}background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.3);color:#f87171;{% endif %}">
+    {% if 'PostgreSQL' in db_type %}✓ PostgreSQL{% else %}⚠ {{ db_type }}{% endif %}
+  </div>
+
   <!-- ── Overview stats ── -->
   <div class="section-title">Overview</div>
   <div class="stats-grid">

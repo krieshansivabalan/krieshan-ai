@@ -52,9 +52,12 @@ limiter = Limiter(
 )
 
 # Database
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-    "DATABASE_URL", "sqlite:///sidereal.db"
-)
+# Railway (and Heroku) provide postgres:// URLs but SQLAlchemy 2.x requires postgresql://.
+# Without this fix the app silently uses SQLite (wiped on every deploy) — users are lost.
+_db_url = os.environ.get("DATABASE_URL", "sqlite:///sidereal.db")
+if _db_url.startswith("postgres://"):
+    _db_url = _db_url.replace("postgres://", "postgresql://", 1)
+app.config["SQLALCHEMY_DATABASE_URI"] = _db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=30)
@@ -1312,7 +1315,9 @@ def _admin_dashboard_inner():
         .all()
     )
 
-    return render_template("admin_dashboard.html", user_data=user_data, stats=stats, feedbacks=feedbacks)
+    db_type = "PostgreSQL" if "postgresql" in app.config["SQLALCHEMY_DATABASE_URI"] else "SQLite (WARNING: data not persistent)"
+
+    return render_template("admin_dashboard.html", user_data=user_data, stats=stats, feedbacks=feedbacks, db_type=db_type)
 
 
 if __name__ == "__main__":
