@@ -269,16 +269,47 @@
     }
     @media (max-width: 768px) {
       nav { padding: .8rem 1rem; }
-      .nav-links { gap: .9rem; }
-      .nav-links a { font-size: .78rem; }
-      .page { padding: 1.5rem 1rem 4rem; }
+      .nav-links { display: none; }
+      .page { padding: 1.5rem 1rem 5rem; }
       .form-grid { grid-template-columns: 1fr; }
       .big-strip { grid-template-columns: 1fr 1fr; gap: .6rem; }
+      /* iOS input zoom fix */
+      input, select { font-size: 16px !important; }
+      /* Tap targets */
+      .btn-calc { min-height: 48px; font-size: .92rem; padding: .85rem; }
       /* Planet table horizontal scroll */
       .planet-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
       table { min-width: 420px; }
-      /* Career profile card */
-      .career-profile { padding: 1.4rem; }
+      /* Summary chips wrap */
+      .summary-bar { flex-wrap: wrap; gap: .5rem; }
+      .summary-chip { flex: 1 1 120px; }
+      /* Career card */
+      .career-card { padding: 1.2rem; }
+      /* Page header */
+      .page-header h1 { font-size: 1.25rem; }
+      .page-header p { font-size: .82rem; }
+      /* Indicator cards */
+      .indicator-card { padding: 1rem; }
+    }
+
+    /* ── Mobile bottom nav ─────────────────────────────────────── */
+    .mobile-nav { display: none; }
+    @media (max-width: 768px) {
+      .mobile-nav {
+        display: flex; position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+        background: rgba(7,8,15,.97); backdrop-filter: blur(16px);
+        border-top: 1px solid rgba(255,255,255,.08);
+        padding: .6rem 0 max(.6rem, env(safe-area-inset-bottom));
+        justify-content: space-around; align-items: center;
+      }
+      .mobile-nav a {
+        display: flex; flex-direction: column; align-items: center; gap: .2rem;
+        color: #7a789a; font-size: .62rem; font-weight: 600; text-decoration: none;
+        min-width: 52px; padding: .3rem .5rem; transition: color .2s;
+        letter-spacing: .03em; text-transform: uppercase;
+      }
+      .mobile-nav a:hover, .mobile-nav a.active { color: #e8c96a; }
+      .mobile-nav .mnav-icon { font-size: 1.1rem; }
     }
   </style>
 </head>
@@ -732,5 +763,12 @@ function domElementCareerNote(el) {
 }
 </script>
 
+  <nav class="mobile-nav">
+    <a href="/"><span class="mnav-icon">🏠</span>Home</a>
+    <a href="/navamsa"><span class="mnav-icon">♀</span>D9</a>
+    <a href="/d10" class="active"><span class="mnav-icon">◈</span>D10</a>
+    <a href="/synastry"><span class="mnav-icon">♾</span>Synastry</a>
+    <a href="/journal"><span class="mnav-icon">📓</span>Journal</a>
+  </nav>
 </body>
 </html>

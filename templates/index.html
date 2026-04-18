@@ -128,6 +128,44 @@
     /* Bottom nav only visible on mobile */
     .mobile-bottom-nav { display: none; }
 
+    /* ── Onboarding Modal ──────────────────────────────────────── */
+    .onboard-overlay {
+      display: none; position: fixed; inset: 0; z-index: 600;
+      background: rgba(7,8,15,.92); backdrop-filter: blur(12px);
+      align-items: center; justify-content: center; padding: 1.5rem;
+    }
+    .onboard-overlay.open { display: flex; }
+    .onboard-card {
+      background: #0d0f1e; border: 1px solid rgba(201,168,76,.3);
+      border-radius: 24px; padding: 2.5rem 2rem; max-width: 440px; width: 100%;
+      text-align: center; position: relative;
+    }
+    .onboard-title {
+      font-family: 'Cinzel', serif; font-size: 1.3rem; font-weight: 700;
+      color: var(--gold-light); margin-bottom: .6rem; letter-spacing: .04em;
+    }
+    .onboard-sub { font-size: .85rem; color: var(--muted); line-height: 1.75; margin-bottom: 1.5rem; }
+    .onboard-steps { display: flex; flex-direction: column; gap: .65rem; margin-bottom: 1.8rem; text-align: left; }
+    .onboard-step {
+      display: flex; align-items: center; gap: .75rem;
+      font-size: .83rem; color: rgba(226,223,245,.85);
+    }
+    .onboard-num {
+      width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--violet), #5a3fa0);
+      color: #fff; font-size: .7rem; font-weight: 700; font-family: 'Cinzel', serif;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .onboard-btn {
+      width: 100%; background: linear-gradient(135deg, var(--gold), #a07828);
+      border: none; border-radius: 12px; color: #07080f; cursor: pointer;
+      font-family: 'Cinzel', serif; font-size: .95rem; font-weight: 700;
+      letter-spacing: .07em; padding: .9rem; margin-bottom: .75rem;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .onboard-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(201,168,76,.35); }
+    .onboard-fine { font-size: .72rem; color: var(--muted); }
+
     /* ── Page footer (desktop) ── */
     .app-footer {
       position: relative; z-index: 1;
@@ -1871,6 +1909,12 @@
 
       /* ── 19. AI chat panel — full width on mobile ───────────────── */
       .ai-chat-panel { width: 100%; height: 72vh; border-radius: 18px 18px 0 0; }
+      /* Move AI FAB above bottom nav bar */
+      .ai-chat-fab { bottom: 5.5rem; right: 1rem; width: 48px; height: 48px; }
+      /* Onboarding modal tighter on mobile */
+      .onboard-card { padding: 2rem 1.4rem; }
+      .onboard-title { font-size: 1.1rem; }
+      .onboard-sub { font-size: .8rem; }
 
       /* ── 20. App footer — tighter on mobile ─────────────────────── */
       .app-footer { padding: 1rem 1rem 1.5rem; font-size: .72rem; gap: .75rem; }
@@ -2021,14 +2065,30 @@
 <body>
   <div id="stars"></div>
 
-  <!-- ── AI Chat FAB (hidden — coming soon) ───────────────────── -->
+  <!-- ── Onboarding Modal (shown once on first visit) ─────────── -->
+  <div class="onboard-overlay" id="onboard-overlay">
+    <div class="onboard-card">
+      <img src="/static/lion.svg?v=2" alt="Krieshan AI" style="width:56px;height:56px;filter:drop-shadow(0 0 14px rgba(201,168,76,.55));margin-bottom:.8rem" />
+      <div class="onboard-title">Welcome to Krieshan AI</div>
+      <div class="onboard-sub">Your sidereal birth chart is waiting. Enter your birth details below to unlock your cosmic blueprint — your true Sun, Moon, Rising, and all 10 planets placed against the actual sky.</div>
+      <div class="onboard-steps">
+        <div class="onboard-step"><span class="onboard-num">1</span> Enter your date and time of birth</div>
+        <div class="onboard-step"><span class="onboard-num">2</span> Enter your city of birth</div>
+        <div class="onboard-step"><span class="onboard-num">3</span> Tap "Calculate My Chart"</div>
+      </div>
+      <button class="onboard-btn" onclick="dismissOnboarding()">✦ &nbsp;Calculate My Chart</button>
+      <div class="onboard-fine">Takes about 5 seconds · Free forever for your first chart</div>
+    </div>
+  </div>
+
+  <!-- ── AI Chat FAB ──────────────────────────────────────────── -->
   <button class="ai-chat-fab" id="ai-chat-fab" onclick="toggleChat()" title="Ask Your Chart" style="display:none">
     ✦
     <span class="ai-badge" id="ai-badge">AI</span>
   </button>
 
-  <!-- ── AI Chat Panel (hidden — coming soon) ──────────────────── -->
-  <div class="ai-chat-panel" id="ai-chat-panel" style="display:none">
+  <!-- ── AI Chat Panel ───────────────────────────────────────── -->
+  <div class="ai-chat-panel" id="ai-chat-panel">
     <div class="ai-chat-header">
       <div>
         <div class="ai-chat-title">✦ Ask Your Chart</div>
@@ -4789,13 +4849,16 @@
     const lockedPanel = $('ai-chat-locked-panel');
     const inputRow    = $('ai-chat-input-row');
     const quota       = $('ai-chat-quota');
+    const fab         = $('ai-chat-fab');
     if (_tier === 'free') {
       if (lockedPanel) lockedPanel.style.display = '';
       if (inputRow)    inputRow.style.display    = 'none';
       if (quota) quota.textContent = '';
+      if (fab)  fab.style.display  = 'none';
     } else {
       if (lockedPanel) lockedPanel.style.display = 'none';
       if (inputRow)    inputRow.style.display    = '';
+      if (fab)  fab.style.display  = '';
       if (quota) {
         quota.textContent = _aiRemaining === -1
           ? 'Unlimited questions'
@@ -4901,12 +4964,30 @@
     pdfBtn.style.display = '';
   }
 
+  // ── Onboarding (first visit) ──────────────────────────────────
+  function initOnboarding() {
+    if (localStorage.getItem('kai_onboarded')) return;
+    $('onboard-overlay').classList.add('open');
+  }
+  function dismissOnboarding() {
+    localStorage.setItem('kai_onboarded', '1');
+    $('onboard-overlay').classList.remove('open');
+    // Scroll to the form
+    const form = document.getElementById('form-section');
+    if (form) form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  // Allow clicking backdrop to dismiss too
+  $('onboard-overlay').addEventListener('click', e => {
+    if (e.target === $('onboard-overlay')) dismissOnboarding();
+  });
+
   // ── Init ──────────────────────────────────────────────────────
   initStreak();
   initWelcomeBar();
   renderNotifPanel();
   updateNotifBadge();
   checkPaidStatus();
+  initOnboarding();
   </script>
 
   <!-- ── Page footer (desktop only) ── -->
